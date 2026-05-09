@@ -1,0 +1,36 @@
+{
+  "name": "Ridwan",
+  "nickname": "ridwanafazn",
+  "role": "Backend Architect & Systems Engineer",
+  "tagline": "Specializing in high-performance computing, distributed architectures, and cloud-native solutions.",
+  "bio": "An Informatics Engineering graduate passionate about building robust backend systems. From sub-millisecond maritime telemetry in Rust to scalable ecosystems in Go and Node.js, I focus on delivering secure, reliable, and efficient infrastructure.",
+  "education": [
+    {
+      "institution": "UIN Sunan Gunung Djati Bandung",
+      "degree": "Bachelor of Engineering in Informatics Engineering",
+      "gpa": "3.71 / 4.00",
+      "highlights": [
+        "AI Recommendation System Research by Expert System and Genetic Algorithm)"
+      ]
+    },
+    {
+      "institution": "Bangkit Academy",
+      "degree": "Cloud Computing Learning Path",
+      "gpa": "Distinction Graduate",
+      "highlights": [
+        "GCP Infrastructure",
+        "Capstone Project"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Google Associate Cloud Engineer (GCP)",
+      "issuer": "Google Cloud"
+    },
+    {
+      "name": "Cisco Networking Certification",
+      "issuer": "Cisco"
+    }
+  ]
+}

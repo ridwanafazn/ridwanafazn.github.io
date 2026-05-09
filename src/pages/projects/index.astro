@@ -1,0 +1,24 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import projectsData from '../../data/projects.json';
+import type { Project } from '../../types';
+
+const allProjects = projectsData as Project[];
+---
+
+<Layout title="Project Archive">
+  <div class="pt-10 mb-12">
+    <h1 class="text-4xl font-bold text-slate-900 mb-4">Project Vault</h1>
+    <p class="text-lg text-slate-600 max-w-2xl">
+      A comprehensive archive of systems, applications, and architectures I've built. 
+      Ranging from low-latency Rust engines to fullstack monolithic and distributed ecosystems.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {allProjects.map((project) => (
+      <ProjectCard project={project} />
+    ))}
+  </div>
+</Layout>

@@ -1,0 +1,18 @@
+[
+  {
+    "category": "Backend Engineering",
+    "items": ["Rust", "Golang", "Node.js", "Laravel", "Python", "Java"]
+  },
+  {
+    "category": "Cloud & Infrastructure",
+    "items": ["Google Cloud Platform", "Docker", "RabbitMQ", "Message Brokers"]
+  },
+  {
+    "category": "Architecture & Integrations",
+    "items": ["Distributed Systems", "REST/gRPC", "WebSocket", "Third-party APIs (100ms, Health APIs)"]
+  },
+  {
+    "category": "Frontend Technologies",
+    "items": ["Next.js", "Nuxt.js", "Astro", "Tailwind CSS", "React", "Vue.js", "Svelte"]
+  }
+]

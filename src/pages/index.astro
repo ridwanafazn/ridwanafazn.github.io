@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Badge from '../components/Badge.astro';
+
+import profileData from '../data/profile.json';
+import projectsData from '../data/projects.json';
+import skillsData from '../data/skills.json';
+
+import type { Project } from '../types';
+
+const topProjects = (projectsData as Project[]).filter((project) => project.isTopProject);
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title="Home">
+  <!-- Hero Section -->
+  <section class="mb-20 pt-10">
+    <div class="max-w-3xl">
+      <p class="font-mono text-teal-600 mb-4 tracking-wide text-sm uppercase">
+        System Initialized // Profile: {profileData.name}
+      </p>
+      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+        {profileData.role}.
+      </h1>
+      <h2 class="text-xl md:text-2xl text-slate-600 mb-8 font-medium">
+        {profileData.tagline}
+      </h2>
+      <p class="text-slate-600 leading-relaxed mb-8 text-lg">
+        {profileData.bio}
+      </p>
+      <div class="flex gap-4">
+        <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition-colors shadow-sm">
+          Initialize Contact
+        </a>
+        <a href={`${base}projects`} class="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-sm">
+          View Architecture Vault
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Projects Section -->
+  <section class="mb-20">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold text-slate-900">Featured Masterpieces</h2>
+      <a href={`${base}projects`} class="text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors group flex items-center gap-1">
+        View All Projects
+        <span class="group-hover:translate-x-1 transition-transform">→</span>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {topProjects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Technical Arsenal (Skills) -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-slate-900 mb-8">Technical Arsenal</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {skillsData.map((skillGroup) => (
+        <div class="bg-white p-6 rounded-2xl border border-slate-200">
+          <h3 class="text-sm font-mono text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+            {skillGroup.category}
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            {skillGroup.items.map((item) => (
+              <Badge text={item} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

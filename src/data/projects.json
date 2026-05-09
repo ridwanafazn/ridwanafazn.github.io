@@ -1,0 +1,77 @@
+[
+  {
+    "id": "jymz",
+    "title": "Jymz",
+    "role": "Fullstack Developer",
+    "description": "Sistem rekomendasi program kebugaran (fitness) yang menggabungkan logika backend kompleks dengan antarmuka frontend yang intuitif.",
+    "techStack": ["Backend Logic", "Frontend", "Recommendation Engine"],
+    "highlights": ["Algoritma Rekomendasi", "User-centric UI/UX"],
+    "isTopProject": true
+  },
+  {
+    "id": "neuroplastisism",
+    "title": "Neuroplastisism",
+    "role": "Fullstack Engineer",
+    "description": "Learning Management System (LMS) komprehensif yang dikembangkan untuk PT LAPI ITB.",
+    "techStack": ["Laravel 11", "Livewire", "Volt"],
+    "highlights": ["Polymorphic Schemas", "Enterprise Architecture", "RBAC"],
+    "isTopProject": true
+  },
+  {
+    "id": "vessel",
+    "title": "Vessel",
+    "role": "Backend / Systems Engineer",
+    "description": "Simulasi Navigation Data Distribution Unit (NDU) yang menangani komputasi geospasial dan telemetri frekuensi tinggi.",
+    "techStack": ["Rust", "Actix Web", "ReactJS"],
+    "highlights": ["High-frequency Computation", "Sub-millisecond Latency"],
+    "isTopProject": true
+  },
+  {
+    "id": "orchestrix",
+    "title": "Orchestrix",
+    "role": "Backend Architect",
+    "description": "Simulasi arsitektur pemrosesan pekerjaan terdistribusi (distributed job processing) dengan visualisasi proses backend secara real-time.",
+    "techStack": ["Go", "Gin", "RabbitMQ", "Frontend"],
+    "highlights": ["Architecture Visualization", "Queue & Worker Management"]
+  },
+  {
+    "id": "zenithxzn",
+    "title": "Zenithxzn",
+    "role": "Fullstack Developer",
+    "description": "Aplikasi pelacak amalan harian dengan fitur inklusif yang dirancang ramah terhadap siklus menstruasi wanita.",
+    "techStack": ["Next.js", "React", "Node.js"],
+    "highlights": ["Inclusive UX Logic", "Progress Tracking"]
+  },
+  {
+    "id": "maqdis-travel",
+    "title": "Maqdis Travel",
+    "role": "Backend Engineer",
+    "description": "Aplikasi layanan manasik, umroh, dan haji dengan integrasi fitur real-time communication/video.",
+    "techStack": ["Express.js", "Node.js", "100ms API"],
+    "highlights": ["RTC/Video Integration", "Booking System"]
+  },
+  {
+    "id": "nourishify",
+    "title": "Nourishify",
+    "role": "Developer",
+    "description": "Aplikasi manajemen Makan Bergizi Gratis (MBG) untuk memantau perencanaan dan distribusi nutrisi.",
+    "techStack": ["Web Stack"],
+    "highlights": ["Logistics Tracking", "Social Impact System"]
+  },
+  {
+    "id": "habiter",
+    "title": "Habiter",
+    "role": "Mobile Developer",
+    "description": "Aplikasi mobile ringan untuk mengelola daftar to-do dan pelacakan kebiasaan harian.",
+    "techStack": ["Mobile Stack"],
+    "highlights": ["CRUD System", "Local Data Management"]
+  },
+  {
+    "id": "bakerman",
+    "title": "Bakerman",
+    "role": "Backend Engineer",
+    "description": "Sistem toko roti inovatif yang membatasi konsumsi harian pembeli, dengan tambahan kuota pembelian melalui gamifikasi data dari health API (Strava, Nike, Samsung, Huawei).",
+    "techStack": ["API Integration", "Backend System"],
+    "highlights": ["OAuth Third-party", "Health API Gamification"]
+  }
+]

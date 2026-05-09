@@ -1,0 +1,25 @@
+[
+  {
+    "id": "satu-interaksi",
+    "type": "Volunteer",
+    "title": "Charity: Fun Run, Planting & River Clean Up",
+    "organization": "Satu Interaksi",
+    "description": "Berpartisipasi aktif dalam inisiatif lingkungan yang mencakup kegiatan lari amal, penanaman pohon, dan pembersihan area sungai di kawasan Tahura.",
+    "highlights": [
+      "Environmental Conservation",
+      "Community Engagement",
+      "Physical Endurance"
+    ]
+  },
+  {
+    "id": "ringkai-binar",
+    "type": "Volunteer",
+    "title": "Recycling and Reuse Festival",
+    "organization": "Ringkai Binar",
+    "description": "Terlibat dalam kampanye dan eksekusi festival daur ulang untuk mempromosikan praktik keberlanjutan (sustainability) dan manajemen limbah kreatif.",
+    "highlights": [
+      "Sustainability Advocacy",
+      "Waste Management Education"
+    ]
+  }
+]
