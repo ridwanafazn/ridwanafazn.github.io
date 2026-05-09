@@ -4,75 +4,92 @@ import profileData from '../data/profile.json';
 import activitiesData from '../data/activities.json';
 ---
 
-<Layout title="About & Impact">
-  <div class="pt-10 mb-12">
-    <h1 class="text-4xl font-bold text-slate-900 mb-4">The Engineer Behind the Code</h1>
-    <p class="text-lg text-slate-600 max-w-2xl">
-      Beyond the architecture diagrams and terminal, here is my academic foundation and how I try to make a positive impact on the community.
+<Layout title="Background & Architecture">
+  <header class="mb-20 pt-8 relative z-10">
+    <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
+    <p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+      Beyond the architecture diagrams and terminal logs. This is the academic foundation, professional accreditations, and social impact that shapes my engineering mindset.
     </p>
-  </div>
+  </header>
 
-  <section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10">
-    <!-- Education & Certifications -->
-    <div>
-      <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-        <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>
-        Education History
-      </h2>
-      <div class="space-y-6">
-        {profileData.education.map((edu) => (
-          <div class="border-l-2 border-teal-200 pl-4 relative">
-            <div class="absolute w-2 h-2 bg-teal-500 rounded-full -left-[5px] top-2"></div>
-            <h3 class="text-lg font-semibold text-slate-900">{edu.degree}</h3>
-            <p class="text-slate-600 font-medium mb-1">{edu.institution}</p>
-            <p class="text-sm font-mono text-slate-500 mb-2">GPA: {edu.gpa}</p>
-            <ul class="list-disc list-inside text-sm text-slate-600 space-y-1">
-              {edu.highlights.map((highlight) => (
-                <li>{highlight}</li>
-              ))}
-            </ul>
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10 mb-16">
+    
+    <section class="md:col-span-8 bento-card p-8 md:p-10 relative overflow-hidden">
+      <div class="absolute -bottom-20 -right-20 w-64 h-64 border-[1px] border-dashed border-secondary/30 rounded-full opacity-50 pointer-events-none"></div>
+      
+      <div class="flex items-center gap-3 mb-10 relative z-10">
+        <div class="bg-surface p-2 rounded-xl border border-outline-variant/30 flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-secondary">school</span>
+        </div>
+        <h2 class="text-2xl font-bold text-on-background">Academic Core & Certifications</h2>
+      </div>
+
+      <div class="space-y-8 relative z-10 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-secondary/40 before:to-transparent">
+        {profileData.education.map((edu, index) => (
+          <div class="relative flex items-center justify-between md:justify-normal md:even:flex-row-reverse group">
+            <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-surface bg-surface-container-lowest text-secondary shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+              <span class="material-symbols-outlined text-[18px]">memory</span>
+            </div>
+            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+              <h3 class="font-bold text-on-background">{edu.degree}</h3>
+              <div class="font-mono text-xs text-secondary mt-1">{edu.institution}</div>
+              <div class="font-mono text-xs text-tertiary mt-2">GPA: <span class="font-bold text-primary">{edu.gpa}</span></div>
+              <ul class="mt-4 space-y-2">
+                {edu.highlights.map((highlight) => (
+                  <li class="text-sm text-on-surface-variant flex items-start gap-2">
+                    <span class="material-symbols-outlined text-[14px] text-primary mt-0.5">check_small</span>
+                    {highlight}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         ))}
       </div>
 
-      <h3 class="text-lg font-semibold text-slate-900 mt-10 mb-4">Professional Certifications</h3>
-      <div class="space-y-3">
-        {profileData.certifications.map((cert) => (
-          <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center">
-            <span class="font-medium text-slate-800">{cert.name}</span>
-            <span class="text-xs font-mono px-2 py-1 bg-slate-100 text-slate-600 rounded">
-              {cert.issuer}
-            </span>
-          </div>
-        ))}
+      <div class="mt-12 pt-8 border-t border-outline-variant/30 relative z-10">
+        <h3 class="font-mono text-sm font-bold text-on-background uppercase tracking-widest mb-6">Professional Accreditations</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {profileData.certifications.map((cert) => (
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 shadow-sm flex flex-col justify-center">
+              <span class="font-semibold text-sm text-on-background mb-1">{cert.name}</span>
+              <span class="text-xs font-mono text-secondary">{cert.issuer}</span>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Impact / Activities -->
-    <div>
-      <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-        <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-        Social Impact
-      </h2>
-      <div class="space-y-6">
+    <section class="md:col-span-4 bento-card p-8 md:p-10 flex flex-col relative overflow-hidden">
+       <div class="absolute -top-10 -right-10 w-40 h-40 border-[1px] border-dashed border-primary/30 rounded-full opacity-50 pointer-events-none"></div>
+       
+       <div class="flex items-center gap-3 mb-8 relative z-10">
+        <div class="bg-surface p-2 rounded-xl border border-outline-variant/30 flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-primary">diversity_1</span>
+        </div>
+        <h2 class="text-2xl font-bold text-on-background">Social Architecture</h2>
+      </div>
+
+      <div class="flex-grow flex flex-col gap-6 relative z-10">
         {activitiesData.map((activity) => (
-          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-start justify-between mb-2">
-              <h3 class="font-semibold text-slate-900">{activity.title}</h3>
-              <span class="text-xs font-mono px-2 py-1 bg-slate-100 text-slate-600 rounded">
+              <h3 class="font-bold text-sm text-on-background">{activity.title}</h3>
+              <span class="text-[10px] uppercase tracking-wider font-mono px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg shrink-0 ml-2">
                 {activity.type}
               </span>
             </div>
-            <p class="text-sm text-teal-700 font-medium mb-2">@ {activity.organization}</p>
-            <p class="text-sm text-slate-600 mb-3">{activity.description}</p>
+            <p class="text-xs font-mono text-tertiary mb-3">@ {activity.organization}</p>
+            <p class="text-sm text-on-surface-variant mb-4 leading-relaxed">{activity.description}</p>
             <div class="flex flex-wrap gap-2">
               {activity.highlights.map((h) => (
-                <span class="text-xs text-slate-500 before:content-['#'] before:mr-0.5">{h}</span>
+                <span class="text-[11px] font-mono text-secondary bg-secondary/5 px-2 py-1 rounded-md border border-secondary/10">{h}</span>
               ))}
             </div>
           </div>
         ))}
       </div>
-    </div>
-  </section>
+    </section>
+    
+  </div>
 </Layout>

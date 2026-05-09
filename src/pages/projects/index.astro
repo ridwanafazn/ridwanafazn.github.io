@@ -7,16 +7,15 @@ import type { Project } from '../../types';
 const allProjects = projectsData as Project[];
 ---
 
-<Layout title="Project Archive">
-  <div class="pt-10 mb-12">
-    <h1 class="text-4xl font-bold text-slate-900 mb-4">Project Vault</h1>
-    <p class="text-lg text-slate-600 max-w-2xl">
-      A comprehensive archive of systems, applications, and architectures I've built. 
-      Ranging from low-latency Rust engines to fullstack monolithic and distributed ecosystems.
+<Layout title="Project Vault">
+  <header class="pt-8 mb-16 relative z-10">
+    <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">Project Vault</h1>
+    <p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+      A comprehensive archive of systems, applications, and architectures I've built. Ranging from low-latency engines to fullstack monolithic and distributed ecosystems.
     </p>
-  </div>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 relative z-10 mb-16">
     {allProjects.map((project) => (
       <ProjectCard project={project} />
     ))}

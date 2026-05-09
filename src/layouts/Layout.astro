@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
-	title: string;
+    title: string;
 }
 
 const { title } = Astro.props;
@@ -12,25 +12,40 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		
-		<!-- Google Fonts: Inter & JetBrains Mono -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-		
-		<title>{title} | Backend Architect</title>
-	</head>
-	<body class="flex flex-col min-h-screen">
-		<Navbar />
-		<!-- Konten utama akan masuk ke dalam tag main ini -->
-		<main class="flex-grow pt-24 pb-16 px-6 md:px-12 max-w-6xl mx-auto w-full">
-			<slot />
-		</main>
-		<Footer />
-	</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+        <meta name="generator" content={Astro.generator} />
+        
+        <!-- Google Fonts: Inter & JetBrains Mono -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Material Symbols untuk ikon elegan -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,-50..200,24&display=swap" rel="stylesheet" />
+        
+        <title>{title} | Wang.Architect</title>
+    </head>
+    <!-- Menerapkan blueprint-grid secara global di level body -->
+    <body class="flex flex-col min-h-screen blueprint-grid relative overflow-x-hidden">
+        
+        <!-- Ornamen Abstrak Global (Berada di layer paling belakang) -->
+        <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-40">
+            <!-- Glow kanan atas (Sage Green) -->
+            <div class="absolute top-[-10%] right-[-5%] w-[40rem] h-[40rem] bg-primary-container/20 rounded-full blur-[100px]"></div>
+            <!-- Glow kiri bawah (Slate/Teal) -->
+            <div class="absolute bottom-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-secondary-container/30 rounded-full blur-[100px]"></div>
+        </div>
+
+        <Navbar />
+        
+        <!-- Konten utama dinaikkan max-width-nya dan diberi z-index agar berada di atas ornamen -->
+        <main class="flex-grow pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10">
+            <slot />
+        </main>
+        
+        <Footer />
+    </body>
 </html>

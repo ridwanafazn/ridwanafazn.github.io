@@ -13,56 +13,60 @@ const topProjects = (projectsData as Project[]).filter((project) => project.isTo
 const base = import.meta.env.BASE_URL;
 ---
 
-<Layout title="Home">
-  <!-- Hero Section -->
-  <section class="mb-20 pt-10">
-    <div class="max-w-3xl">
-      <p class="font-mono text-teal-600 mb-4 tracking-wide text-sm uppercase">
-        System Initialized // Profile: {profileData.name}
-      </p>
-      <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-        {profileData.role}.
-      </h1>
-      <h2 class="text-xl md:text-2xl text-slate-600 mb-8 font-medium">
-        {profileData.tagline}
-      </h2>
-      <p class="text-slate-600 leading-relaxed mb-8 text-lg">
-        {profileData.bio}
-      </p>
-      <div class="flex gap-4">
-        <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-teal-600 hover:bg-teal-700 transition-colors shadow-sm">
-          Initialize Contact
-        </a>
-        <a href={`${base}projects`} class="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-colors shadow-sm">
-          View Architecture Vault
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Top Projects Section -->
-  <section class="mb-20">
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="text-2xl font-bold text-slate-900">Featured Masterpieces</h2>
-      <a href={`${base}projects`} class="text-teal-600 hover:text-teal-700 font-medium text-sm transition-colors group flex items-center gap-1">
-        View All Projects
-        <span class="group-hover:translate-x-1 transition-transform">→</span>
+<Layout title="Architecture">
+  <header class="mb-16 md:mb-24 mt-8 md:mt-16 max-w-4xl relative z-10">
+    <p class="font-mono text-xs font-semibold text-secondary mb-4 uppercase tracking-widest flex items-center gap-3">
+      <span class="w-8 h-[2px] bg-secondary inline-block"></span> 
+      System Initialized // Profile: {profileData.name}
+    </p>
+    <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight leading-tight">
+      {profileData.role}.
+    </h1>
+    <h2 class="text-xl md:text-2xl text-on-surface-variant mb-6 font-medium">
+      {profileData.tagline}
+    </h2>
+    <p class="text-base md:text-lg text-on-surface-variant leading-relaxed max-w-2xl mb-8">
+      {profileData.bio}
+    </p>
+    <div class="flex flex-wrap gap-4">
+      <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center bg-primary-container text-on-primary-container font-mono text-sm font-bold px-6 py-3 rounded-full border border-primary-container/80 hover:opacity-90 active:scale-95 transition-all duration-300 shadow-sm">
+        Initialize Contact
+      </a>
+      <a href={`${base}projects`} class="inline-flex items-center justify-center border border-outline-variant text-tertiary font-mono text-sm px-6 py-3 rounded-full hover:bg-surface-variant hover:text-on-background active:scale-95 transition-all duration-300">
+        View Architecture Vault
       </a>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  </header>
+
+  <section class="mb-24 relative z-10">
+    <div class="flex items-end justify-between border-b border-outline-variant/30 pb-4 mb-8">
+      <h2 class="text-2xl font-bold text-on-background flex items-center gap-3">
+        <span class="material-symbols-outlined text-tertiary">dashboard_customize</span> 
+        Featured Masterpieces
+      </h2>
+      <a href={`${base}projects`} class="font-mono text-sm font-medium text-primary hover:opacity-80 flex items-center gap-1 transition-opacity">
+        View Vault <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
       {topProjects.map((project) => (
         <ProjectCard project={project} />
       ))}
     </div>
   </section>
 
-  <!-- Technical Arsenal (Skills) -->
-  <section class="mb-10">
-    <h2 class="text-2xl font-bold text-slate-900 mb-8">Technical Arsenal</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <section class="mb-16 relative z-10">
+     <div class="flex items-end justify-between border-b border-outline-variant/30 pb-4 mb-8">
+        <h2 class="text-2xl font-bold text-on-background flex items-center gap-3">
+          <span class="material-symbols-outlined text-secondary">memory</span> 
+          Technical Arsenal
+        </h2>
+     </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
       {skillsData.map((skillGroup) => (
-        <div class="bg-white p-6 rounded-2xl border border-slate-200">
-          <h3 class="text-sm font-mono text-slate-500 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">
+        <div class="bento-card p-8 flex flex-col min-h-[200px]">
+          <h3 class="font-mono text-sm font-bold text-on-background uppercase tracking-widest mb-6 flex items-center gap-2">
+             <span class="w-2 h-2 rounded-full bg-secondary/50"></span>
             {skillGroup.category}
           </h3>
           <div class="flex flex-wrap gap-2">
