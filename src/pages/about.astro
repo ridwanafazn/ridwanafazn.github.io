@@ -6,38 +6,50 @@ import activitiesData from '../data/activities.json';
 
 <Layout title="Background & Architecture">
   <header class="mb-20 pt-8 relative z-10">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-indigo/10 border border-accent-indigo/20 text-accent-indigo font-mono text-[9px] font-bold uppercase tracking-widest mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-accent-indigo animate-pulse"></span>
+      Initialization Sequence
+    </div>
     <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
-    <p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+    <p class="text-[15px] text-on-surface-variant max-w-2xl leading-relaxed font-medium">
       Beyond the architecture diagrams and terminal logs. This is the academic foundation, professional accreditations, and social impact that shapes my engineering mindset.
     </p>
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10 mb-16">
     
-    <section class="md:col-span-8 bento-card p-8 md:p-10 relative overflow-hidden">
-      <div class="absolute -bottom-20 -right-20 w-64 h-64 border-[1px] border-dashed border-secondary/30 rounded-full opacity-50 pointer-events-none"></div>
+    <section class="md:col-span-8 bento-card p-8 md:p-10 relative outline-none focus-visible:ring-2 focus-visible:ring-accent-indigo">
+      <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-accent-indigo/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
+      <div class="absolute -top-10 -right-10 w-64 h-64 ornament-dashed-circle opacity-40 pointer-events-none z-0"></div>
       
-      <div class="flex items-center gap-3 mb-10 relative z-10">
-        <div class="bg-surface p-2 rounded-xl border border-outline-variant/30 flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-secondary">school</span>
+      <div class="flex items-center gap-4 mb-12 relative z-10">
+        <div class="bg-accent-indigo/10 p-3 rounded-2xl border border-accent-indigo/20 flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-accent-indigo">school</span>
         </div>
-        <h2 class="text-2xl font-bold text-on-background">Academic Core & Certifications</h2>
+        <h2 class="text-3xl font-bold text-on-background tracking-tight">Academic Core</h2>
       </div>
 
-      <div class="space-y-8 relative z-10 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-secondary/40 before:to-transparent">
+      <div class="space-y-10 relative z-10 before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-accent-indigo/40 before:via-accent-cyan/20 before:to-transparent">
         {profileData.education.map((edu, index) => (
           <div class="relative flex items-center justify-between md:justify-normal md:even:flex-row-reverse group">
-            <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-surface bg-surface-container-lowest text-secondary shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
-              <span class="material-symbols-outlined text-[18px]">memory</span>
+            
+            <div class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-surface bg-surface-hover text-accent-indigo shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10 transition-transform duration-300 group-hover:scale-110 group-hover:border-accent-indigo/20">
+              <span class="material-symbols-outlined text-[20px]">memory</span>
             </div>
-            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <h3 class="font-bold text-on-background">{edu.degree}</h3>
-              <div class="font-mono text-xs text-secondary mt-1">{edu.institution}</div>
-              <div class="font-mono text-xs text-tertiary mt-2">GPA: <span class="font-bold text-primary">{edu.gpa}</span></div>
-              <ul class="mt-4 space-y-2">
+            
+            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 md:p-8 bg-surface-container-lowest/50 backdrop-blur-sm border border-outline/50 rounded-3xl shadow-sm hover:shadow-md hover:border-accent-indigo/30 transition-all duration-300">
+              <h3 class="text-xl font-bold text-on-background mb-1 group-hover:text-accent-indigo transition-colors">{edu.degree}</h3>
+              <div class="font-mono text-[11px] font-semibold text-on-surface-variant mb-4">{edu.institution}</div>
+              
+              <div class="inline-flex items-center gap-2 bg-accent-cyan/10 border border-accent-cyan/20 px-3 py-1.5 rounded-full mb-4">
+                <span class="font-mono text-[9px] uppercase tracking-widest text-accent-cyan">GPA</span>
+                <span class="font-mono text-[11px] font-bold text-accent-cyan">{edu.gpa}</span>
+              </div>
+              
+              <ul class="space-y-2.5">
                 {edu.highlights.map((highlight) => (
-                  <li class="text-sm text-on-surface-variant flex items-start gap-2">
-                    <span class="material-symbols-outlined text-[14px] text-primary mt-0.5">check_small</span>
+                  <li class="text-[13px] text-on-surface-variant font-medium flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-[16px] text-accent-emerald mt-0.5">check_circle</span>
                     {highlight}
                   </li>
                 ))}
@@ -47,45 +59,62 @@ import activitiesData from '../data/activities.json';
         ))}
       </div>
 
-      <div class="mt-12 pt-8 border-t border-outline-variant/30 relative z-10">
-        <h3 class="font-mono text-sm font-bold text-on-background uppercase tracking-widest mb-6">Professional Accreditations</h3>
+      <div class="mt-16 pt-10 border-t border-outline/40 relative z-10">
+        <div class="flex items-center gap-3 mb-8">
+          <span class="material-symbols-outlined text-accent-cyan">workspace_premium</span>
+          <h3 class="font-mono text-[11px] font-bold text-on-background uppercase tracking-widest">Professional Accreditations</h3>
+        </div>
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {profileData.certifications.map((cert) => (
-            <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 shadow-sm flex flex-col justify-center">
-              <span class="font-semibold text-sm text-on-background mb-1">{cert.name}</span>
-              <span class="text-xs font-mono text-secondary">{cert.issuer}</span>
+            <div class="bg-surface-container-lowest/50 backdrop-blur-sm p-5 rounded-2xl border border-outline/50 shadow-sm hover:border-accent-cyan/40 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-center group">
+              <span class="font-bold text-[13px] text-on-background mb-2 group-hover:text-accent-cyan transition-colors">{cert.name}</span>
+              <span class="text-[10px] font-mono font-semibold text-on-surface-variant flex items-center gap-1.5">
+                <span class="w-1 h-1 rounded-full bg-accent-cyan"></span>
+                {cert.issuer}
+              </span>
             </div>
           ))}
         </div>
       </div>
     </section>
 
-    <section class="md:col-span-4 bento-card p-8 md:p-10 flex flex-col relative overflow-hidden">
-       <div class="absolute -top-10 -right-10 w-40 h-40 border-[1px] border-dashed border-primary/30 rounded-full opacity-50 pointer-events-none"></div>
+    <section class="md:col-span-4 bento-card p-8 md:p-10 flex flex-col relative outline-none focus-visible:ring-2 focus-visible:ring-accent-amber">
+       <div class="absolute -top-20 -right-20 w-80 h-80 bg-accent-amber/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
+       <div class="absolute -bottom-10 -left-10 w-48 h-48 ornament-dashed-circle opacity-40 pointer-events-none z-0"></div>
+       <div class="absolute inset-0 opacity-0 hover:opacity-10 transition-opacity duration-500 pointer-events-none dot-pattern z-0"></div>
        
-       <div class="flex items-center gap-3 mb-8 relative z-10">
-        <div class="bg-surface p-2 rounded-xl border border-outline-variant/30 flex items-center justify-center shadow-sm">
-          <span class="material-symbols-outlined text-primary">diversity_1</span>
+       <div class="flex items-center gap-4 mb-10 relative z-10">
+        <div class="bg-accent-amber/10 p-3 rounded-2xl border border-accent-amber/20 flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-accent-amber">diversity_1</span>
         </div>
-        <h2 class="text-2xl font-bold text-on-background">Social Architecture</h2>
+        <h2 class="text-2xl font-bold text-on-background tracking-tight">Social Architecture</h2>
       </div>
 
       <div class="flex-grow flex flex-col gap-6 relative z-10">
         {activitiesData.map((activity) => (
-          <div class="p-5 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm hover:shadow-md transition-shadow">
-            <div class="flex items-start justify-between mb-2">
-              <h3 class="font-bold text-sm text-on-background">{activity.title}</h3>
-              <span class="text-[10px] uppercase tracking-wider font-mono px-2 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg shrink-0 ml-2">
+          <div class="p-6 bg-surface-container-lowest/50 backdrop-blur-sm rounded-3xl border border-outline/50 shadow-sm hover:shadow-lg hover:border-accent-amber/30 hover:-translate-y-1 transition-all duration-300 group">
+            
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-grow pr-4">
+                <h3 class="font-bold text-[14px] text-on-background leading-tight mb-1 group-hover:text-accent-amber transition-colors">{activity.title}</h3>
+                <p class="text-[10px] font-mono font-semibold text-on-surface-variant">@ {activity.organization}</p>
+              </div>
+              <span class="text-[8px] uppercase tracking-widest font-mono font-bold px-2 py-1 bg-accent-amber/10 text-accent-amber border border-accent-amber/20 rounded-xl shrink-0">
                 {activity.type}
               </span>
             </div>
-            <p class="text-xs font-mono text-tertiary mb-3">@ {activity.organization}</p>
-            <p class="text-sm text-on-surface-variant mb-4 leading-relaxed">{activity.description}</p>
+            
+            <p class="text-[13px] text-on-surface-variant font-medium mb-5 leading-relaxed">{activity.description}</p>
+            
             <div class="flex flex-wrap gap-2">
               {activity.highlights.map((h) => (
-                <span class="text-[11px] font-mono text-secondary bg-secondary/5 px-2 py-1 rounded-md border border-secondary/10">{h}</span>
+                <span class="text-[9px] uppercase tracking-wider font-mono font-bold text-accent-amber bg-surface px-2 py-1 rounded-lg border border-outline/30 shadow-sm">
+                  {h}
+                </span>
               ))}
             </div>
+            
           </div>
         ))}
       </div>

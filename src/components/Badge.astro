@@ -4,8 +4,36 @@ interface Props {
 }
 
 const { text } = Astro.props;
+
+// Logika dinamis untuk menentukan warna badge berdasarkan nama teknologi
+const getColorClass = (tech: string) => {
+  const t = tech.toLowerCase();
+  
+  if (t.includes('go') || t.includes('react') || t.includes('docker') || t.includes('kubernetes') || t.includes('k8s') || t.includes('postgres') || t.includes('sql')) {
+    return 'tech-chip-cyan';
+  }
+  if (t.includes('rust') || t.includes('aws') || t.includes('kafka') || t.includes('rabbitmq') || t.includes('kinesis')) {
+    return 'tech-chip-amber';
+  }
+  if (t.includes('node') || t.includes('next') || t.includes('tailwind') || t.includes('graphql') || t.includes('express')) {
+    return 'tech-chip-indigo';
+  }
+  if (t.includes('laravel') || t.includes('php') || t.includes('python') || t.includes('livewire') || t.includes('actix')) {
+    return 'tech-chip-rose';
+  }
+  if (t.includes('frontend') || t.includes('backend') || t.includes('architecture') || t.includes('engine') || t.includes('system')) {
+    return 'tech-chip-emerald';
+  }
+  
+  const fallbackColors = ['tech-chip-indigo', 'tech-chip-cyan', 'tech-chip-emerald', 'tech-chip-amber', 'tech-chip-rose'];
+  const hash = text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return fallbackColors[hash % fallbackColors.length];
+};
+
+const colorClass = getColorClass(text);
 ---
 
-<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-mono font-medium bg-primary/5 text-primary border border-primary/20 shadow-sm backdrop-blur-sm">
+<span class={`inline-flex items-center px-2.5 py-1.5 rounded-full text-[10px] uppercase font-mono font-bold tracking-widest shadow-sm backdrop-blur-sm transition-transform hover:scale-105 ${colorClass}`}>
+  <span class="w-1 h-1 rounded-full bg-current opacity-70 mr-1.5"></span>
   {text}
 </span>

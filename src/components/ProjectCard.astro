@@ -8,38 +8,47 @@ interface Props {
 
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project.id}`;
+
+const glowColors = ['bg-accent-indigo', 'bg-accent-cyan', 'bg-accent-emerald', 'bg-accent-amber', 'bg-accent-rose'];
+const glowColor = glowColors[project.title.length % glowColors.length];
 ---
 
-<a href={`${base}projects/${project.id}`} class="bento-card group flex flex-col p-8 min-h-[320px] relative overflow-hidden outline-none focus-visible:ring-2 focus-visible:ring-primary block">
+<a href={projectLink} class="bento-card group flex flex-col p-6 md:p-8 min-h-[280px] relative outline-none focus-visible:ring-2 focus-visible:ring-accent-indigo block">
   
-  <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500 pointer-events-none z-0"></div>
+  <div class={`absolute -bottom-16 -right-16 w-64 h-64 ${glowColor}/5 rounded-full blur-[80px] group-hover:${glowColor}/20 transition-colors duration-700 pointer-events-none z-0`}></div>
   
-  <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none dot-pattern z-0"></div>
+  <div class="absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500 pointer-events-none dot-pattern z-0"></div>
+
+  <div class="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300 z-10 bg-surface/80 backdrop-blur-md border border-outline-strong p-2 rounded-full shadow-sm flex items-center justify-center">
+    <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-accent-indigo transition-colors">arrow_forward</span>
+  </div>
 
   <div class="relative z-10 flex flex-col h-full flex-grow">
     
-    <div class="flex justify-between items-start mb-6">
-      <span class="font-mono text-xs font-semibold tracking-wider text-secondary bg-secondary/10 border border-secondary/20 px-3 py-1.5 rounded-full uppercase">
+    <div class="flex justify-between items-start mb-4 pr-10">
+      <span class="font-mono text-[9px] font-bold tracking-widest text-on-surface-variant flex items-center gap-2 uppercase">
+        <span class="w-1 h-1 rounded-full bg-outline-strong"></span>
         {project.role}
       </span>
       
       {project.isTopProject && (
-        <div class="flex items-center justify-center p-1" title="Featured Masterpiece">
-          <div class="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)] animate-pulse"></div>
+        <div class="flex items-center justify-center" title="Featured Masterpiece">
+          <div class="h-1.5 w-1.5 rounded-full bg-accent-emerald shadow-[0_0_8px_var(--color-accent-emerald)] animate-pulse"></div>
         </div>
       )}
     </div>
 
-    <div class="flex-grow flex flex-col">
-      <h3 class="text-2xl font-bold text-on-background mb-3 group-hover:text-primary transition-colors duration-300">
+    <div class="flex-grow flex flex-col mt-2">
+      <h3 class="text-2xl font-bold text-on-background mb-2 group-hover:text-accent-indigo transition-colors duration-300 tracking-tight">
         {project.title}
       </h3>
-      <p class="text-on-surface-variant text-sm leading-relaxed mb-6">
+      <p class="text-on-surface-variant text-[13px] leading-relaxed mb-4 font-medium">
         {project.description}
       </p>
     </div>
 
-    <div class="flex flex-wrap gap-2 mt-auto pt-5 border-t border-outline-variant/30">
+    <div class="flex flex-wrap gap-2 mt-auto pt-4">
       {project.techStack.map((tech) => (
         <Badge text={tech} />
       ))}

@@ -4,7 +4,6 @@ import Badge from '../../components/Badge.astro';
 import projectsData from '../../data/projects.json';
 import type { Project } from '../../types';
 
-// Fungsi wajib Astro untuk meng-generate halaman statis berdasarkan array ID
 export function getStaticPaths() {
   return projectsData.map((project) => ({
     params: { id: project.id },
@@ -18,11 +17,12 @@ interface Props {
 
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 ---
 
 <Layout title={`${project.title} | Vault`}>
   <div class="pt-8 mb-8 relative z-10">
-    <a href={`${base}projects`} class="inline-flex items-center gap-2 text-sm font-mono text-tertiary hover:text-primary transition-colors">
+    <a href={projectsLink} class="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold font-mono text-on-surface-variant hover:text-accent-indigo transition-colors">
       <span class="material-symbols-outlined text-[16px]">arrow_back</span>
       Return to Vault
     </a>
@@ -30,57 +30,62 @@ const base = import.meta.env.BASE_URL;
 
   <article class="max-w-4xl mx-auto relative z-10">
     <header class="mb-12 text-center flex flex-col items-center">
-      <span class="font-mono text-xs font-bold tracking-widest text-secondary uppercase mb-4">
+      <span class="font-mono text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-4 flex items-center gap-2">
+        <span class="w-1.5 h-1.5 rounded-full bg-outline-strong"></span>
         Role // {project.role}
       </span>
       <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-8 tracking-tight">
         {project.title}
       </h1>
-      <div class="flex flex-wrap justify-center gap-3">
+      <div class="flex flex-wrap justify-center gap-2.5">
         {project.techStack.map((tech) => (
           <Badge text={tech} />
         ))}
       </div>
     </header>
 
-    <div class="bento-card p-8 md:p-12">
+    <div class="bento-card p-8 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent-indigo">
       
-      <section class="mb-12">
-        <h2 class="text-2xl font-bold text-on-background mb-4 border-b border-outline-variant/30 pb-4">System Overview</h2>
-        <p class="text-lg text-on-surface-variant leading-relaxed">
-          {project.description}
-        </p>
-      </section>
+      <div class="absolute -top-32 -left-32 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
-      {project.highlights && project.highlights.length > 0 && (
+      <div class="relative z-10">
         <section class="mb-12">
-          <h2 class="text-xl font-bold text-on-background mb-4 border-b border-outline-variant/30 pb-4">Key Highlights & Engineering Feats</h2>
-          <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            {project.highlights.map((feat) => (
-              <li class="flex items-start gap-3">
-                <span class="material-symbols-outlined text-primary mt-0.5">check</span>
-                <span class="text-on-surface-variant">{feat}</span>
-              </li>
-            ))}
-          </ul>
+          <h2 class="text-2xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">System Overview</h2>
+          <p class="text-[15px] text-on-surface-variant leading-relaxed font-medium">
+            {project.description}
+          </p>
         </section>
-      )}
 
-      <section>
-        <h2 class="text-xl font-bold text-on-background mb-6 border-b border-outline-variant/30 pb-4">Architecture / Infrastructure Map</h2>
-        
-        <div class="w-full h-80 rounded-2xl border border-dashed border-outline-variant/60 bg-surface-container-lowest/50 flex flex-col items-center justify-center text-center p-6 group hover:border-primary/50 transition-colors duration-300">
-          <span class="material-symbols-outlined text-4xl text-tertiary mb-4 opacity-50 group-hover:opacity-100 group-hover:text-primary transition-all duration-300">
-            architecture
-          </span>
-          <p class="font-mono text-sm text-tertiary">
-            [ Diagram Visualization Pending ]
-          </p>
-          <p class="font-mono text-xs text-tertiary/70 mt-2">
-            Insert SVG or Image of the system topology here.
-          </p>
-        </div>
-      </section>
+        {project.highlights && project.highlights.length > 0 && (
+          <section class="mb-12">
+            <h2 class="text-xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">Key Highlights & Engineering Feats</h2>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              {project.highlights.map((feat) => (
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-accent-emerald mt-0.5 text-[18px]">check_circle</span>
+                  <span class="text-[14px] text-on-surface-variant font-medium">{feat}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section>
+          <h2 class="text-xl font-bold text-on-background mb-6 border-b border-outline/30 pb-4">Architecture / Infrastructure Map</h2>
+          
+          <div class="w-full h-80 rounded-[2rem] border-2 border-dashed border-outline/40 bg-surface-container-lowest/30 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 group hover:border-accent-indigo/40 hover:bg-accent-indigo/5 transition-all duration-300">
+            <span class="material-symbols-outlined text-4xl text-outline-strong mb-4 opacity-70 group-hover:opacity-100 group-hover:text-accent-indigo transition-all duration-300">
+              architecture
+            </span>
+            <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-accent-indigo transition-colors">
+              [ Diagram Visualization Pending ]
+            </p>
+            <p class="font-mono text-[10px] text-on-surface-variant/70 mt-3">
+              Insert SVG or Image of the system topology here.
+            </p>
+          </div>
+        </section>
+      </div>
 
     </div>
   </article>

@@ -1,34 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  /* Tipografi */
+  /* Tipografi Inti */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* 
-   * Skema Warna "Refined Engineering" 
-   * Diadaptasi dari referensi dengan basis Sand Beige (#FAFAF9) 
+  /* * Skema Warna "Vibrant Architecture" 
+   * Kanvas hangat yang dipadukan dengan aksen gelap maskulin dan warna berani
    */
-  --color-background: #FAFAF9; /* Sand Beige */
-  --color-on-background: #1c1b19;
+  --color-background: #F9F8F6; /* Warm White/Beige Canvas */
+  --color-on-background: #0F172A; /* Deep Slate (Maskulin & Tegas) */
+  --color-on-surface-variant: #475569; /* Muted Slate */
   
-  --color-primary: #635f40; /* Sage Green Dark */
-  --color-primary-container: #b2ac88;
-  --color-on-primary-container: #444024;
+  /* Latar Belakang Kartu (Glassmorphism siap pakai) */
+  --color-surface: rgba(255, 255, 255, 0.65);
+  --color-surface-hover: rgba(255, 255, 255, 0.9);
   
-  --color-secondary: #44636d; /* Slate / Muted Azure */
-  --color-secondary-container: #c7e8f3;
-  --color-on-secondary-container: #2c4b54;
-  
-  --color-tertiary: #50606f; /* Slate Gray */
-  --color-tertiary-container: #9dadbe;
-  
-  --color-surface: #ffffff;
-  --color-surface-variant: #e6e2dd;
-  --color-on-surface-variant: #49473d;
-  
-  --color-outline: #7a776c;
-  --color-outline-variant: #cbc6b9;
+  /* Border Halus */
+  --color-outline: rgba(148, 163, 184, 0.25);
+  --color-outline-strong: rgba(148, 163, 184, 0.5);
+
+  /* Aksen Vibrant & Playful (Digunakan untuk badge, icon, dan glow) */
+  --color-accent-indigo: #4F46E5; /* Deep Purple-Blue */
+  --color-accent-cyan: #0891B2;   /* Tech Blue */
+  --color-accent-emerald: #059669; /* Success/Status Green */
+  --color-accent-amber: #D97706;  /* Warning/Data Orange */
+  --color-accent-rose: #E11D48;   /* Red Accent */
 }
 
 @layer base {
@@ -36,36 +33,72 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-on-background font-sans antialiased selection:bg-secondary-container selection:text-secondary;
+    @apply bg-background text-on-background font-sans antialiased selection:bg-accent-indigo/20 selection:text-accent-indigo;
   }
   
-  /* Standarisasi konfigurasi font Material Symbols Outlined */
+  /* Standarisasi ikon agar lebih tebal (wght 500) mengimbangi aksen maskulin */
   .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
   }
 }
 
 @layer utilities {
-  /* Pola Latar Belakang Kustom */
+  /* =========================================
+     MOTIF & ORNAMEN ARSITEKTUR
+     (Dikalibrasi agar lebih tegas dan maskulin)
+     ========================================= */
+     
+  /* Blueprint Grid Utama */
   .blueprint-grid {
-    background-image: 
-      linear-gradient(to right, rgba(112, 128, 144, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(112, 128, 144, 0.06) 1px, transparent 1px);
-    background-size: 64px 64px;
     background-color: var(--color-background);
+    background-image: 
+      linear-gradient(to right, rgba(15, 23, 42, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
+  /* Pola Titik (Playful Grid) */
   .dot-pattern {
-    background-image: radial-gradient(var(--color-primary) 1.5px, transparent 1.5px);
-    background-size: 16px 16px;
+    background-image: radial-gradient(rgba(15, 23, 42, 0.15) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
   }
 
-  /* Engine Kelas Bento Card Global untuk digunakan di komponen */
+  /* Garis Diagonal (Motif Konstruksi/Arsitektur) */
+  .diagonal-pattern {
+    background-image: repeating-linear-gradient(
+      45deg, 
+      rgba(15, 23, 42, 0.06) 0, 
+      rgba(15, 23, 42, 0.06) 1px, 
+      transparent 1px, 
+      transparent 12px
+    );
+  }
+
+  /* Ornamen Lingkaran Garis Putus (Abstract Blueprint) */
+  .ornament-dashed-circle {
+    @apply border-[2px] border-dashed border-on-background/20 rounded-full pointer-events-none;
+  }
+
+  /* =========================================
+     BENTO ENGINE (SUPER ROUNDED & GLASS)
+     ========================================= */
+
   .bento-card {
-    @apply bg-surface/80 backdrop-blur-md border border-outline-variant/40 rounded-[2rem] transition-all duration-300;
+    @apply bg-surface backdrop-blur-xl border border-outline rounded-[2.5rem] transition-all duration-500 overflow-hidden relative;
   }
   
   .bento-card:hover {
-    @apply shadow-[0px_8px_30px_rgba(68,99,109,0.12)] -translate-y-1 border-outline-variant/80;
+    @apply bg-surface-hover border-outline-strong shadow-[0_20px_40px_-15px_rgba(15,23,42,0.08)] -translate-y-1;
   }
+
+  /* =========================================
+     TECH CHIPS (VIBRANT BADGES)
+     ========================================= */
+     
+  /* Kumpulan class utility yang siap dipanggil di Badge.astro secara dinamis */
+  .tech-chip-indigo { @apply bg-accent-indigo/10 text-accent-indigo border border-accent-indigo/20; }
+  .tech-chip-cyan { @apply bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20; }
+  .tech-chip-emerald { @apply bg-accent-emerald/10 text-accent-emerald border border-accent-emerald/20; }
+  .tech-chip-amber { @apply bg-accent-amber/10 text-accent-amber border border-accent-amber/20; }
+  .tech-chip-rose { @apply bg-accent-rose/10 text-accent-rose border border-accent-rose/20; }
 }

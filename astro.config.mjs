@@ -2,9 +2,9 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // Ganti dengan URL domain GitHub Pages kamu nanti
+  // Karena ini adalah repositori username.github.io, gunakan root domain
   site: 'https://ridwanafazn.github.io',
-  base: '/ridwanafazn.github.io-2', 
+  base: '/', 
   vite: {
     plugins: [tailwindcss()]
   }
