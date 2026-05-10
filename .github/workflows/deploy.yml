@@ -1,35 +1,36 @@
-name: Deploy to GitHub Pages
+name: Deploy Portfolio to GitHub Pages
 
 on:
+  # Trigger pipeline setiap ada push ke branch main
   push:
-    branches: [main]
+    branches: [ main ]
+  # Memungkinkan kita menjalankan pipeline secara manual dari tab Actions
   workflow_dispatch:
 
+# Memberikan izin token agar GitHub Actions bisa memodifikasi GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Mencegah antrean build bertumpuk jika kamu melakukan push berkali-kali dengan cepat
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
+  # Job 1: Mesin Build
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout codebase
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm install
-      - name: Build Astro
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
 
+      # Menggunakan official action dari Astro (Otomatis mendeteksi package-lock.json milik npm)
+      - name: Install dependencies, build, and upload artifacts
+        uses: withastro/action@v3
+
+  # Job 2: Mesin Deploy (Menunggu Job 1 Selesai)
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -37,6 +38,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy artifacts to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
