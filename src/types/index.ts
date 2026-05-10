@@ -33,7 +33,12 @@ export interface Project {
   techStack: string[];
   highlights: string[];
   isTopProject: boolean;
-}
+  links?: {
+      label: string;
+      url: string;
+      icon: string;
+    }[];
+  }
 
 export interface Activity {
   id: string;

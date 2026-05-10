@@ -37,11 +37,28 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
       <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-8 tracking-tight">
         {project.title}
       </h1>
-      <div class="flex flex-wrap justify-center gap-2.5">
+      
+      <div class="flex flex-wrap justify-center gap-2.5 mb-8">
         {project.techStack.map((tech) => (
           <Badge text={tech} />
         ))}
       </div>
+
+      {project.links && project.links.length > 0 && (
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          {project.links.map((link) => (
+            <a 
+              href={link.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-outline-strong bg-surface/50 backdrop-blur-sm text-[11px] font-mono font-bold uppercase tracking-widest text-on-surface-variant hover:bg-on-background hover:text-surface hover:border-on-background transition-all duration-300 shadow-sm group"
+            >
+              <span class="material-symbols-outlined text-[16px] group-hover:text-surface transition-colors">{link.icon}</span>
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
     </header>
 
     <div class="bento-card p-8 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent-indigo">

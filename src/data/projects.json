@@ -6,7 +6,29 @@
     "description": "Sistem rekomendasi program kebugaran (fitness) yang menggabungkan logika backend kompleks dengan antarmuka frontend yang intuitif.",
     "techStack": ["Backend Logic", "Frontend", "Recommendation Engine"],
     "highlights": ["Algoritma Rekomendasi", "User-centric UI/UX"],
-    "isTopProject": true
+    "isTopProject": true,
+    "links": [
+    {
+      "label": "App",
+      "url": "https://jymz.pages.dev/",
+      "icon": "open_in_new"
+    },
+    {
+      "label": "Frontend Repository",
+      "url": "https://github.com/ridwanafazn/city-master-v2",
+      "icon": "code"
+    },
+    {
+      "label": "API Service",
+      "url": "https://fitness-rs-api.onrender.com/",
+      "icon": "code"
+    },
+    {
+      "label": "Backend Repository",
+      "url": "https://github.com/ridwanafazn/fitness-rs-api",
+      "icon": "terminal"
+    }
+  ]
   },
   {
     "id": "neuroplastisism",
