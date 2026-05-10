@@ -2,14 +2,12 @@
 const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 
-// Helper untuk menggabungkan path dengan base secara aman
 const joinPath = (path: string) => {
   const cleanBase = base.endsWith('/') ? base : `${base}/`;
   const cleanPath = path.startsWith('/') ? path.substring(1) : path;
   return `${cleanBase}${cleanPath}`;
 };
 
-// Logika deteksi halaman aktif yang robust
 const isCurrent = (targetPath: string) => {
   const normalizedCurrent = currentPath.replace(/\/$/, '') || '/';
   const normalizedTarget = joinPath(targetPath).replace(/\/$/, '') || '/';
@@ -21,7 +19,7 @@ const isCurrent = (targetPath: string) => {
 
 <header class="fixed top-0 w-full z-50 flex justify-center mt-0 md:mt-4 pointer-events-none">
   
-  <div class="relative z-50 pointer-events-auto bg-surface/80 backdrop-blur-xl border-b md:border border-outline/40 w-full md:w-auto md:rounded-full px-6 md:px-8 h-16 flex items-center justify-between gap-6 md:gap-16 shadow-sm transition-all duration-300 hover:shadow-md">
+  <div class="relative z-50 pointer-events-auto bg-surface/80 backdrop-blur-xl border-b md:border border-outline/40 w-full md:w-auto md:rounded-full px-6 md:px-8 h-16 flex items-center justify-between gap-6 md:gap-16 shadow-sm transition-all duration-300">
     
     <a href={joinPath('/')} class="flex items-center gap-2 group shrink-0">
       <span class="font-mono font-bold text-on-background group-hover:text-accent-indigo transition-colors tracking-tight text-[15px]">
@@ -46,38 +44,55 @@ const isCurrent = (targetPath: string) => {
       <a href="https://drive.google.com/file/d/1_hsaSgJN3LB2mdCuJZWMJlVT1rH6dqqS/view" target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center justify-center border border-outline-strong text-on-surface-variant font-mono text-[11px] uppercase tracking-wider font-bold px-4 py-2 rounded-full hover:bg-surface-hover hover:text-on-background hover:border-on-background transition-all duration-300">
         Resume
       </a>
-      <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-surface font-mono text-[11px] uppercase tracking-wider font-bold px-4 py-2 rounded-full border border-on-background hover:bg-accent-indigo hover:border-accent-indigo active:scale-95 transition-all duration-300 shadow-sm">
+      <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-surface font-mono text-[11px] uppercase tracking-wider font-bold px-5 py-2.5 rounded-full border border-on-background hover:bg-accent-indigo hover:border-accent-indigo active:scale-95 transition-all duration-300 shadow-sm">
         Hire Me
       </a>
       
-      <button id="mobile-menu-btn" aria-label="Toggle Menu" class="md:hidden flex items-center justify-center p-1.5 rounded-full border border-outline-strong bg-surface hover:bg-surface-variant transition-colors text-on-background">
-        <span id="menu-icon" class="material-symbols-outlined text-[20px]">menu</span>
+      <button id="mobile-menu-btn" aria-label="Toggle Menu" class="md:hidden flex items-center justify-center p-2 rounded-full bg-surface-variant/50 hover:bg-surface-variant transition-colors text-on-background">
+        <span id="menu-icon" class="material-symbols-outlined text-[24px]">menu</span>
       </button>
     </div>
   </div>
 
-  <div id="mobile-menu" class="fixed inset-0 z-40 bg-background/98 backdrop-blur-2xl hidden flex-col items-center justify-center gap-8 transition-opacity duration-300 opacity-0 pointer-events-auto min-h-screen">
+  <div id="mobile-menu" class="fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl hidden flex-col pointer-events-auto min-h-screen blueprint-grid transition-opacity duration-300 opacity-0 overflow-y-auto">
     
-    <nav class="flex flex-col items-center gap-8 w-full px-6">
-      <a href={joinPath('/')} class={`text-3xl tracking-tight transition-colors ${isCurrent('/') ? 'font-bold text-accent-indigo' : 'font-medium text-on-surface-variant hover:text-on-background'}`}>
-        Home
+    <div class="absolute top-1/4 -right-20 w-72 h-72 bg-accent-indigo/10 rounded-full blur-[80px] pointer-events-none -z-10"></div>
+    <div class="absolute bottom-1/4 -left-20 w-64 h-64 bg-accent-cyan/10 rounded-full blur-[80px] pointer-events-none -z-10"></div>
+
+    <nav class="flex flex-col gap-8 w-full px-8 pt-32 pb-12">
+      
+      <a href={joinPath('/')} class={`group flex flex-col gap-1 transition-colors ${isCurrent('/') ? 'text-accent-indigo' : 'text-on-surface-variant hover:text-on-background'}`}>
+        <span class="font-mono text-[10px] font-bold tracking-widest uppercase opacity-60 flex items-center gap-2">
+          <span class="w-4 h-px bg-current"></span> 01 //
+        </span>
+        <span class="text-4xl font-bold tracking-tight">Home</span>
       </a>
-      <a href={joinPath('/about')} class={`text-3xl tracking-tight transition-colors ${isCurrent('/about') ? 'font-bold text-accent-indigo' : 'font-medium text-on-surface-variant hover:text-on-background'}`}>
-        About
+
+      <a href={joinPath('/about')} class={`group flex flex-col gap-1 transition-colors ${isCurrent('/about') ? 'text-accent-indigo' : 'text-on-surface-variant hover:text-on-background'}`}>
+        <span class="font-mono text-[10px] font-bold tracking-widest uppercase opacity-60 flex items-center gap-2">
+          <span class="w-4 h-px bg-current"></span> 02 //
+        </span>
+        <span class="text-4xl font-bold tracking-tight">About</span>
       </a>
-      <a href={joinPath('/projects')} class={`text-3xl tracking-tight transition-colors ${isCurrent('/projects') ? 'font-bold text-accent-indigo' : 'font-medium text-on-surface-variant hover:text-on-background'}`}>
-        Projects
+
+      <a href={joinPath('/projects')} class={`group flex flex-col gap-1 transition-colors ${isCurrent('/projects') ? 'text-accent-indigo' : 'text-on-surface-variant hover:text-on-background'}`}>
+        <span class="font-mono text-[10px] font-bold tracking-widest uppercase opacity-60 flex items-center gap-2">
+          <span class="w-4 h-px bg-current"></span> 03 //
+        </span>
+        <span class="text-4xl font-bold tracking-tight">Project Vault</span>
       </a>
       
-      <div class="w-16 h-px bg-outline/50 my-2"></div>
+      <div class="w-full h-px bg-outline/40 my-4"></div>
       
-      <a href="https://drive.google.com/file/d/1_hsaSgJN3LB2mdCuJZWMJlVT1rH6dqqS/view" target="_blank" rel="noopener noreferrer" class="font-mono text-[13px] uppercase tracking-widest font-bold text-on-surface-variant hover:text-on-background transition-colors flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">description</span>
-        View Resume
+      <a href="https://drive.google.com/file/d/1_hsaSgJN3LB2mdCuJZWMJlVT1rH6dqqS/view" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-between w-full p-5 rounded-2xl border border-outline-strong bg-surface/50 hover:bg-surface-hover hover:border-accent-indigo transition-colors shadow-sm group">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-accent-indigo">description</span>
+          <span class="font-mono text-[12px] font-bold uppercase tracking-widest text-on-background">View Resume</span>
+        </div>
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-accent-indigo transition-colors">arrow_forward</span>
       </a>
+
     </nav>
-    
-    <div class="absolute bottom-0 left-0 w-64 h-64 bg-accent-cyan/10 rounded-full blur-[100px] pointer-events-none -z-10"></div>
   </div>
 </header>
 
@@ -92,20 +107,16 @@ const isCurrent = (targetPath: string) => {
         const isClosed = menu.classList.contains('hidden');
         
         if (isClosed) {
-          // Buka Menu
           menu.classList.remove('hidden');
-          // Trigger reflow agar animasi CSS jalan
           void menu.offsetWidth; 
           menu.classList.remove('opacity-0');
           icon.textContent = 'close';
-          document.body.style.overflow = 'hidden'; // Kunci scroll layar utama
+          document.body.style.overflow = 'hidden'; 
         } else {
-          // Tutup Menu
           menu.classList.add('opacity-0');
           icon.textContent = 'menu';
-          document.body.style.overflow = 'auto'; // Buka scroll
+          document.body.style.overflow = 'auto'; 
           
-          // Tunggu animasi transisi (300ms) sebelum menyembunyikan div sepenuhnya
           setTimeout(() => {
             menu.classList.add('hidden');
           }, 300);
