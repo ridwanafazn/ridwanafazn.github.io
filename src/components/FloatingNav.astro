@@ -1,0 +1,45 @@
+---
+const navItems = [
+  { id: 'hero', label: 'Start' },
+  { id: 'projects', label: 'Masterpieces' },
+  { id: 'skills', label: 'Arsenal' }
+];
+---
+
+<div class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-4 items-end">
+  {navItems.map(item => (
+    <a href={`#${item.id}`} class="nav-dot group flex items-center gap-3" data-target={item.id}>
+      <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block">
+        {item.label}
+      </span>
+      <div class="dot-indicator w-2.5 h-2.5 rounded-full border-2 border-outline-strong bg-transparent transition-all duration-300 group-hover:border-accent-emerald"></div>
+    </a>
+  ))}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('header[id], section[id]');
+    const navDots = document.querySelectorAll('.nav-dot');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navDots.forEach(dot => {
+            const indicator = dot.querySelector('.dot-indicator');
+            // Jika target dot sama dengan ID section yang sedang terlihat
+            if (dot.getAttribute('data-target') === entry.target.id) {
+              indicator?.classList.add('bg-accent-emerald', 'border-accent-emerald', 'scale-150');
+              indicator?.classList.remove('bg-transparent', 'border-outline-strong');
+            } else {
+              indicator?.classList.remove('bg-accent-emerald', 'border-accent-emerald', 'scale-150');
+              indicator?.classList.add('bg-transparent', 'border-outline-strong');
+            }
+          });
+        }
+      });
+    }, { threshold: 0.4 }); // Trigger saat 40% section terlihat di layar
+
+    sections.forEach(section => observer.observe(section));
+  });
+</script>
