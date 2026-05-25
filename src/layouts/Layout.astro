@@ -7,9 +7,6 @@ interface Props {
     title: string;
 }
 
-const { title } = Astro.props;
-
-// Pengamanan URL untuk aset statis (Favicon)
 const base = import.meta.env.BASE_URL;
 const faviconUrl = `${base.endsWith('/') ? base : base + '/'}favicon.svg`;
 ---
@@ -28,7 +25,7 @@ const faviconUrl = `${base.endsWith('/') ? base : base + '/'}favicon.svg`;
         
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,-50..200,24&display=swap" rel="stylesheet" />
         
-        <title>{title} | Wang.Architect</title>
+        <title>Ridwan Pages</title>
     </head>
     
     <body class="flex flex-col min-h-screen blueprint-grid relative overflow-x-hidden">
