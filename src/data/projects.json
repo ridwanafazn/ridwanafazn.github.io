@@ -35,7 +35,7 @@
     "title": "Neuroplastisism",
     "role": "Fullstack Engineer",
     "description": "Learning Management System (LMS) komprehensif yang dikembangkan untuk PT LAPI ITB.",
-    "techStack": ["Laravel 11", "Livewire", "Volt"],
+    "techStack": ["Laravel", "Livewire", "MySQL", "Midtrans", "Zoom SDK"],
     "highlights": ["Polymorphic Schemas", "Enterprise Architecture", "RBAC"],
     "isTopProject": true
   },
@@ -53,7 +53,7 @@
     "title": "Orchestrix",
     "role": "Backend Architect",
     "description": "Simulasi arsitektur pemrosesan pekerjaan terdistribusi (distributed job processing) dengan visualisasi proses backend secara real-time.",
-    "techStack": ["Go", "Gin", "RabbitMQ", "Frontend"],
+    "techStack": ["Go", "Gin", "RabbitMQ", "Vue.js"],
     "highlights": ["Architecture Visualization", "Queue & Worker Management"]
   },
   {

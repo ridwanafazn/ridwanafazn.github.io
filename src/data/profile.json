@@ -3,21 +3,22 @@
   "nickname": "ridwanafazn",
   "role": "Backend Developer and\nCloud Engineer",
   "tagline": "Specializing in high-performance computing, distributed architectures, and cloud-native solutions.",
-  "bio": "An Informatics Engineering graduate passionate about building robust backend systems. From sub-millisecond maritime telemetry in Rust to scalable ecosystems in Go and Node.js, I focus on delivering secure, reliable, and efficient infrastructure.",
+  "bio": "An Informatics Engineering graduate passionate about building robust backend systems.",
   "education": [
     {
       "institution": "UIN Sunan Gunung Djati Bandung",
-      "degree": "Bachelor of Engineering in Informatics Engineering",
+      "degree": "Informatics Engineering (S.T)",
       "gpa": "3.71 / 4.00",
       "highlights": [
-        "AI Recommendation System Research by Expert System and Genetic Algorithm"
+        "Sistem Rekomendasi Program Fitness Berbasis Aturan dan Algoritma Optimasi Genetika"
       ]
     },
     {
       "institution": "Bangkit Academy",
       "degree": "Cloud Computing Learning Path",
-      "gpa": "Distinction Graduate",
+      "gpa": "93.44 / 100",
       "highlights": [
+        "Distinction Graduate",
         "GCP Infrastructure",
         "Capstone Project"
       ]

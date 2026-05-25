@@ -2,9 +2,9 @@
   {
     "id": "satu-interaksi",
     "type": "Volunteer",
-    "title": "Charity: Fun Run, Planting & River Clean Up",
-    "organization": "Satu Interaksi",
-    "description": "Berpartisipasi aktif dalam inisiatif lingkungan yang mencakup kegiatan lari amal, penanaman pohon, dan pembersihan area sungai di kawasan Tahura.",
+    "title": "TREES 4 CHANGE",
+    "organization": "Satu Interaksi Charity",
+    "description": "Berpartisipasi aktif dalam inisiatif lingkungan yang mencakup kegiatan lari amal, penanaman pohon, dan pembersihan area sungai dan hutan di kawasan Tahura.",
     "highlights": [
       "Environmental Conservation",
       "Community Engagement",
@@ -14,12 +14,21 @@
   {
     "id": "ringkai-binar",
     "type": "Volunteer",
-    "title": "Green Deen Festival 2025",
-    "organization": "Ringkai Binar",
-    "description": "Terlibat dalam kampanye dan eksekusi festival daur ulang untuk mempromosikan praktik keberlanjutan (sustainability) dan manajemen limbah kreatif.",
+    "title": "GREEN DEEN FESTIVAL 2025",
+    "organization": "Ringkai Binar Project",
+    "description": "Terlibat dalam kampanye dan eksekusi festival daur ulang untuk mempromosikan praktik keberlanjutan dan manajemen limbah kreatif.",
     "highlights": [
       "Sustainability Advocacy",
       "Waste Management Education"
+    ]
+  },
+  {
+    "id": "ringkai-binar",
+    "type": "Volunteer",
+    "title": "SMILE FESTIVAL 2026",
+    "organization": "Ringkai Binar Project",
+    "description": "",
+    "highlights": [
     ]
   }
 ]
