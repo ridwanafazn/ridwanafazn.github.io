@@ -1,5 +1,36 @@
 [
   {
+    "id": "smile-fest",
+    "title": "SMILE FEST 2026",
+    "role": "Fullstack Developer (Volunteer)",
+    "description": "Sistem ticketing & event management production-scale untuk festival Ringkai Binar — mencakup landing page publik, sistem tiket & approval pembayaran manual, gate scanner check-in, hingga dashboard eksekutif untuk panitia.",
+    "techStack": ["React", "Go", "Gin", "Redis", "Object Storage"],
+    "highlights": [
+      "Rp4.8Jt+ Revenue Diproses",
+      "151 Tiket Terjual, 64 Check-in Live",
+      "Gate Scanner + Approval System End-to-End"
+    ],
+    "isTopProject": true,
+    "links": [
+      { "label": "App", "url": "https://smile-festival.pages.dev/", "icon": "open_in_new" },
+      { "label": "Instagram", "url": "https://www.instagram.com/ringkaibinar.project/", "icon": "link" }
+    ]
+  },
+  {
+    "id": "personal-finance-ai",
+    "title": "Personal Finance Intelligence Platform",
+    "role": "Backend Engineer",
+    "description": "Aplikasi keuangan pribadi yang mengubah data transaksi jadi evaluasi dan insight, dievaluasi lewat framework 50/30/20 dan 7 Tangga Ternak Uang, dengan AI assistant yang menjawab berdasarkan data aktual.",
+    "techStack": ["Go", "Gin", "PostgreSQL (Neon)", "Redis", "Cloudflare R2", "LLM API"],
+    "highlights": [
+      "AI sebagai Interpreter, Bukan Sumber Angka",
+      "Async AI Insight via Background Worker",
+      "Financial Progression Framework (50/30/20 & 7 Tangga)"
+    ],
+    "status": "In Development",
+    "isTopProject": true
+  },
+  {
     "id": "jymz",
     "title": "Jymz",
     "role": "Fullstack Developer",
@@ -8,27 +39,11 @@
     "highlights": ["Algoritma Rekomendasi", "User-centric UI/UX"],
     "isTopProject": true,
     "links": [
-    {
-      "label": "App",
-      "url": "https://jymz.pages.dev/",
-      "icon": "open_in_new"
-    },
-    {
-      "label": "Frontend Repository",
-      "url": "https://github.com/ridwanafazn/city-master-v2",
-      "icon": "code"
-    },
-    {
-      "label": "API Service",
-      "url": "https://fitness-rs-api.onrender.com/",
-      "icon": "code"
-    },
-    {
-      "label": "Backend Repository",
-      "url": "https://github.com/ridwanafazn/fitness-rs-api",
-      "icon": "terminal"
-    }
-  ]
+      { "label": "App", "url": "https://jymz.pages.dev/", "icon": "open_in_new" },
+      { "label": "Frontend Repository", "url": "https://github.com/ridwanafazn/city-master-v2", "icon": "code" },
+      { "label": "API Service", "url": "https://fitness-rs-api.onrender.com/", "icon": "code" },
+      { "label": "Backend Repository", "url": "https://github.com/ridwanafazn/fitness-rs-api", "icon": "terminal" }
+    ]
   },
   {
     "id": "neuroplastisism",
@@ -43,10 +58,9 @@
     "id": "vessel",
     "title": "Vessel",
     "role": "Backend / Systems Engineer",
-    "description": "Simulasi Navigation Data Distribution Unit (NDU) yang menangani komputasi geospasial dan telemetri frekuensi tinggi.",
+    "description": "Simulasi Navigation Data Distribution Unit (NDU) yang menangani komputasi geospasial dan telemetri.",
     "techStack": ["Rust", "Actix Web", "ReactJS"],
-    "highlights": ["High-frequency Computation", "Sub-millisecond Latency"],
-    "isTopProject": true
+    "highlights": ["Geospatial Telemetry Simulation", "Actix Web Async Runtime"]
   },
   {
     "id": "orchestrix",
@@ -92,7 +106,7 @@
     "id": "bakerman",
     "title": "Bakerman",
     "role": "Backend Engineer",
-    "description": "Sistem toko roti inovatif yang membatasi konsumsi harian pembeli, dengan tambahan kuota pembelian melalui gamifikasi data dari health API (Strava, Nike, Samsung, Huawei).",
+    "description": "Sistem toko roti inovatif yang membatasi konsumsi harian pembeli, dengan kuota pembelian melalui gamifikasi data dari health API (Strava, Nike, Samsung, Huawei).",
     "techStack": ["API Integration", "Backend System"],
     "highlights": ["OAuth Third-party", "Health API Gamification"]
   }

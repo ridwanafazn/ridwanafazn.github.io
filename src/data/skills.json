@@ -9,7 +9,7 @@
   },
   {
     "category": "Architecture & Integrations",
-    "items": ["Distributed Systems", "REST/gRPC", "WebSocket", "Third-party APIs (100ms, Health APIs)"]
+    "items": ["Distributed Systems", "REST/gRPC", "WebSocket", "LLM API Integration", "AI Orchestration (Tool Calling)", "Third-party APIs (100ms, Health APIs)"]
   },
   {
     "category": "Frontend Technologies",

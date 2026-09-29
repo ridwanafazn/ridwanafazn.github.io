@@ -1,9 +1,67 @@
 {
   "name": "Ridwan",
   "nickname": "ridwanafazn",
-  "role": "Backend Developer and\nCloud Engineer",
-  "tagline": "Specializing in high-performance computing, distributed architectures, and cloud-native solutions.",
-  "bio": "An Informatics Engineering graduate passionate about building robust backend systems.",
+  "role": "Backend Engineer",
+  "tagline": "Akurasi data, performa, keamanan, dan efisiensi server x AI integration.",
+  "bio": "Informatics Engineering graduate yang memulai karier profesional lewat Bangkit Academy Cloud Computing 2024, lalu terus membangun sistem backend production di beberapa perusahaan dan proyek volunteer.",
+  "stats": [
+    { "label": "Professional Since", "value": "2024" },
+    { "label": "Roles Completed", "value": "5" },
+    { "label": "Projects Shipped", "value": "9+" },
+    { "label": "Certifications", "value": "2" }
+  ],
+  "experience": [
+    {
+      "role": "Backend & Cloud Engineer (Project Lead)",
+      "organization": "Bangkit Academy — Cloud Computing Cohort 2024",
+      "period": "Mei 2024 - Jun 2024",
+      "description": "Capstone project 'Herbalyze', aplikasi deteksi obat herbal yang meng-consume model computer vision melalui Express.js + TensorFlow.js. Program oleh GoTo, Gojek, Traveloka, dan Kemendikbud."
+    },
+    {
+      "role": "Backend Developer Intern",
+      "organization": "Yayasan Maqdis",
+      "period": "Apr 2025 - Jul 2025"
+    },
+    {
+      "role": "Backend Developer Intern",
+      "organization": "PT LEN Industri",
+      "period": "Sep 2025 - Nov 2025"
+    },
+    {
+      "role": "Fullstack Developer Intern",
+      "organization": "PT LAPI ITB",
+      "period": "Okt 2025 - Apr 2026",
+      "description": "Membangun Learning Management System (Neuroplastisism) dengan Laravel + Livewire."
+    },
+    {
+      "role": "Fullstack Developer (Volunteer)",
+      "organization": "Ringkai Binar Project — SMILE FEST 2026",
+      "period": "Mei 2026 - Jun 2026",
+      "description": "Merancang dan membangun sistem ticketing & event management production-scale dengan React + Go + Gin."
+    }
+  ],
+  "currentFocus": {
+    "title": "AI/LLM Integration into Backend Systems",
+    "description": "Sedang membangun Personal Finance Intelligence Platform (Go/Gin + PostgreSQL + Redis + Cloudflare R2 + LLM API). Prinsip utamanya: backend tetap jadi single source of truth untuk semua angka finansial — LLM hanya berperan sebagai interpreter yang menjelaskan data, bukan menghitung atau memutuskan fakta finansial."
+  },
+  "howIBuild": {
+    "summary": "Dari ide ke kode dijaga tetap tertata, bukan langsung loncat ngoding.",
+    "steps": [
+      {
+        "step": "Brainstorm & Spec",
+        "detail": "Brainstorming dengan AI sampai menghasilkan PRD.md yang jelas — scope, non-goals, data model, dan prinsip arsitektur ditentukan di sini dulu."
+      },
+      {
+        "step": "UI Design",
+        "detail": "Rancang UI/wireframe di Google Stitch berdasarkan PRD, jadi arah visual sudah jelas sebelum sentuh kode."
+      },
+      {
+        "step": "Development",
+        "detail": "Coding di VS Code dengan Kilo Code, membawa PRD yang sudah final sebagai konteks. Model diakses lewat 9Router untuk fleksibilitas provider."
+      }
+    ],
+    "why": "Alur ini bikin proses dari ide ke implementasi jauh lebih tertata dan hasilnya lebih cepat dibanding langsung ngoding tanpa spec."
+  },
   "education": [
     {
       "institution": "UIN Sunan Gunung Djati Bandung",
@@ -25,13 +83,7 @@
     }
   ],
   "certifications": [
-    {
-      "name": "Google Associate Cloud Engineer (GCP)",
-      "issuer": "Google Cloud"
-    },
-    {
-      "name": "Cisco Networking Certification",
-      "issuer": "Cisco"
-    }
+    { "name": "Google Associate Cloud Engineer (GCP)", "issuer": "Google Cloud" },
+    { "name": "Cisco Networking Certification", "issuer": "Cisco" }
   ]
 }
