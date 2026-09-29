@@ -22,7 +22,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
 <Layout title={`${project.title} | Vault`}>
   <div class="pt-8 mb-8 relative z-10">
-    <a href={projectsLink} class="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold font-mono text-on-surface-variant hover:text-accent-indigo transition-colors">
+    <a href={projectsLink} class="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold font-mono text-on-surface-variant hover:text-accent transition-colors">
       <span class="material-symbols-outlined text-[16px]">arrow_back</span>
       Return to Vault
     </a>
@@ -51,7 +51,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
               href={link.url} 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-outline-strong bg-surface/50 backdrop-blur-sm text-[11px] font-mono font-bold uppercase tracking-widest text-on-surface-variant hover:bg-on-background hover:text-surface hover:border-on-background transition-all duration-300 shadow-sm group"
+              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md border border-outline-strong bg-surface text-[11px] font-mono font-bold uppercase tracking-widest text-on-surface-variant hover:bg-on-background hover:text-surface hover:border-on-background transition-all duration-300 group"
             >
               <span class="material-symbols-outlined text-[16px] group-hover:text-surface transition-colors">{link.icon}</span>
               {link.label}
@@ -61,10 +61,8 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
       )}
     </header>
 
-    <div class="bento-card p-8 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent-indigo">
+    <div class="bento-card p-8 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent">
       
-      <div class="absolute -top-32 -left-32 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
-
       <div class="relative z-10">
         <section class="mb-12">
           <h2 class="text-2xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">System Overview</h2>
@@ -79,7 +77,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
             <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               {project.highlights.map((feat) => (
                 <li class="flex items-start gap-3">
-                  <span class="material-symbols-outlined text-accent-emerald mt-0.5 text-[18px]">check_circle</span>
+                  <span class="material-symbols-outlined text-accent mt-0.5 text-[18px]">check_circle</span>
                   <span class="text-[14px] text-on-surface-variant font-medium">{feat}</span>
                 </li>
               ))}
@@ -90,11 +88,11 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
         <section>
           <h2 class="text-xl font-bold text-on-background mb-6 border-b border-outline/30 pb-4">Architecture / Infrastructure Map</h2>
           
-          <div class="w-full h-80 rounded-[2rem] border-2 border-dashed border-outline/40 bg-surface-container-lowest/30 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 group hover:border-accent-indigo/40 hover:bg-accent-indigo/5 transition-all duration-300">
-            <span class="material-symbols-outlined text-4xl text-outline-strong mb-4 opacity-70 group-hover:opacity-100 group-hover:text-accent-indigo transition-all duration-300">
+          <div class="w-full h-80 rounded-lg border-2 border-dashed border-outline/40 bg-surface flex flex-col items-center justify-center text-center p-6 group hover:border-accent/40 hover:bg-accent/5 transition-all duration-300">
+            <span class="material-symbols-outlined text-4xl text-outline-strong mb-4 opacity-70 group-hover:opacity-100 group-hover:text-accent transition-all duration-300">
               architecture
             </span>
-            <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-accent-indigo transition-colors">
+            <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-accent transition-colors">
               [ Diagram Visualization Pending ]
             </p>
             <p class="font-mono text-[10px] text-on-surface-variant/70 mt-3">

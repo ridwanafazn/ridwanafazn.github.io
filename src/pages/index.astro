@@ -13,21 +13,14 @@ import type { Project } from '../types';
 const topProjects = (projectsData as Project[]).filter((project) => project.isTopProject);
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
-
-const arsenalColors = [
-  'bg-accent-indigo/5 border-accent-indigo/10',
-  'bg-accent-cyan/5 border-accent-cyan/10',
-  'bg-accent-emerald/5 border-accent-emerald/10',
-  'bg-accent-amber/5 border-accent-amber/10'
-];
 ---
 
 <Layout title="Architecture">
   <FloatingNav />
 
   <header id="hero" class="mb-24 md:mb-32 mt-2 max-w-5xl relative z-10 flex flex-col justify-center min-h-[50vh] scroll-mt-32">
-    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-emerald/10 border border-accent-emerald/20 text-accent-emerald font-mono text-[9px] font-bold uppercase tracking-widest mb-6 w-fit">
-      <span class="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse"></span>
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-accent/8 border border-accent/15 text-accent font-mono text-[9px] font-bold uppercase tracking-widest mb-6 w-fit">
+      <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
       System Initialized // Profile: {profileData.name}
     </div>
     
@@ -44,10 +37,10 @@ const arsenalColors = [
     </p>
     
     <div class="flex flex-wrap items-center gap-4">
-      <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center bg-accent-cyan text-white font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-full shadow-[0_8px_20px_-6px_rgba(8,145,178,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(8,145,178,0.5)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+      <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
         Initialize Contact
       </a>
-      <a href={projectsLink} class="inline-flex items-center justify-center bg-surface backdrop-blur-md border border-outline-strong text-on-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-full hover:bg-surface-hover hover:border-accent-indigo/30 hover:text-accent-indigo active:scale-95 transition-all duration-300">
+      <a href={projectsLink} class="inline-flex items-center justify-center bg-surface border border-outline-strong text-on-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:bg-surface-hover hover:border-accent hover:text-accent active:scale-95 transition-all duration-300">
         View Architecture Vault
       </a>
     </div>
@@ -57,7 +50,7 @@ const arsenalColors = [
     <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
       <h2 class="text-3xl font-bold text-on-background tracking-tight">Featured Project</h2>
       
-      <a href={projectsLink} class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent-indigo hover:text-accent-indigo/80 flex items-center gap-1.5 transition-colors group">
+      <a href={projectsLink} class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent hover:text-accent/80 flex items-center gap-1.5 transition-colors group">
         View All Projects <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
       </a>
     </div>
@@ -76,18 +69,12 @@ const arsenalColors = [
      
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
       {skillsData.map((skillGroup, index) => {
-        const accentClass = arsenalColors[index % arsenalColors.length];
-        
         return (
           <div class="bento-card p-8 md:p-10 flex flex-col min-h-[250px] relative overflow-hidden group">
             
-            <div class={`absolute -top-10 -right-10 w-40 h-40 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-0 ${accentClass.split(' ')[0].replace('/5', '/20')}`}></div>
-            
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none dot-pattern z-0"></div>
-
             <div class="relative z-10 flex flex-col h-full">
               <h3 class="font-mono text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-outline/30 pb-4">
-                <span class="w-1.5 h-1.5 rounded-full bg-outline-strong group-hover:bg-accent-indigo transition-colors"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-outline-strong group-hover:bg-accent transition-colors"></span>
                 {skillGroup.category}
               </h3>
               
