@@ -17,20 +17,6 @@
     ]
   },
   {
-    "id": "personal-finance-ai",
-    "title": "Personal Finance Intelligence Platform",
-    "role": "Backend Engineer",
-    "description": "Aplikasi keuangan pribadi yang mengubah data transaksi jadi evaluasi dan insight, dievaluasi lewat framework 50/30/20 dan 7 Tangga Ternak Uang, dengan AI assistant yang menjawab berdasarkan data aktual.",
-    "techStack": ["Go", "Gin", "PostgreSQL (Neon)", "Redis", "Cloudflare R2", "LLM API"],
-    "highlights": [
-      "AI sebagai Interpreter, Bukan Sumber Angka",
-      "Async AI Insight via Background Worker",
-      "Financial Progression Framework (50/30/20 & 7 Tangga)"
-    ],
-    "status": "In Development",
-    "isTopProject": true
-  },
-  {
     "id": "jymz",
     "title": "Jymz",
     "role": "Fullstack Developer",
@@ -93,14 +79,6 @@
     "description": "Aplikasi manajemen Makan Bergizi Gratis (MBG) untuk memantau perencanaan dan distribusi nutrisi.",
     "techStack": ["Web Stack"],
     "highlights": ["Logistics Tracking", "Social Impact System"]
-  },
-  {
-    "id": "habiter",
-    "title": "Habiter",
-    "role": "Mobile Developer",
-    "description": "Aplikasi mobile ringan untuk mengelola daftar to-do dan pelacakan kebiasaan harian.",
-    "techStack": ["Mobile Stack"],
-    "highlights": ["CRUD System", "Local Data Management"]
   },
   {
     "id": "bakerman",

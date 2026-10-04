@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @theme {
   /* Tipografi Inti */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -58,6 +63,41 @@
      ========================================= */
      
   .tech-chip {
-    @apply bg-accent/8 text-accent border border-accent/15;
+    @apply bg-accent/10 text-accent border border-accent/25;
   }
+
+  /* =========================================
+     SCROLL ANIMATIONS
+     ========================================= */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.from-left {
+    transform: translateX(-28px);
+  }
+
+  .reveal.from-right {
+    transform: translateX(28px);
+  }
+
+  .reveal.from-behind {
+    transform: translateY(12px) scale(0.97);
+    opacity: 0;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Stagger delays */
+  .reveal-delay-1 { transition-delay: 80ms; }
+  .reveal-delay-2 { transition-delay: 160ms; }
+  .reveal-delay-3 { transition-delay: 240ms; }
+  .reveal-delay-4 { transition-delay: 320ms; }
 }

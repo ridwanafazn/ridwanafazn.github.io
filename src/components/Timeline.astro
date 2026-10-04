@@ -1,0 +1,63 @@
+---
+interface Experience {
+  role: string;
+  organization: string;
+  period: string;
+  description?: string;
+}
+
+interface Props {
+  experience: Experience[];
+}
+
+const { experience } = Astro.props;
+---
+
+<section class="mb-10 relative z-10">
+  <div class="flex items-center gap-3 mb-10">
+    <div class="bg-accent/10 p-3 rounded-lg border border-accent/20 flex items-center justify-center">
+      <span class="material-symbols-outlined text-accent">work_history</span>
+    </div>
+    <h2 class="text-3xl font-bold text-on-background tracking-tight">Pengalaman</h2>
+  </div>
+
+  <div class="relative">
+    <!-- Garis vertikal timeline -->
+    <div class="absolute left-[19px] top-3 bottom-3 w-px bg-gradient-to-b from-accent/40 via-accent/20 to-transparent"></div>
+
+    <div class="space-y-0">
+      {experience.map((exp, index) => (
+        <div class={`relative flex gap-8 group reveal from-left ${index === 0 ? '' : index === 1 ? 'reveal-delay-1' : index === 2 ? 'reveal-delay-2' : 'reveal-delay-3'}`}>
+          <!-- Dot -->
+          <div class="relative z-10 shrink-0 mt-1">
+            <div class="w-10 h-10 rounded-full bg-surface border-2 border-outline-strong group-hover:border-accent flex items-center justify-center transition-colors duration-300">
+              <div class="w-2 h-2 rounded-full bg-outline-strong group-hover:bg-accent transition-colors duration-300"></div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="pb-10 flex-1">
+            <div class="bg-surface border border-outline rounded-lg p-6 hover:border-accent/30 transition-all duration-300">
+              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
+                <h3 class="font-bold text-[15px] text-on-background leading-snug group-hover:text-accent transition-colors">
+                  {exp.role}
+                </h3>
+                <span class="font-mono text-[9px] uppercase tracking-widest text-accent bg-accent/8 border border-accent/20 px-2.5 py-1 rounded-md whitespace-nowrap shrink-0">
+                  {exp.period}
+                </span>
+              </div>
+              <div class="font-mono text-[11px] font-semibold text-on-surface-variant mb-3">
+                {exp.organization}
+              </div>
+              {exp.description && (
+                <p class="text-[13px] text-on-surface-variant leading-relaxed font-medium">
+                  {exp.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

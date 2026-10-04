@@ -29,13 +29,13 @@ const isCurrent = (targetPath: string) => {
     </a>
 
     <nav class="hidden md:flex items-center gap-8 pt-1">
-      <a href={joinPath('/')} class={`text-[13px] transition-all duration-300 pb-1.5 border-b-[2px] ${isCurrent('/') ? 'font-bold text-on-background border-on-background' : 'font-medium text-on-surface-variant border-transparent hover:text-on-background'}`}>
+      <a href={joinPath('/')} class={`text-[13px] transition-all duration-300 pb-1.5 border-b-[2px] ${isCurrent('/') ? 'font-bold text-on-background border-accent' : 'font-medium text-on-surface-variant border-transparent hover:text-on-background'}`}>
         Home
       </a>
-      <a href={joinPath('/about')} class={`text-[13px] transition-all duration-300 pb-1.5 border-b-[2px] ${isCurrent('/about') ? 'font-bold text-on-background border-on-background' : 'font-medium text-on-surface-variant border-transparent hover:text-on-background'}`}>
+      <a href={joinPath('/about')} class={`text-[13px] transition-all duration-300 pb-1.5 border-b-[2px] ${isCurrent('/about') ? 'font-bold text-on-background border-accent' : 'font-medium text-on-surface-variant border-transparent hover:text-on-background'}`}>
         About
       </a>
-      <a href={joinPath('/projects')} class={`text-[13px] transition-all duration-300 pb-1.5 border-b-[2px] ${isCurrent('/projects') ? 'font-bold text-on-background border-on-background' : 'font-medium text-on-surface-variant border-transparent hover:text-on-background'}`}>
+      <a href={joinPath('/projects')} class={`text-[13px] transition-all duration-300 pb-1.5 border-b-[2px] ${isCurrent('/projects') ? 'font-bold text-on-background border-accent' : 'font-medium text-on-surface-variant border-transparent hover:text-on-background'}`}>
         Projects
       </a>
     </nav>

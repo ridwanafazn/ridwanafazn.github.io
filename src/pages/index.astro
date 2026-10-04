@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Badge from '../components/Badge.astro';
 import FloatingNav from '../components/FloatingNav.astro';
+import StatBar from '../components/StatBar.astro';
+import HowIBuild from '../components/HowIBuild.astro';
 
 import profileData from '../data/profile.json';
 import projectsData from '../data/projects.json';
@@ -15,79 +17,102 @@ const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 ---
 
-<Layout title="Architecture">
+<Layout title="ridwanafazn">
   <FloatingNav />
 
-  <header id="hero" class="mb-24 md:mb-32 mt-2 max-w-5xl relative z-10 flex flex-col justify-center min-h-[50vh] scroll-mt-32">
-    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-accent/8 border border-accent/15 text-accent font-mono text-[9px] font-bold uppercase tracking-widest mb-6 w-fit">
-      <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
-      Profile: {profileData.name}
-    </div>
+  <header id="hero" class="mb-20 md:mb-28 mt-2 max-w-5xl relative z-10 flex flex-col justify-center min-h-[50vh] scroll-mt-32">
+    <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-6 opacity-0 animate-[fadeSlideUp_0.5s_cubic-bezier(0.22,1,0.36,1)_0.1s_forwards]">
+      {profileData.nickname}
+    </span>
     
-    <h1 class="text-6xl md:text-7xl font-bold text-on-background mb-6 tracking-tight leading-[1.1] whitespace-pre-line">
+    <h1 class="text-6xl md:text-7xl font-bold text-on-background mb-6 tracking-tight leading-[1.1] whitespace-pre-line opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
       {profileData.role}.
     </h1>
     
-    <h2 class="text-2xl md:text-3xl text-on-surface-variant mb-6 font-medium max-w-3xl">
+    <h2 class="text-xl md:text-2xl text-on-surface-variant mb-6 font-medium max-w-3xl opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.35s_forwards]">
       {profileData.tagline}
     </h2>
     
-    <p class="text-[15px] md:text-base text-on-surface-variant leading-relaxed max-w-2xl mb-10">
+    <p class="text-[15px] md:text-base text-on-surface-variant leading-relaxed max-w-2xl mb-10 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards]">
       {profileData.bio}
     </p>
     
-    <div class="flex flex-wrap items-center gap-4">
-      <a href="mailto:ridwanafazn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
-        Initialize Contact
+    <div class="flex flex-wrap items-center gap-4 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.55s_forwards]">
+      <a href="mailto:ridwanafzn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+        Contact Me
       </a>
       <a href={projectsLink} class="inline-flex items-center justify-center bg-surface border border-outline-strong text-on-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:bg-surface-hover hover:border-accent hover:text-accent active:scale-95 transition-all duration-300">
-        View Architecture Vault
+        Project List
       </a>
     </div>
   </header>
 
+  <StatBar stats={profileData.stats} />
+
   <section id="projects" class="mb-24 relative z-10 scroll-mt-32">
     <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
-      <h2 class="text-3xl font-bold text-on-background tracking-tight">Featured Project</h2>
+      <h2 class="text-3xl font-bold text-on-background tracking-tight">Featured Projects</h2>
       
       <a href={projectsLink} class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent hover:text-accent/80 flex items-center gap-1.5 transition-colors group">
-        View All Projects <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        Lihat Semua Proyek <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
       </a>
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {topProjects.map((project) => (
-        <ProjectCard project={project} />
+      {topProjects.map((project, i) => (
+        <div class={i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}>
+          <ProjectCard project={project} />
+        </div>
       ))}
     </div>
   </section>
 
-  <section id="skills" class="mb-16 relative z-10 scroll-mt-32">
-     <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
-        <h2 class="text-3xl font-bold text-on-background tracking-tight">Tech Stack</h2>
-     </div>
-     
+  <section id="skills" class="mb-24 relative z-10 scroll-mt-32">
+    <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
+      <h2 class="text-3xl font-bold text-on-background tracking-tight">Tech Stack</h2>
+    </div>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-      {skillsData.map((skillGroup, index) => {
+      {skillsData.map((skillGroup, i) => {
+        const delayClass = i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : '';
+        const dirClass = i % 2 === 0 ? 'from-left' : 'from-right';
         return (
-          <div class="bento-card p-8 md:p-10 flex flex-col min-h-[250px] relative overflow-hidden group">
-            
+          <div class={`bento-card p-8 md:p-10 flex flex-col relative overflow-hidden group reveal ${dirClass} ${delayClass}`}>
             <div class="relative z-10 flex flex-col h-full">
               <h3 class="font-mono text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-outline/30 pb-4">
                 <span class="w-1.5 h-1.5 rounded-full bg-outline-strong group-hover:bg-accent transition-colors"></span>
                 {skillGroup.category}
               </h3>
-              
-              <div class="flex flex-wrap gap-2.5 mt-auto">
+              <div class="flex flex-wrap gap-2.5">
                 {skillGroup.items.map((item) => (
                   <Badge text={item} />
                 ))}
               </div>
             </div>
-
           </div>
         );
       })}
     </div>
   </section>
+
+  <section class="mb-24 relative z-10">
+    <div class="bento-card p-8 md:p-12 relative overflow-hidden reveal">
+      <div class="relative z-10 flex flex-col md:flex-row md:items-start gap-8">
+        <div class="shrink-0">
+          <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-4">Fokus Sekarang</span>
+          <h2 class="text-2xl md:text-3xl font-bold text-on-background tracking-tight max-w-sm">
+            {profileData.currentFocus.title}
+          </h2>
+        </div>
+        <div class="flex-1 border-t md:border-t-0 md:border-l border-outline pt-6 md:pt-0 md:pl-8">
+          <p class="text-[14px] text-on-surface-variant leading-relaxed font-medium max-w-xl">
+            {profileData.currentFocus.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowIBuild data={profileData.howIBuild} />
+
 </Layout>

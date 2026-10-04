@@ -2,7 +2,7 @@
   "name": "Ridwan",
   "nickname": "ridwanafazn",
   "role": "Backend Engineer",
-  "tagline": "Akurasi data, performa, keamanan, dan efisiensi server x AI integration.",
+  "tagline": "Membangun sistem backend yang akurat, aman, dan siap diintegrasikan dengan AI.",
   "bio": "Informatics Engineering graduate yang memulai karier profesional lewat Bangkit Academy Cloud Computing 2024, lalu terus membangun sistem backend production di beberapa perusahaan dan proyek volunteer.",
   "stats": [
     { "label": "Professional Since", "value": "2024" },
@@ -12,7 +12,7 @@
   ],
   "experience": [
     {
-      "role": "Backend & Cloud Engineer (Project Lead)",
+      "role": "Backend and Cloud Engineer",
       "organization": "Bangkit Academy — Cloud Computing Cohort 2024",
       "period": "Mei 2024 - Jun 2024",
       "description": "Capstone project 'Herbalyze', aplikasi deteksi obat herbal yang meng-consume model computer vision melalui Express.js + TensorFlow.js. Program oleh GoTo, Gojek, Traveloka, dan Kemendikbud."
@@ -20,12 +20,14 @@
     {
       "role": "Backend Developer Intern",
       "organization": "Yayasan Maqdis",
-      "period": "Apr 2025 - Jul 2025"
+      "period": "Apr 2025 - Jul 2025",
+      "description": "Merancang dan membangun API server untuk aplikasi manasik haji dan umroh serta integrasi 100ms untuk audio communication."
     },
     {
       "role": "Backend Developer Intern",
       "organization": "PT LEN Industri",
-      "period": "Sep 2025 - Nov 2025"
+      "period": "Sep 2025 - Nov 2025",
+      "description": "Aplikasi backend server simulasi sensor kapal laut menggunakan Rust Actix-web untuk aplikasi frontend dan IoT device."
     },
     {
       "role": "Fullstack Developer Intern",
@@ -34,7 +36,7 @@
       "description": "Membangun Learning Management System (Neuroplastisism) dengan Laravel + Livewire."
     },
     {
-      "role": "Fullstack Developer (Volunteer)",
+      "role": "Fullstack Developer",
       "organization": "Ringkai Binar Project — SMILE FEST 2026",
       "period": "Mei 2026 - Jun 2026",
       "description": "Merancang dan membangun sistem ticketing & event management production-scale dengan React + Go + Gin."

@@ -33,6 +33,7 @@ export interface Project {
   techStack: string[];
   highlights: string[];
   isTopProject: boolean;
+  status?: string;
   links?: {
       label: string;
       url: string;
