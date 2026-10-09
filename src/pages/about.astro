@@ -6,10 +6,10 @@ import activitiesData from '../data/activities.json';
 ---
 
 <Layout title="Tentang — ridwanafazn">
-  <header class="mb-16 pt-8 relative z-10">
+  <header class="mb-16 pt-0 relative z-10">
     <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-6">Latar Belakang</span>
     <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
-    <p class="text-[15px] text-on-surface-variant max-w-2xl leading-relaxed font-medium">
+    <p class="text-[15px] text-on-surface-variant max-w-2xl leading-relaxed font-medium text-justify">
       Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem.
     </p>
   </header>
@@ -103,7 +103,7 @@ import activitiesData from '../data/activities.json';
               </span>
             </div>
             
-            <p class="text-[13px] text-on-surface-variant font-medium mb-5 leading-relaxed">{activity.description}</p>
+            <p class="text-[13px] text-on-surface-variant font-medium mb-5 leading-relaxed text-justify">{activity.description}</p>
             
             <div class="flex flex-wrap gap-2">
               {activity.highlights.map((h) => (

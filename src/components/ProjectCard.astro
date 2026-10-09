@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project.id}`;
 ---
 
-<a href={projectLink} class="bento-card group flex flex-col p-6 md:p-8 min-h-[280px] relative outline-none focus-visible:ring-2 focus-visible:ring-accent block reveal from-behind">
+<a href={projectLink} class="bento-card group flex flex-col p-6 md:p-8 min-h-[280px] h-full relative outline-none focus-visible:ring-2 focus-visible:ring-accent block reveal from-behind">
   
   <div class="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300 z-10 bg-surface border border-outline rounded-md p-2 flex items-center justify-center">
     <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-accent transition-colors">arrow_forward</span>
@@ -43,7 +43,7 @@ const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project
       <h3 class="text-2xl font-bold text-on-background mb-2 group-hover:text-accent transition-colors duration-300 tracking-tight">
         {project.title}
       </h3>
-      <p class="text-on-surface-variant text-[13px] leading-relaxed mb-4 font-medium">
+      <p class="text-on-surface-variant text-[13px] leading-relaxed mb-4 font-medium text-justify">
         {project.description}
       </p>
     </div>

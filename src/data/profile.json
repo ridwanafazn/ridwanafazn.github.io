@@ -43,7 +43,7 @@
     }
   ],
   "currentFocus": {
-    "title": "AI/LLM Integration into Backend Systems",
+    "title": "LLM Integration into Backend Systems",
     "description": "Sedang membangun Personal Finance Intelligence Platform (Go/Gin + PostgreSQL + Redis + Cloudflare R2 + LLM API). Prinsip utamanya: backend tetap jadi single source of truth untuk semua angka finansial — LLM hanya berperan sebagai interpreter yang menjelaskan data, bukan menghitung atau memutuskan fakta finansial."
   },
   "howIBuild": {

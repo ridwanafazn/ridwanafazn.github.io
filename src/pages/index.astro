@@ -20,12 +20,8 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 <Layout title="ridwanafazn">
   <FloatingNav />
 
-  <header id="hero" class="mb-20 md:mb-28 mt-2 max-w-5xl relative z-10 flex flex-col justify-center min-h-[50vh] scroll-mt-32">
-    <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-6 opacity-0 animate-[fadeSlideUp_0.5s_cubic-bezier(0.22,1,0.36,1)_0.1s_forwards]">
-      {profileData.nickname}
-    </span>
-    
-    <h1 class="text-6xl md:text-7xl font-bold text-on-background mb-6 tracking-tight leading-[1.1] whitespace-pre-line opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
+  <header id="hero" class="mb-8 md:mb-12 mt-0 max-w-5xl relative z-10 flex flex-col justify-center min-h-[35vh] scroll-mt-32">
+    <h1 class="text-7xl md:text-8xl font-bold text-on-background mb-6 tracking-tight leading-[1.1] whitespace-pre-line opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
       {profileData.role}.
     </h1>
     
@@ -33,7 +29,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
       {profileData.tagline}
     </h2>
     
-    <p class="text-[15px] md:text-base text-on-surface-variant leading-relaxed max-w-2xl mb-10 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards]">
+    <p class="text-[15px] md:text-base text-on-surface-variant leading-relaxed max-w-2xl mb-10 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards] text-justify">
       {profileData.bio}
     </p>
     
@@ -49,7 +45,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
   <StatBar stats={profileData.stats} />
 
-  <section id="projects" class="mb-24 relative z-10 scroll-mt-32">
+  <section id="projects" class="mb-8 relative z-10 scroll-mt-32">
     <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
       <h2 class="text-3xl font-bold text-on-background tracking-tight">Featured Projects</h2>
       
@@ -60,14 +56,14 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
       {topProjects.map((project, i) => (
-        <div class={i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}>
+        <div class={`h-full ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
           <ProjectCard project={project} />
         </div>
       ))}
     </div>
   </section>
 
-  <section id="skills" class="mb-24 relative z-10 scroll-mt-32">
+  <section id="skills" class="mb-16 relative z-10 scroll-mt-32">
     <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
       <h2 class="text-3xl font-bold text-on-background tracking-tight">Tech Stack</h2>
     </div>
@@ -77,7 +73,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
         const delayClass = i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : '';
         const dirClass = i % 2 === 0 ? 'from-left' : 'from-right';
         return (
-          <div class={`bento-card p-8 md:p-10 flex flex-col relative overflow-hidden group reveal ${dirClass} ${delayClass}`}>
+          <div class={`bento-card p-5 md:p-6 flex flex-col relative overflow-hidden group reveal ${dirClass} ${delayClass}`}>
             <div class="relative z-10 flex flex-col h-full">
               <h3 class="font-mono text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 flex items-center gap-2 border-b border-outline/30 pb-4">
                 <span class="w-1.5 h-1.5 rounded-full bg-outline-strong group-hover:bg-accent transition-colors"></span>
@@ -105,7 +101,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
           </h2>
         </div>
         <div class="flex-1 border-t md:border-t-0 md:border-l border-outline pt-6 md:pt-0 md:pl-8">
-          <p class="text-[14px] text-on-surface-variant leading-relaxed font-medium max-w-xl">
+          <p class="text-[14px] text-on-surface-variant leading-relaxed font-medium max-w-xl text-justify">
             {profileData.currentFocus.description}
           </p>
         </div>

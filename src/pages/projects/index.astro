@@ -8,9 +8,9 @@ const allProjects = projectsData as Project[];
 ---
 
 <Layout title="Project Vault">
-  <header class="pt-8 mb-16 relative z-10">
+  <header class="pt-0 mb-16 relative z-10">
     <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">Portofolio Proyek</h1>
-    <p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+    <p class="text-lg text-on-surface-variant max-w-2xl leading-relaxed text-justify">
       Kumpulan sistem, aplikasi, dan arsitektur yang sudah dibangun — mulai dari backend low-latency, fullstack monolitik, sampai sistem terdistribusi skala produksi.
     </p>
   </header>
@@ -19,7 +19,7 @@ const allProjects = projectsData as Project[];
     {allProjects.map((project, i) => {
       const delay = i % 3 === 1 ? 'reveal-delay-1' : i % 3 === 2 ? 'reveal-delay-2' : '';
       return (
-        <div class={`reveal ${delay}`}>
+        <div class={`h-full reveal ${delay}`}>
           <ProjectCard project={project} />
         </div>
       );

@@ -25,7 +25,7 @@ const { data } = Astro.props;
       <h2 class="text-3xl md:text-4xl font-bold text-surface tracking-tight leading-snug">
         Dari ide ke produksi —<br />dengan niat, bukan tergesa.
       </h2>
-      <p class="text-[14px] text-surface/55 mt-5 leading-relaxed font-medium max-w-lg">
+      <p class="text-[14px] text-surface/55 mt-5 leading-relaxed font-medium max-w-lg text-justify">
         {data.summary}
       </p>
     </div>
@@ -39,7 +39,7 @@ const { data } = Astro.props;
           <h3 class="font-bold text-[17px] text-surface mb-3 tracking-tight">
             {s.step}
           </h3>
-          <p class="text-[13px] text-surface/50 leading-relaxed font-medium">
+          <p class="text-[13px] text-surface/50 leading-relaxed font-medium text-justify">
             {s.detail}
           </p>
         </div>
@@ -47,7 +47,7 @@ const { data } = Astro.props;
     </div>
 
     <div class="mt-10 pt-8 border-t border-surface/10 reveal reveal-delay-2">
-      <p class="text-[13px] text-surface/45 max-w-2xl leading-relaxed font-medium">
+      <p class="text-[13px] text-surface/45 max-w-2xl leading-relaxed font-medium text-justify">
         {data.why}
       </p>
     </div>
