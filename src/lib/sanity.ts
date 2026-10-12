@@ -2,8 +2,15 @@
 // Helper functions untuk query data dari Sanity via GROQ
 // Fallback ke JSON lokal saat Sanity dataset kosong / belum diisi
 
-import { sanityClient } from 'sanity:client';
+import { createClient } from '@sanity/client';
 import type { Project, Profile, SkillCategory, Activity } from '../types';
+
+export const sanityClient = createClient({
+  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID || 'exvebwem',
+  dataset: import.meta.env.PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: '2024-01-01',
+  useCdn: false,
+});
 
 // JSON fallbacks
 import profileJson from '../data/profile.json';
