@@ -11,10 +11,26 @@ export const profileSchema = defineType({
     defineField({ name: 'tagline', title: 'Tagline', type: 'string' }),
     defineField({ name: 'bio', title: 'Bio', type: 'text', rows: 4 }),
     defineField({
+      name: 'stats',
+      title: 'Statistik (StatBar)',
+      type: 'array',
+      of: [{
+        type: 'object',
+        fields: [
+          defineField({ name: 'label', title: 'Label', type: 'string' }),
+          defineField({ name: 'value', title: 'Nilai (Value)', type: 'string' }),
+        ],
+        preview: { select: { title: 'label', subtitle: 'value' } },
+      }],
+    }),
+    defineField({
       name: 'currentFocus',
       title: 'Fokus Sekarang',
-      type: 'string',
-      description: 'Tampil di StatBar. Contoh: LLM Integration & Cloud-Native Systems',
+      type: 'object',
+      fields: [
+        defineField({ name: 'title', title: 'Judul Fokus', type: 'string' }),
+        defineField({ name: 'description', title: 'Deskripsi', type: 'text', rows: 3 }),
+      ],
     }),
     defineField({
       name: 'experience',

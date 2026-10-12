@@ -79,14 +79,21 @@ export async function getProfile(): Promise<Profile> {
       role,
       tagline,
       bio,
-      currentFocus,
+      stats[] { label, value },
+      currentFocus { title, description },
       experience[] { role, organization, period, description },
       education[] { institution, degree, gpa, highlights },
       certifications[] { name, issuer },
       howIBuild { summary, steps[] { step, detail }, why }
     }`
   );
-  return data ?? (profileJson as unknown as Profile);
+  const fallback = profileJson as unknown as Profile;
+  if (!data) return fallback;
+  // Gunakan fallback stats kalau data stats di Sanity masih kosong
+  return {
+    ...data,
+    stats: data.stats?.length ? data.stats : fallback.stats,
+  };
 }
 
 // ─── Skills ──────────────────────────────────────────────────────────────────

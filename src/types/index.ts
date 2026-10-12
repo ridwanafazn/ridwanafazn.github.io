@@ -17,13 +17,24 @@ export interface Experience {
   description?: string;
 }
 
+export interface Stat {
+  label: string;
+  value: string;
+}
+
+export interface CurrentFocus {
+  title: string;
+  description: string;
+}
+
 export interface Profile {
   name: string;
   nickname: string;
   role: string;
   tagline: string;
   bio: string;
-  currentFocus?: string;
+  currentFocus?: CurrentFocus;
+  stats?: Stat[];
   experience?: Experience[];
   education: Education[];
   certifications: Certification[];
