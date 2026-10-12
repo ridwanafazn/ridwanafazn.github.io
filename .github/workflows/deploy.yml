@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  # Dipanggil oleh Sanity webhook saat konten berubah
+  repository_dispatch:
+    types: [sanity-content-update]
 
 permissions:
   contents: read
@@ -25,6 +28,9 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version: 22
+        env:
+          PUBLIC_SANITY_PROJECT_ID: ${{ secrets.PUBLIC_SANITY_PROJECT_ID }}
+          PUBLIC_SANITY_DATASET: ${{ secrets.PUBLIC_SANITY_DATASET }}
 
   deploy:
     needs: build

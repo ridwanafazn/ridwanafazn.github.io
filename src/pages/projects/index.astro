@@ -1,10 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import projectsData from '../../data/projects.json';
-import type { Project } from '../../types';
+import { getAllProjects } from '../../lib/sanity';
 
-const allProjects = projectsData as Project[];
+const allProjects = await getAllProjects();
 ---
 
 <Layout title="Project Vault">

@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Timeline from '../components/Timeline.astro';
-import profileData from '../data/profile.json';
-import activitiesData from '../data/activities.json';
+import { getProfile, getActivities } from '../lib/sanity';
+
+const profileData = await getProfile();
+const activitiesData = await getActivities();
 ---
 
 <Layout title="Tentang — ridwanafazn">
@@ -14,9 +16,10 @@ import activitiesData from '../data/activities.json';
     </p>
   </header>
 
-  <!-- Experience Timeline -->
   <div class="relative z-10 mb-8">
-    <Timeline experience={profileData.experience} />
+    {profileData?.experience && profileData.experience.length > 0 && (
+      <Timeline experience={profileData.experience} />
+    )}
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10 mb-16">

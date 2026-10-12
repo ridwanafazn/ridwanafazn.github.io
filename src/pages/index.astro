@@ -6,13 +6,11 @@ import FloatingNav from '../components/FloatingNav.astro';
 import StatBar from '../components/StatBar.astro';
 import HowIBuild from '../components/HowIBuild.astro';
 
-import profileData from '../data/profile.json';
-import projectsData from '../data/projects.json';
-import skillsData from '../data/skills.json';
+import { getProfile, getTopProjects, getSkills } from '../lib/sanity';
 
-import type { Project } from '../types';
-
-const topProjects = (projectsData as Project[]).filter((project) => project.isTopProject);
+const profileData = await getProfile();
+const topProjects = await getTopProjects();
+const skillsData = await getSkills();
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 ---
