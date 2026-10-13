@@ -8,12 +8,14 @@ const activitiesData = await getActivities();
 ---
 
 <Layout title="Tentang — ridwanafazn">
-  <header class="mb-16 pt-0 relative z-10">
-    <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-6">Latar Belakang</span>
-    <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
-    <p class="text-[15px] text-on-surface-variant max-w-2xl leading-relaxed font-medium text-justify">
-      Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem.
-    </p>
+  <header class="mb-14 pt-0 relative z-10">
+    <div class="max-w-2xl">
+      <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-4">Latar Belakang</span>
+      <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
+      <p class="text-[15px] text-on-surface-variant leading-relaxed font-medium">
+        Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem.
+      </p>
+    </div>
   </header>
 
   <div class="relative z-10 mb-8">
@@ -73,8 +75,7 @@ const activitiesData = await getActivities();
           {profileData.certifications.map((cert, index) => (
             <div class={`bg-surface p-5 rounded-lg border border-outline hover:border-accent/40 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-center group reveal from-behind ${index === 1 ? 'reveal-delay-1' : ''}`}>
               <span class="font-bold text-[13px] text-on-background mb-2 group-hover:text-accent transition-colors">{cert.name}</span>
-              <span class="text-[10px] font-mono font-semibold text-on-surface-variant flex items-center gap-1.5">
-                <span class="w-1 h-1 rounded-full bg-accent"></span>
+              <span class="text-[10px] font-mono font-semibold text-on-surface-variant">
                 {cert.issuer}
               </span>
             </div>

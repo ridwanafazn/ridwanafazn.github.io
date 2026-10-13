@@ -1,0 +1,375 @@
+---
+// src/components/HeroSystemVisualizer.astro
+// Interactive 3D Distributed System Topology built with Three.js
+---
+
+<div class="relative w-full h-[380px] lg:h-[420px]" id="hero-topology-container">
+  <canvas id="hero-topology-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+</div>
+
+<script>
+  import * as THREE from 'three';
+
+  function initHeroTopology() {
+    const container = document.getElementById('hero-topology-container');
+    const canvas = document.getElementById('hero-topology-canvas') as HTMLCanvasElement | null;
+
+    if (!container || !canvas) return;
+
+    // Dimensions
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+
+    // Scene & Camera
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+    camera.position.set(0, 0, 16);
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.8);
+    dirLight1.position.set(8, 12, 10);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x64748b, 1.2);
+    dirLight2.position.set(-10, -6, -4);
+    scene.add(dirLight2);
+
+    // Root Group for interactive rotation
+    const world = new THREE.Group();
+    scene.add(world);
+
+    // Colors
+    const COLOR_DARK = 0x16151a;
+    const COLOR_ACCENT = 0x64748b;
+    const COLOR_LINE = 0xc8c6bf;
+    const COLOR_SURFACE = 0xffffff;
+
+    // 1. Central Core Node (Coordinator / Gateway)
+    const coreGroup = new THREE.Group();
+    const coreGeo = new THREE.IcosahedronGeometry(1.6, 0);
+    const coreMat = new THREE.MeshStandardMaterial({
+      color: COLOR_DARK,
+      roughness: 0.25,
+      metalness: 0.8,
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    coreGroup.add(coreMesh);
+
+    // Wireframe overlay on core
+    const coreWireGeo = new THREE.IcosahedronGeometry(1.64, 0);
+    const coreWireMat = new THREE.MeshBasicMaterial({
+      color: COLOR_ACCENT,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const coreWire = new THREE.Mesh(coreWireGeo, coreWireMat);
+    coreGroup.add(coreWire);
+
+    // Inner glowing ring
+    const ringGeo = new THREE.TorusGeometry(2.3, 0.03, 16, 64);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: COLOR_ACCENT,
+      transparent: true,
+      opacity: 0.35,
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = Math.PI / 2.5;
+    coreGroup.add(ringMesh);
+
+    world.add(coreGroup);
+
+    // 2. Satellite Nodes Configuration
+    const satelliteData = [
+      { name: 'API Gateway', sub: 'Reverse Proxy / Rate Limiter', pos: new THREE.Vector3(4.2, 1.8, 1.5), shape: 'box' },
+      { name: 'Auth & RBAC', sub: 'JWT Verification & Sessions', pos: new THREE.Vector3(-4.0, 2.2, -1.2), shape: 'oct' },
+      { name: 'Database Cluster', sub: 'PostgreSQL Primary + Replica', pos: new THREE.Vector3(3.4, -2.8, -1.8), shape: 'cyl' },
+      { name: 'Redis Cache', sub: 'In-Memory State & Subscriptions', pos: new THREE.Vector3(-3.2, -2.4, 2.2), shape: 'box' },
+      { name: 'Event Queue', sub: 'RabbitMQ / Message Broker', pos: new THREE.Vector3(0.4, 4.2, 0.8), shape: 'oct' },
+      { name: 'Object Store', sub: 'S3 / Cloudflare R2 Bucket', pos: new THREE.Vector3(-0.8, -4.0, -1.4), shape: 'box' },
+    ];
+
+    const interactiveMeshes: THREE.Mesh[] = [];
+    const satellites: { group: THREE.Group; mesh: THREE.Mesh; data: typeof satelliteData[0]; basePos: THREE.Vector3 }[] = [];
+
+    // Materials
+    const satMaterial = new THREE.MeshStandardMaterial({
+      color: COLOR_SURFACE,
+      roughness: 0.3,
+      metalness: 0.2,
+    });
+    const satEdgeMaterial = new THREE.LineBasicMaterial({
+      color: COLOR_ACCENT,
+      linewidth: 1,
+    });
+
+    satelliteData.forEach((item) => {
+      const satGroup = new THREE.Group();
+      satGroup.position.copy(item.pos);
+
+      let geo: THREE.BufferGeometry;
+      if (item.shape === 'box') {
+        geo = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+      } else if (item.shape === 'cyl') {
+        geo = new THREE.CylinderGeometry(0.55, 0.55, 0.9, 16);
+      } else {
+        geo = new THREE.OctahedronGeometry(0.65, 0);
+      }
+
+      const mesh = new THREE.Mesh(geo, satMaterial.clone());
+      mesh.userData = item;
+      satGroup.add(mesh);
+
+      // Edge outline
+      const edges = new THREE.EdgesGeometry(geo);
+      const line = new THREE.LineSegments(edges, satEdgeMaterial);
+      satGroup.add(line);
+
+      world.add(satGroup);
+      satellites.push({ group: satGroup, mesh, data: item, basePos: item.pos.clone() });
+      interactiveMeshes.push(mesh);
+    });
+
+    // 3. Dynamic Connection Lines & Traveling Packets
+    interface Packet {
+      mesh: THREE.Mesh;
+      from: THREE.Vector3;
+      to: THREE.Vector3;
+      progress: number;
+      speed: number;
+    }
+
+    const packets: Packet[] = [];
+    const packetGeo = new THREE.SphereGeometry(0.09, 8, 8);
+    const packetMat = new THREE.MeshBasicMaterial({ color: COLOR_ACCENT });
+
+    const linesGroup = new THREE.Group();
+    const lineMat = new THREE.LineBasicMaterial({
+      color: COLOR_LINE,
+      transparent: true,
+      opacity: 0.55,
+    });
+
+    satellites.forEach((sat, idx) => {
+      const points = [new THREE.Vector3(0, 0, 0), sat.basePos];
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.Line(lineGeo, lineMat);
+      linesGroup.add(line);
+
+      // 2 packets per connection line
+      for (let p = 0; p < 2; p++) {
+        const pMesh = new THREE.Mesh(packetGeo, packetMat.clone());
+        world.add(pMesh);
+        packets.push({
+          mesh: pMesh,
+          from: new THREE.Vector3(0, 0, 0),
+          to: sat.basePos,
+          progress: (idx * 0.15 + p * 0.5) % 1,
+          speed: 0.006 + Math.random() * 0.004,
+        });
+      }
+    });
+
+    // Inter-satellite cross connections
+    const crossPairs = [
+      [0, 2], // Gateway <-> Database
+      [1, 3], // Auth <-> Redis
+      [4, 0], // Queue <-> Gateway
+      [2, 5], // Database <-> Object Store
+    ];
+    crossPairs.forEach(([i, j]) => {
+      const p1 = satellites[i].basePos;
+      const p2 = satellites[j].basePos;
+      const cGeo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+      const cMat = new THREE.LineBasicMaterial({ color: COLOR_LINE, transparent: true, opacity: 0.25 });
+      linesGroup.add(new THREE.Line(cGeo, cMat));
+    });
+
+    world.add(linesGroup);
+
+    // 4. Subtle Orbital Guides
+    const orbitGridGeo = new THREE.RingGeometry(6.5, 6.55, 64);
+    const orbitGridMat = new THREE.MeshBasicMaterial({
+      color: COLOR_LINE,
+      transparent: true,
+      opacity: 0.2,
+      side: THREE.DoubleSide,
+    });
+    const orbitRing = new THREE.Mesh(orbitGridGeo, orbitGridMat);
+    orbitRing.rotation.x = Math.PI / 2.3;
+    world.add(orbitRing);
+
+    // Interaction State
+    let isDragging = false;
+    let prevPointerX = 0;
+    let prevPointerY = 0;
+    let targetRotationX = 0.25;
+    let targetRotationY = -0.4;
+    let currentRotationX = 0.25;
+    let currentRotationY = -0.4;
+    let isHovering = false;
+    let hoveredMesh: THREE.Mesh | null = null;
+    let isVisible = true;
+
+    // Raycaster for Hover detection
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2(-999, -999);
+
+    function onPointerDown(e: PointerEvent) {
+      isDragging = true;
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+      container.style.cursor = 'grabbing';
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      if (isDragging) {
+        const deltaX = e.clientX - prevPointerX;
+        const deltaY = e.clientY - prevPointerY;
+        prevPointerX = e.clientX;
+        prevPointerY = e.clientY;
+
+        targetRotationY += deltaX * 0.008;
+        targetRotationX += deltaY * 0.008;
+      } else {
+        // Parallax drift
+        const ndcX = (e.clientX - rect.left) / rect.width - 0.5;
+        const ndcY = (e.clientY - rect.top) / rect.height - 0.5;
+        camera.position.x = ndcX * 2.2;
+        camera.position.y = -ndcY * 2.2;
+        camera.lookAt(0, 0, 0);
+      }
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+      container.style.cursor = isHovering ? 'pointer' : 'grab';
+    }
+
+    container.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+
+    // Resize Handler
+    function onResize() {
+      if (!container) return;
+      width = container.clientWidth;
+      height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(container);
+
+    // Visibility Observer to pause rendering when off-screen
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        isVisible = entries[0].isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    visibilityObserver.observe(container);
+
+    // Animation Loop
+    let clock = new THREE.Clock();
+    let animId: number;
+
+    function animate() {
+      animId = requestAnimationFrame(animate);
+      if (!isVisible) return;
+
+      const time = clock.getElapsedTime();
+
+      // Smooth rotation with inertia
+      if (!isDragging) {
+        targetRotationY += 0.0025; // Continuous gentle drift
+      }
+
+      currentRotationX += (targetRotationX - currentRotationX) * 0.08;
+      currentRotationY += (targetRotationY - currentRotationY) * 0.08;
+      world.rotation.x = currentRotationX;
+      world.rotation.y = currentRotationY;
+
+      // Core animation
+      ringMesh.rotation.z += 0.01;
+      coreWire.rotation.y -= 0.008;
+
+      // Satellite node harmonic floating & rotation
+      satellites.forEach((sat, i) => {
+        const floatOffset = Math.sin(time * 1.5 + i * 1.1) * 0.12;
+        sat.group.position.y = sat.basePos.y + floatOffset;
+        sat.group.rotation.y += 0.01;
+        sat.group.rotation.x += 0.006;
+      });
+
+      // Update traveling data packets
+      packets.forEach((p) => {
+        p.progress += p.speed;
+        if (p.progress >= 1) p.progress = 0;
+        p.mesh.position.lerpVectors(p.from, p.to, p.progress);
+      });
+
+      // Raycasting for interactive hover
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(interactiveMeshes);
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].object as THREE.Mesh;
+        if (hoveredMesh !== hit) {
+          if (hoveredMesh) (hoveredMesh.material as THREE.MeshStandardMaterial).color.setHex(COLOR_SURFACE);
+          hoveredMesh = hit;
+          (hit.material as THREE.MeshStandardMaterial).color.setHex(0xe2e8f0);
+          isHovering = true;
+          container.style.cursor = 'pointer';
+        }
+      } else {
+        if (hoveredMesh) {
+          (hoveredMesh.material as THREE.MeshStandardMaterial).color.setHex(COLOR_SURFACE);
+          hoveredMesh = null;
+        }
+        isHovering = false;
+        container.style.cursor = isDragging ? 'grabbing' : 'grab';
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Clean up if component unmounts
+    return () => {
+      cancelAnimationFrame(animId);
+      resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      container.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      renderer.dispose();
+    };
+  }
+
+  // Initialize on load & Astro transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeroTopology);
+  } else {
+    initHeroTopology();
+  }
+</script>

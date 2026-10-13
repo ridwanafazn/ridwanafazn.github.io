@@ -1,6 +1,8 @@
 // src/lib/sanity.ts
-// Helper functions untuk query data dari Sanity via GROQ
-// Fallback ke JSON lokal saat Sanity dataset kosong / belum diisi
+// Query data dari Sanity via GROQ.
+// Konten sepenuhnya berasal dari Sanity — tidak ada fallback JSON lokal.
+// Kalau Sanity kosong atau tidak bisa diakses, build sengaja GAGAL KERAS
+// supaya halaman kosong tidak pernah ikut ter-deploy diam-diam.
 
 import { createClient } from '@sanity/client';
 import type { Project, Profile, SkillCategory, Activity } from '../types';
@@ -12,11 +14,15 @@ export const sanityClient = createClient({
   useCdn: false,
 });
 
-// JSON fallbacks
-import profileJson from '../data/profile.json';
-import projectsJson from '../data/projects.json';
-import skillsJson from '../data/skills.json';
-import activitiesJson from '../data/activities.json';
+function fail(what: string, hint: string): never {
+  const { projectId, dataset } = sanityClient.config();
+  throw new Error(
+    `[sanity] ${what} kosong atau tidak bisa diambil. ${hint} ` +
+      `Cek koneksi ke project "${projectId}" / dataset "${dataset}", lalu pastikan ` +
+      `dokumennya sudah diisi dan di-publish di Sanity Studio. ` +
+      `Build dihentikan supaya halaman kosong tidak ter-deploy.`
+  );
+}
 
 // ─── Projects ────────────────────────────────────────────────────────────────
 
@@ -35,7 +41,8 @@ export async function getAllProjects(): Promise<Project[]> {
       links[] { label, url, icon }
     }`
   );
-  return data?.length ? data : (projectsJson as Project[]);
+  if (!data?.length) fail('Daftar project', 'Tidak ada dokumen bertipe "project".');
+  return data;
 }
 
 export async function getTopProjects(): Promise<Project[]> {
@@ -52,11 +59,11 @@ export async function getTopProjects(): Promise<Project[]> {
       links[] { label, url, icon }
     }`
   );
-  if (data?.length) return data;
-  return (projectsJson as Project[]).filter((p) => p.isTopProject);
+  if (!data?.length) fail('Project unggulan', 'Tidak ada project dengan isTopProject == true.');
+  return data;
 }
 
-export async function getProjectById(id: string): Promise<Project | null> {
+export async function getProjectById(id: string): Promise<Project> {
   const data = await sanityClient.fetch<Project | null>(
     `*[_type == "project" && id.current == $id][0] {
       "id": id.current,
@@ -72,8 +79,8 @@ export async function getProjectById(id: string): Promise<Project | null> {
     }`,
     { id }
   );
-  if (data) return data;
-  return (projectsJson as Project[]).find((p) => p.id === id) ?? null;
+  if (!data) fail(`Project "${id}"`, 'Slug-nya tidak ada di dataset.');
+  return data;
 }
 
 // ─── Profile ─────────────────────────────────────────────────────────────────
@@ -94,13 +101,8 @@ export async function getProfile(): Promise<Profile> {
       howIBuild { summary, steps[] { step, detail }, why }
     }`
   );
-  const fallback = profileJson as unknown as Profile;
-  if (!data) return fallback;
-  // Gunakan fallback stats kalau data stats di Sanity masih kosong
-  return {
-    ...data,
-    stats: data.stats?.length ? data.stats : fallback.stats,
-  };
+  if (!data) fail('Profil', 'Dokumen "singleton-profile" tidak ditemukan.');
+  return data;
 }
 
 // ─── Skills ──────────────────────────────────────────────────────────────────
@@ -111,7 +113,10 @@ export async function getSkills(): Promise<SkillCategory[]> {
       categories[] { category, items }
     }`
   );
-  return result?.categories?.length ? result.categories : (skillsJson as SkillCategory[]);
+  if (!result?.categories?.length) {
+    fail('Skill', 'Dokumen "singleton-skills" belum punya isi categories.');
+  }
+  return result.categories;
 }
 
 // ─── Activities ───────────────────────────────────────────────────────────────
@@ -127,5 +132,6 @@ export async function getActivities(): Promise<Activity[]> {
       highlights
     }`
   );
-  return data?.length ? data : (activitiesJson as Activity[]);
+  if (!data?.length) fail('Activity', 'Tidak ada dokumen bertipe "activity".');
+  return data;
 }

@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project.id}`;
 ---
 
-<a href={projectLink} class="bento-card group flex flex-col p-6 md:p-8 min-h-[280px] h-full relative outline-none focus-visible:ring-2 focus-visible:ring-accent block reveal from-behind">
+<a href={projectLink} class="bento-card group flex flex-col p-6 md:p-7 h-full relative outline-none focus-visible:ring-2 focus-visible:ring-accent block reveal from-behind hover:-translate-y-1 transition-all duration-300">
   
   <div class="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300 z-10 bg-surface border border-outline rounded-md p-2 flex items-center justify-center">
     <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-accent transition-colors">arrow_forward</span>
@@ -19,24 +19,10 @@ const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project
 
   <div class="relative z-10 flex flex-col h-full flex-grow">
     
-    <div class="flex justify-between items-start mb-4 pr-10">
-      <span class="font-mono text-[9px] font-bold tracking-widest text-on-surface-variant flex items-center gap-2 uppercase">
-        <span class="w-1 h-1 rounded-full bg-outline-strong"></span>
+    <div class="mb-4 pr-10">
+      <span class="font-mono text-[9px] font-bold tracking-widest text-on-surface-variant uppercase">
         {project.role}
       </span>
-      
-      <div class="flex items-center gap-2">
-        {project.status && (
-          <span class="font-mono text-[8px] uppercase tracking-widest font-bold px-2 py-0.5 bg-accent/10 text-accent border border-accent/25 rounded-md">
-            {project.status}
-          </span>
-        )}
-        {project.isTopProject && (
-          <div class="flex items-center justify-center" title="Proyek Unggulan">
-            <div class="h-1.5 w-1.5 rounded-full bg-accent"></div>
-          </div>
-        )}
-      </div>
     </div>
 
     <div class="flex-grow flex flex-col mt-2">
