@@ -3,7 +3,7 @@
 // Interactive 3D Distributed System Topology built with Three.js
 ---
 
-<div class="relative w-full h-[380px] lg:h-[420px]" id="hero-topology-container">
+<div class="relative w-full h-[220px] sm:h-[380px] lg:h-[420px] overflow-hidden" id="hero-topology-container">
   <canvas id="hero-topology-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
 </div>
 
@@ -49,6 +49,8 @@
 
     // Root Group for interactive rotation
     const world = new THREE.Group();
+    // Komposisi diperkecil di mobile agar node & paket data tidak melewati margin horizontal
+    world.scale.setScalar(width < 768 ? 0.72 : 1);
     scene.add(world);
 
     // Colors
@@ -249,11 +251,12 @@
         targetRotationY += deltaX * 0.008;
         targetRotationX += deltaY * 0.008;
       } else {
-        // Parallax drift
+        // Parallax drift — dibatasi supaya elemen dekoratif tidak keluar margin layar
         const ndcX = (e.clientX - rect.left) / rect.width - 0.5;
         const ndcY = (e.clientY - rect.top) / rect.height - 0.5;
-        camera.position.x = ndcX * 2.2;
-        camera.position.y = -ndcY * 2.2;
+        const parallax = width < 768 ? 1.0 : 2.2;
+        camera.position.x = THREE.MathUtils.clamp(ndcX * parallax, -parallax, parallax);
+        camera.position.y = THREE.MathUtils.clamp(-ndcY * parallax, -parallax, parallax);
         camera.lookAt(0, 0, 0);
       }
     }
@@ -275,6 +278,8 @@
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
+      // Pertahankan batas komposisi saat viewport berubah (mobile < 768px)
+      world.scale.setScalar(width < 768 ? 0.72 : 1);
     }
     const resizeObserver = new ResizeObserver(onResize);
     resizeObserver.observe(container);
@@ -288,15 +293,23 @@
     );
     visibilityObserver.observe(container);
 
-    // Animation Loop
-    let clock = new THREE.Clock();
+    // Animation Loop — pakai delta waktu standar (performance.now) supaya tidak
+    // memicu warning deprecation THREE.Clock di DevTools.
+    let lastTime = performance.now();
+    let elapsedTime = 0;
     let animId: number;
 
     function animate() {
       animId = requestAnimationFrame(animate);
+
+      const now = performance.now();
+      // Delta dibatasi agar animasi tidak "meloncat" setelah tab kembali aktif
+      elapsedTime += Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
       if (!isVisible) return;
 
-      const time = clock.getElapsedTime();
+      const time = elapsedTime;
 
       // Smooth rotation with inertia
       if (!isDragging) {

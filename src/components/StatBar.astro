@@ -14,14 +14,14 @@ const { stats } = Astro.props;
 <section class="mb-8 relative z-10 reveal">
   <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-outline border border-outline rounded-lg overflow-hidden">
     {stats.map((stat, index) => (
-      <div class="bg-surface px-8 py-8 flex flex-col gap-2 group hover:bg-surface-hover transition-colors duration-300">
+      <div class="bg-surface px-4 py-4 md:px-8 md:py-8 flex flex-col gap-1 md:gap-2 group hover:bg-surface-hover transition-colors duration-300">
         <span
-          class="font-mono text-4xl md:text-5xl font-bold text-accent tracking-tight leading-none stat-number"
+          class="font-mono text-3xl md:text-5xl font-bold text-accent tracking-tight leading-none stat-number"
           data-target={stat.value}
         >
           {stat.value}
         </span>
-        <span class="font-mono text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">
+        <span class="font-mono text-[9px] md:text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">
           {stat.label}
         </span>
       </div>
