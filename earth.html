@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Particle Earth</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #030508; /* Deep dark space blue/black */
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #canvas-container {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: grab;
+      z-index: 1;
+    }
+    #canvas-container:active {
+      cursor: grabbing;
+    }
+    
+    /* Elegant Digital Loading Screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #030508;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      transition: opacity 1s ease-out;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 2px solid rgba(91, 192, 190, 0.2);
+      border-top-color: #5bc0be;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 15px rgba(91, 192, 190, 0.4);
+    }
+    @keyframes spin { 
+      to { transform: rotate(360deg); } 
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading State -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- WebGL Container -->
+  <div id="canvas-container"></div>
+
+  <script>
+    const container = document.getElementById('canvas-container');
+    const loadingScreen = document.getElementById('loading-screen');
+    
+    let scene, camera, renderer, controls;
+    let earthGroup; // Group to hold everything that rotates
+    
+    const GLOBE_RADIUS = 5;
+    const DOT_DENSITY = 2; // Kepadatan tinggi: resolusi ditingkatkan agar sebaran map sangat presisi
+
+    init();
+
+    function init() {
+      // 1. Scene Setup
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030508, 0.03); // Soft fade into background
+
+      // 2. Camera Setup
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      // Position camera to look at the Pacific ocean (where the action in the reference image is)
+      camera.position.set(0, 2, 16);
+
+      // 3. Renderer Setup
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for high DPI
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      // Master group for rotation
+      earthGroup = new THREE.Group();
+      // Putar globe agar Indonesia & Asia berada di depan saat pertama dimuat
+      earthGroup.rotation.y = Math.PI;
+      scene.add(earthGroup);
+
+      // MENGATASI ISU BLANK HITAM (CORS BLOCK PADA FILE://)
+      // Menggunakan trik Fetch -> Blob untuk mengubah gambar internet menjadi 
+      // file lokal virtual, sehingga browser (Edge/Chrome) mengizinkan render partikel daratan.
+      fetch('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-water.png', { mode: 'cors' })
+        .then(response => {
+          if (!response.ok) throw new Error("Gagal mengunduh gambar peta");
+          return response.blob();
+        })
+        .then(blob => {
+          const image = new Image();
+          image.onload = () => {
+            buildParticleEarth(image);
+            buildAtmosphere();
+            
+            // Sembunyikan layar loading
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => loadingScreen.style.display = 'none', 1000);
+            
+            animate();
+          };
+          // Jadikan blob sebagai URL lokal yang kebal dari blokir keamanan
+          image.src = URL.createObjectURL(blob);
+        })
+        .catch(err => {
+          console.error("Error keamanan:", err);
+          // Peringatan jika pengamanan browser benar-benar menolak koneksi
+          loadingScreen.innerHTML = `<div style="color: white; font-family: sans-serif; text-align: center; line-height: 1.6; max-width: 80%;">
+            <span style="color: #ff4444; font-size: 24px; font-weight: bold;">Keamanan Browser Memblokir Peta Daratan</span><br><br>
+            Browser Anda memblokir partikel putih karena Anda membukanya langsung via <b>file:///</b>.<br><br>
+            <b>Cara Fix Pasti:</b> Buka file HTML ini menggunakan <i>Local Web Server</i> (misalnya ekstensi <b>"Live Server"</b> di VS Code).
+          </div>`;
+          buildAtmosphere(); // Tetap render atmosfer
+          animate();
+        });
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.enablePan = false;
+      controls.minDistance = 7;
+      controls.maxDistance = 25;
+      
+      window.addEventListener('resize', onWindowResize, false);
+    }
+
+    function buildParticleEarth(img) {
+      // Draw image to an offscreen canvas to read pixel data
+      const canvas = document.createElement('canvas');
+      // Fix resolusi kanvas untuk memastikan kepadatan titik presisi, apa pun ukuran layarnya
+      canvas.width = 1024;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+      const particles = [];
+      const DOT_DENSITY = 2; // Semakin kecil semakin padat
+      
+      // Loop through pixels and create dots for landmass
+      for (let y = 0; y < canvas.height; y += DOT_DENSITY) {
+        for (let x = 0; x < canvas.width; x += DOT_DENSITY) {
+          const index = (y * canvas.width + x) * 4;
+          // Gambar referensi: air itu putih (255), daratan itu hitam (0)
+          const r = imgData[index];
+          
+          if (r < 128) { // Jika area gelap (daratan)
+            // Convert x,y coordinates to latitude and longitude
+            const lat = 90 - (y / canvas.height) * 180;
+            const lon = (x / canvas.width) * 360 - 180;
+            
+            // Convert Lat/Lon to 3D Vector
+            const pos = latLonToVector3(lat, lon, GLOBE_RADIUS);
+            particles.push(pos.x, pos.y, pos.z);
+          }
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(particles, 3));
+
+      // Generate a circular texture procedurally for round dots
+      const circleCanvas = document.createElement('canvas');
+      circleCanvas.width = 32;
+      circleCanvas.height = 32;
+      const context = circleCanvas.getContext('2d');
+      context.beginPath();
+      context.arc(16, 16, 14, 0, Math.PI * 2);
+      context.fillStyle = '#ffffff';
+      context.fill();
+      const dotTexture = new THREE.CanvasTexture(circleCanvas);
+
+      const material = new THREE.PointsMaterial({
+        color: 0xffffff, // Putih terang yang sangat jelas
+        size: 0.045, // Diperbesar sedikit agar kepulauan seperti Indonesia terlihat jelas
+        map: dotTexture,
+        transparent: true,
+        opacity: 1.0,
+        alphaTest: 0.1,
+        depthWrite: false
+      });
+
+      const pointCloud = new THREE.Points(geometry, material);
+      earthGroup.add(pointCloud);
+    }
+
+    function buildAtmosphere() {
+      // Create a slightly larger sphere for the atmospheric glow
+      const atmosGeo = new THREE.SphereGeometry(GLOBE_RADIUS * 1.05, 64, 64);
+      
+      // Custom Shader for the glowing edge (Fresnel effect)
+      const atmosMat = new THREE.ShaderMaterial({
+        uniforms: {
+          color: { value: new THREE.Color(0x2a62b3) }, // Deep neon blue
+          viewVector: { value: camera.position }
+        },
+        vertexShader: `
+          uniform vec3 viewVector;
+          varying float intensity;
+          void main() {
+            vec3 vNormal = normalize( normalMatrix * normal );
+            vec3 vNormel = normalize( normalMatrix * viewVector );
+            // Calculate how much the normal faces AWAY from camera
+            intensity = pow( 0.6 - dot(vNormal, vNormel), 2.5 );
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 color;
+          varying float intensity;
+          void main() {
+            // Apply intensity to alpha and color brightness
+            vec3 glow = color * 1.5; 
+            gl_FragColor = vec4( glow, intensity );
+          }
+        `,
+        side: THREE.BackSide, // Render on the inside to form a halo around the sphere
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        depthWrite: false
+      });
+
+      const atmosphere = new THREE.Mesh(atmosGeo, atmosMat);
+      earthGroup.add(atmosphere);
+
+      // Add a very faint dark sphere in the center to hide dots on the back side slightly
+      // and provide a solid core to the hologram
+      const coreGeo = new THREE.SphereGeometry(GLOBE_RADIUS * 0.98, 64, 64);
+      const coreMat = new THREE.MeshBasicMaterial({ 
+        color: 0x020408, // Inti gelap pekat agar daratan putih lebih menonjol
+        transparent: true, 
+        opacity: 0.95 
+      });
+      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+      earthGroup.add(coreMesh);
+    }
+
+    // Convert Latitude and Longitude to 3D Cartesian coordinates
+    function latLonToVector3(lat, lon, radius) {
+      const phi = (90 - lat) * (Math.PI / 180);
+      const theta = (lon + 180) * (Math.PI / 180);
+
+      const x = -(radius * Math.sin(phi) * Math.cos(theta));
+      const z = (radius * Math.sin(phi) * Math.sin(theta));
+      const y = (radius * Math.cos(phi));
+
+      return new THREE.Vector3(x, y, z);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Continuous slow rotation of the entire Earth group
+      earthGroup.rotation.y += 0.0015;
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>

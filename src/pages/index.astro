@@ -5,7 +5,7 @@ import Badge from '../components/Badge.astro';
 import FloatingNav from '../components/FloatingNav.astro';
 import StatBar from '../components/StatBar.astro';
 import HowIBuild from '../components/HowIBuild.astro';
-import HeroSystemVisualizer from '../components/HeroSystemVisualizer.astro';
+import HeroGlobe from '../components/HeroGlobe.astro';
 
 import { getProfile, getTopProjects, getSkills } from '../lib/sanity';
 
@@ -19,10 +19,12 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 <Layout title="ridwanafazn">
   <FloatingNav />
 
-  <header id="hero" class="mb-6 md:mb-8 mt-0 max-w-7xl relative z-10 scroll-mt-32">
-    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:gap-10 items-center">
-      <div class="contents lg:flex lg:flex-col lg:justify-center lg:col-span-7">
-        <h1 class="text-[clamp(2rem,11vw,4.5rem)] md:text-[clamp(1.75rem,6.2vw,4.25rem)] font-bold text-on-background text-left mb-3 md:mb-6 tracking-tight leading-[1.08] opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
+  <header id="hero" class="mb-6 md:mb-2 mt-0 max-w-7xl relative z-10 scroll-mt-32">
+    <HeroGlobe />
+
+    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:gap-10 items-center pointer-events-none">
+      <div class="contents lg:flex lg:flex-col lg:justify-center lg:col-span-7 pointer-events-auto">
+        <h1 class="text-[clamp(3rem,13.5vw,4.75rem)] md:text-[clamp(1.75rem,6.2vw,4.25rem)] font-bold text-on-background text-left mb-3 md:mb-6 tracking-tight leading-[1.03] opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
           {profileData.role}.
         </h1>
 
@@ -44,9 +46,8 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
         </div>
       </div>
 
-      <div class="order-1 lg:order-none w-full mb-6 md:mb-8 lg:mb-0 lg:col-span-5 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.65s_forwards]">
-        <HeroSystemVisualizer />
-      </div>
+      <!-- Spacer kolom kanan desktop; globe dirender absolut oleh HeroGlobe -->
+      <div class="hidden lg:block lg:col-span-5 lg:h-[440px]" aria-hidden="true"></div>
     </div>
   </header>
 
