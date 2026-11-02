@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@theme {
+  /* Tipografi Inti */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Skema Warna — Editorial Minimal */
+  --color-background: #F5F4F1;
+  --color-on-background: #16151A;
+  --color-on-surface-variant: #6B6B76;
+  
+  /* Latar Belakang Kartu (Solid, tanpa transparansi) */
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #FAFAF8;
+  
+  /* Border Solid */
+  --color-outline: #DEDCD5;
+  --color-outline-strong: #C8C6BF;
+
+  /* Aksen Tunggal — Muted Slate Blue */
+  --color-accent: #64748B;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-on-background font-sans antialiased selection:bg-accent/20 selection:text-accent;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-heading);
+  }
+  
+  /* Standarisasi ikon agar lebih tebal (wght 500) */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+@layer utilities {
+  /* =========================================
+     BENTO ENGINE (Flat, minimal radius)
+     ========================================= */
+
+  .bento-card {
+    @apply bg-surface border border-outline rounded-lg transition-all duration-500 overflow-hidden relative;
+  }
+  
+  .bento-card:hover {
+    @apply bg-surface-hover border-outline-strong;
+  }
+
+  /* =========================================
+     TECH CHIP (Single accent)
+     ========================================= */
+     
+  .tech-chip {
+    @apply bg-accent/10 text-accent border border-accent/25;
+  }
+
+  /* =========================================
+     SCROLL ANIMATIONS
+     ========================================= */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.from-left {
+    transform: translateX(-28px);
+  }
+
+  .reveal.from-right {
+    transform: translateX(28px);
+  }
+
+  .reveal.from-behind {
+    transform: translateY(12px) scale(0.97);
+    opacity: 0;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Stagger delays */
+  .reveal-delay-1 { transition-delay: 80ms; }
+  .reveal-delay-2 { transition-delay: 160ms; }
+  .reveal-delay-3 { transition-delay: 240ms; }
+  .reveal-delay-4 { transition-delay: 320ms; }
+}

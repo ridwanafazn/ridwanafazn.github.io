@@ -1,0 +1,92 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Badge from '../../components/Badge.astro';
+import { getProjectById, getAllProjects } from '../../lib/sanity';
+import type { Project } from '../../types';
+
+export async function getStaticPaths() {
+  const projects = await getAllProjects();
+  return projects.map((project: Project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
+---
+
+<Layout title={`${project.title} | ridwanafazn`}>
+  <div class="pt-8 mb-8 relative z-10">
+    <a href={projectsLink} class="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold font-mono text-on-surface-variant hover:text-accent transition-colors">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+      Kembali ke Proyek
+    </a>
+  </div>
+
+  <article class="max-w-4xl mx-auto relative z-10">
+    <header class="mb-12 text-center flex flex-col items-center">
+      <span class="font-mono text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-4">
+      {project.role}
+      </span>
+      <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-8 tracking-tight">
+        {project.title}
+      </h1>
+      
+      <div class="flex flex-wrap justify-center gap-2.5 mb-8">
+        {project.techStack.map((tech) => (
+          <Badge text={tech} />
+        ))}
+      </div>
+
+      {project.links && project.links.length > 0 && (
+        <div class="flex flex-wrap justify-center gap-4 pt-2">
+          {project.links.map((link) => (
+            <a 
+              href={link.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md border border-outline-strong bg-surface text-[11px] font-mono font-bold uppercase tracking-widest text-on-surface-variant hover:bg-on-background hover:text-surface hover:border-on-background transition-all duration-300 group"
+            >
+              <span class="material-symbols-outlined text-[16px] group-hover:text-surface transition-colors">{link.icon}</span>
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="bento-card p-8 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent reveal">
+      
+      <div class="relative z-10">
+        <section class="mb-12 reveal from-behind">
+          <h2 class="text-2xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">Ringkasan Proyek</h2>
+          <p class="text-left md:text-justify text-[15px] text-on-surface-variant leading-relaxed font-medium">
+            {project.longDescription || project.description}
+          </p>
+        </section>
+
+        {project.highlights && project.highlights.length > 0 && (
+          <section class="mb-12 reveal from-behind reveal-delay-1">
+            <h2 class="text-xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">Highlights</h2>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              {project.highlights.map((feat) => (
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined text-accent mt-0.5 text-[18px]">check_circle</span>
+                  <span class="text-[14px] text-on-surface-variant font-medium">{feat}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+      </div>
+
+    </div>
+  </article>
+</Layout>

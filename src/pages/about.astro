@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Timeline from '../components/Timeline.astro';
+import { getProfile, getActivities } from '../lib/sanity';
+
+const profileData = await getProfile();
+const activitiesData = await getActivities();
+---
+
+<Layout title="Tentang — ridwanafazn">
+  <header class="mb-14 pt-0 relative z-10">
+    <div class="max-w-2xl">
+      <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-4">Latar Belakang</span>
+      <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
+      <p class="text-[15px] text-on-surface-variant leading-relaxed font-medium">
+        Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem.
+      </p>
+    </div>
+  </header>
+
+  <div class="relative z-10 mb-8">
+    {profileData?.experience && profileData.experience.length > 0 && (
+      <Timeline experience={profileData.experience} />
+    )}
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10 mb-16">
+    
+    <section class="md:col-span-8 bento-card p-8 md:p-10 relative outline-none focus-visible:ring-2 focus-visible:ring-accent">
+      
+      <div class="flex items-center gap-4 mb-12 relative z-10">
+        <div class="bg-accent/10 p-3 rounded-lg border border-accent/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-accent">school</span>
+        </div>
+        <h2 class="text-3xl font-bold text-on-background tracking-tight">Pendidikan</h2>
+      </div>
+
+      <div class="space-y-10 relative z-10 before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-accent/40 before:via-accent/20 before:to-transparent">
+        {profileData.education.map((edu, index) => (
+          <div class={`relative flex items-center justify-between md:justify-normal md:even:flex-row-reverse group reveal ${index % 2 === 0 ? 'from-left' : 'from-right'}`}>
+            
+            <div class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-surface bg-surface-hover text-accent shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 transition-transform duration-300 group-hover:scale-110 group-hover:border-accent/20">
+              <span class="material-symbols-outlined text-[20px]">memory</span>
+            </div>
+            
+            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 md:p-8 bg-surface border border-outline rounded-lg hover:border-accent/30 transition-all duration-300">
+              <h3 class="text-xl font-bold text-on-background mb-1 group-hover:text-accent transition-colors">{edu.degree}</h3>
+              <div class="font-mono text-[11px] font-semibold text-on-surface-variant mb-4">{edu.institution}</div>
+              
+              <div class="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 px-3 py-1.5 rounded-md mb-4">
+                <span class="font-mono text-[9px] uppercase tracking-widest text-accent">GPA</span>
+                <span class="font-mono text-[11px] font-bold text-accent">{edu.gpa}</span>
+              </div>
+              
+              <ul class="space-y-2.5">
+                {edu.highlights.map((highlight) => (
+                  <li class="text-[13px] text-on-surface-variant font-medium flex items-start gap-2.5">
+                    <span class="material-symbols-outlined text-[16px] text-accent mt-0.5">check_circle</span>
+                    {highlight}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-16 pt-10 border-t border-outline/40 relative z-10">
+        <div class="flex items-center gap-3 mb-8">
+          <span class="material-symbols-outlined text-accent">workspace_premium</span>
+          <h3 class="font-mono text-[11px] font-bold text-on-background uppercase tracking-widest">Sertifikasi</h3>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {profileData.certifications.map((cert, index) => (
+            <div class={`bg-surface p-5 rounded-lg border border-outline hover:border-accent/40 hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-center group reveal from-behind ${index === 1 ? 'reveal-delay-1' : ''}`}>
+              <span class="font-bold text-[13px] text-on-background mb-2 group-hover:text-accent transition-colors">{cert.name}</span>
+              <span class="text-[10px] font-mono font-semibold text-on-surface-variant">
+                {cert.issuer}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="md:col-span-4 bento-card p-8 md:p-10 flex flex-col relative outline-none focus-visible:ring-2 focus-visible:ring-accent">
+       
+       <div class="flex items-center gap-4 mb-10 relative z-10">
+        <div class="bg-accent/10 p-3 rounded-lg border border-accent/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-accent">diversity_1</span>
+        </div>
+        <h2 class="text-2xl font-bold text-on-background tracking-tight">Volunteering</h2>
+      </div>
+
+      <div class="flex-grow flex flex-col gap-6 relative z-10">
+        {activitiesData.map((activity, index) => (
+          <div class={`p-6 bg-surface rounded-lg border border-outline hover:border-accent/30 hover:-translate-y-1 transition-all duration-300 group reveal from-right ${index === 1 ? 'reveal-delay-1' : ''}`}>
+            
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-grow pr-4">
+                <h3 class="font-bold text-[14px] text-on-background leading-tight mb-1 group-hover:text-accent transition-colors">{activity.title}</h3>
+                <p class="text-[10px] font-mono font-semibold text-on-surface-variant">{activity.organization}</p>
+              </div>
+              <span class="text-[8px] uppercase tracking-widest font-mono font-bold px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded-md shrink-0">
+                {activity.type}
+              </span>
+            </div>
+            
+            <p class="text-left md:text-justify text-[13px] text-on-surface-variant font-medium mb-5 leading-relaxed">{activity.description}</p>
+            
+            <div class="flex flex-wrap gap-2">
+              {activity.highlights.map((h) => (
+                <span class="text-[9px] uppercase tracking-wider font-mono font-bold text-accent bg-accent/8 px-2 py-1 rounded-md border border-accent/20">
+                  {h}
+                </span>
+              ))}
+            </div>
+            
+          </div>
+        ))}
+      </div>
+    </section>
+    
+  </div>
+</Layout>

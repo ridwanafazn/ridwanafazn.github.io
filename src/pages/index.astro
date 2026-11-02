@@ -1,0 +1,121 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Badge from '../components/Badge.astro';
+import FloatingNav from '../components/FloatingNav.astro';
+import StatBar from '../components/StatBar.astro';
+import HowIBuild from '../components/HowIBuild.astro';
+import HeroGlobe from '../components/HeroGlobe.astro';
+
+import { getProfile, getTopProjects, getSkills } from '../lib/sanity';
+
+const profileData = await getProfile();
+const topProjects = await getTopProjects();
+const skillsData = await getSkills();
+const base = import.meta.env.BASE_URL;
+const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
+---
+
+<Layout title="ridwanafazn">
+  <FloatingNav />
+
+  <header id="hero" class="mb-6 md:mb-2 mt-0 max-w-7xl relative z-10 scroll-mt-32">
+    <HeroGlobe />
+
+    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:gap-10 items-center pointer-events-none">
+      <div class="contents lg:flex lg:flex-col lg:justify-center lg:col-span-7 pointer-events-auto">
+        <h1 class="text-[clamp(3rem,13.5vw,4.75rem)] md:text-[clamp(1.75rem,6.2vw,4.25rem)] font-bold text-on-background text-left mb-3 md:mb-6 tracking-tight leading-[1.03] opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
+          {profileData.role}.
+        </h1>
+
+        <h2 class="text-lg md:text-2xl text-on-surface-variant mb-6 font-medium max-w-3xl opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.35s_forwards]">
+          {profileData.tagline}
+        </h2>
+
+        <p class="hidden md:block text-[15px] md:text-base text-on-surface-variant leading-relaxed max-w-2xl mb-8 text-left opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards]">
+          {profileData.bio}
+        </p>
+
+        <div class="order-2 lg:order-none flex flex-wrap items-center gap-4 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.55s_forwards]">
+          <a href="mailto:ridwanafzn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+            Contact Me
+          </a>
+          <a href={projectsLink} class="inline-flex items-center justify-center bg-surface border border-outline-strong text-on-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:bg-surface-hover hover:border-accent hover:text-accent active:scale-95 transition-all duration-300">
+            Project List
+          </a>
+        </div>
+      </div>
+
+      <!-- Spacer kolom kanan desktop; globe dirender absolut oleh HeroGlobe -->
+      <div class="hidden lg:block lg:col-span-5 lg:h-[440px]" aria-hidden="true"></div>
+    </div>
+  </header>
+
+  <StatBar stats={profileData.stats} />
+
+  <section id="projects" class="mb-8 relative z-10 scroll-mt-32">
+    <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
+      <h2 class="text-3xl font-bold text-on-background tracking-tight">Featured Projects</h2>
+      
+      <a href={projectsLink} class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent hover:text-accent/80 flex items-center gap-1.5 transition-colors group">
+        Lihat Semua Proyek <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </a>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      {topProjects.map((project, i) => (
+        <div class={`h-full ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
+          <ProjectCard project={project} />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="skills" class="mb-16 relative z-10 scroll-mt-32">
+    <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
+      <h2 class="text-3xl font-bold text-on-background tracking-tight">Tech Stack</h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      {skillsData.map((skillGroup, i) => {
+        const delayClass = i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : '';
+        const dirClass = i % 2 === 0 ? 'from-left' : 'from-right';
+        return (
+          <div class={`bento-card p-5 md:p-6 flex flex-col relative overflow-hidden group reveal ${dirClass} ${delayClass}`}>
+            <div class="relative z-10 flex flex-col h-full">
+              <h3 class="font-mono text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 border-b border-outline/30 pb-4">
+                {skillGroup.category}
+              </h3>
+              <div class="flex flex-wrap gap-2.5">
+                {skillGroup.items.map((item) => (
+                  <Badge text={item} />
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="mb-20 md:mb-24 relative z-10">
+    <div class="bento-card p-6 md:p-10 relative overflow-hidden reveal">
+      <div class="relative z-10 flex flex-col md:flex-row md:items-start gap-8">
+        <div class="shrink-0">
+          <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-4">Fokus Sekarang</span>
+          <h2 class="text-2xl md:text-3xl font-bold text-on-background tracking-tight max-w-sm">
+            {profileData.currentFocus.title}
+          </h2>
+        </div>
+        <div class="flex-1 border-t md:border-t-0 md:border-l border-outline pt-6 md:pt-0 md:pl-8">
+          <p class="text-left md:text-justify text-[14px] text-on-surface-variant leading-relaxed font-medium max-w-xl">
+            {profileData.currentFocus.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowIBuild data={profileData.howIBuild} />
+
+</Layout>
