@@ -9,6 +9,9 @@ interface Props {
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project.id}`;
+const maxTech = 3;
+const visibleTech = project.techStack.slice(0, maxTech);
+const extraTech = project.techStack.length - visibleTech.length;
 ---
 
 <a href={projectLink} class="bento-card group flex flex-col p-6 md:p-7 h-full relative outline-none focus-visible:ring-2 focus-visible:ring-accent block reveal from-behind hover:-translate-y-1 transition-all duration-300">
@@ -35,9 +38,14 @@ const projectLink = `${base.endsWith('/') ? base : base + '/'}projects/${project
     </div>
 
     <div class="flex flex-wrap gap-2 mt-auto pt-4">
-      {project.techStack.map((tech) => (
+      {visibleTech.map((tech) => (
         <Badge text={tech} />
       ))}
+      {extraTech > 0 && (
+        <span class="rounded font-mono text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 border border-outline text-on-surface-variant">
+          +{extraTech}
+        </span>
+      )}
     </div>
     
   </div>

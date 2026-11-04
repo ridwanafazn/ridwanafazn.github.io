@@ -14,14 +14,68 @@ const allProjects = await getAllProjects();
     </p>
   </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 relative z-10 mb-16">
-    {allProjects.map((project, i) => {
-      const delay = i % 3 === 1 ? 'reveal-delay-1' : i % 3 === 2 ? 'reveal-delay-2' : '';
-      return (
-        <div class={`h-full reveal ${delay}`}>
-          <ProjectCard project={project} />
-        </div>
-      );
-    })}
+  <div class="relative z-10 mb-16">
+    <div
+      id="projects-carousel"
+      class="projects-carousel"
+      tabindex="0"
+      role="region"
+      aria-label="Daftar proyek. Geser ke samping untuk melihat proyek lainnya."
+    >
+      {allProjects.map((project, i) => {
+        const delay = i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : '';
+        return (
+          <div class={`project-card-wrapper reveal ${delay}`}>
+            <ProjectCard project={project} />
+          </div>
+        );
+      })}
+    </div>
+
+    <button type="button" class="carousel-nav carousel-nav--prev" data-carousel-prev aria-label="Proyek sebelumnya">
+      <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+    </button>
+    <button type="button" class="carousel-nav carousel-nav--next" data-carousel-next aria-label="Proyek berikutnya">
+      <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+    </button>
   </div>
 </Layout>
+
+<script>
+  const carousel = document.getElementById('projects-carousel') as HTMLElement | null;
+
+  if (carousel) {
+    const prevBtn = document.querySelector('[data-carousel-prev]') as HTMLButtonElement | null;
+    const nextBtn = document.querySelector('[data-carousel-next]') as HTMLButtonElement | null;
+
+    const updateState = () => {
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      const x = carousel.scrollLeft;
+      const atStart = x <= 1;
+      const atEnd = x >= maxScroll - 1;
+
+      carousel.dataset.atStart = String(atStart);
+      carousel.dataset.atEnd = String(atEnd);
+
+      if (prevBtn) prevBtn.disabled = atStart;
+      if (nextBtn) nextBtn.disabled = atEnd;
+    };
+
+    const step = (direction: number) => {
+      const card = carousel.querySelector<HTMLElement>('.project-card-wrapper');
+      const gap = parseFloat(getComputedStyle(carousel).columnGap) || 0;
+      const distance = card ? card.getBoundingClientRect().width + gap : carousel.clientWidth;
+      carousel.scrollBy({ left: direction * distance, behavior: 'smooth' });
+    };
+
+    prevBtn?.addEventListener('click', () => step(-1));
+    nextBtn?.addEventListener('click', () => step(1));
+
+    carousel.addEventListener('scroll', updateState, { passive: true });
+    window.addEventListener('resize', updateState);
+
+    // Keyboard: panah kiri/kanan sudah native saat fokus,
+    // tapi pastikan tombol juga bekerja saat fokus di tombol navigasi.
+    updateState();
+  }
+</script>

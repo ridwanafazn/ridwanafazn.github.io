@@ -100,4 +100,148 @@
   .reveal-delay-2 { transition-delay: 160ms; }
   .reveal-delay-3 { transition-delay: 240ms; }
   .reveal-delay-4 { transition-delay: 320ms; }
+
+  /* =========================================
+     HORIZONTAL SCROLL CAROUSEL (Projects)
+     ========================================= */
+
+  .projects-carousel {
+    --carousel-gap: 1.5rem; /* sama dengan gap-6 */
+    display: flex;
+    gap: var(--carousel-gap);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-block: 0.25rem 0.5rem;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    /* Scrollbar disembunyikan; navigasi lewat swipe, keyboard, atau tombol panah */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .projects-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .projects-carousel {
+      --carousel-gap: 2rem; /* md:gap-8 */
+    }
+  }
+
+  .projects-carousel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: 0.5rem;
+  }
+
+  /* Fade hanya muncul di sisi yang masih punya konten */
+  .projects-carousel[data-at-start='false'] {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 3rem);
+    mask-image: linear-gradient(to right, transparent 0, #000 3rem);
+  }
+
+  .projects-carousel[data-at-end='false'] {
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 3rem);
+    mask-image: linear-gradient(to left, transparent 0, #000 3rem);
+  }
+
+  .projects-carousel[data-at-start='false'][data-at-end='false'] {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent 100%
+    );
+  }
+
+  .project-card-wrapper {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 768px) {
+    .project-card-wrapper {
+      /* 2 kartu per layar */
+      flex-basis: calc((100% - var(--carousel-gap)) / 2);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .project-card-wrapper {
+      /* 3 kartu per layar */
+      flex-basis: calc((100% - (2 * var(--carousel-gap))) / 3);
+    }
+  }
+
+  /* Tombol navigasi carousel (desktop) */
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 20;
+    display: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid var(--color-outline-strong);
+    background: var(--color-surface);
+    color: var(--color-on-background);
+    transform: translateY(-50%);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+    cursor: pointer;
+    transition:
+      opacity 0.2s ease,
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .carousel-nav:hover {
+    background: var(--color-on-background);
+    border-color: var(--color-on-background);
+    color: var(--color-surface);
+  }
+
+  .carousel-nav:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .carousel-nav[disabled] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .carousel-nav--prev {
+    left: -1.25rem;
+  }
+
+  .carousel-nav--next {
+    right: -1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .carousel-nav {
+      display: flex;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .projects-carousel {
+      scroll-behavior: auto;
+    }
+  }
 }
