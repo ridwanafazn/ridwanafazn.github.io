@@ -5,14 +5,16 @@ import { BETTER_AUTH_SECRET, BETTER_AUTH_URL, AUTH_TRUSTED_ORIGINS } from 'astro
 import { db } from './db';
 import * as schema from '@db/schema';
 
-const trustedOrigins = (AUTH_TRUSTED_ORIGINS ?? BETTER_AUTH_URL)
+const authUrl = BETTER_AUTH_URL || 'http://localhost:4321';
+
+const trustedOrigins = (AUTH_TRUSTED_ORIGINS || authUrl)
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
 
 export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,
-  baseURL: BETTER_AUTH_URL,
+  baseURL: authUrl,
   trustedOrigins,
   database: drizzleAdapter(db, {
     provider: 'pg',
