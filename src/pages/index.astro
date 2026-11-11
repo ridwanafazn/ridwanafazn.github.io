@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Badge from '../components/Badge.astro';
@@ -7,7 +9,7 @@ import StatBar from '../components/StatBar.astro';
 import HowIBuild from '../components/HowIBuild.astro';
 import HeroGlobe from '../components/HeroGlobe.astro';
 
-import { getProfile, getTopProjects, getSkills } from '../lib/sanity';
+import { getProfile, getTopProjects, getSkills } from '../lib/content';
 
 const profileData = await getProfile();
 const topProjects = await getTopProjects();
@@ -16,7 +18,7 @@ const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 ---
 
-<Layout title="ridwanafazn">
+<Layout title="Ridwan Pages">
   <FloatingNav />
 
   <header id="hero" class="mb-6 md:mb-2 mt-0 max-w-7xl relative z-10 scroll-mt-32">

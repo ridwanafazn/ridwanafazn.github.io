@@ -1,92 +1,186 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/Badge.astro';
-import { getProjectById, getAllProjects } from '../../lib/sanity';
-import type { Project } from '../../types';
+import { getProjectById } from '../../lib/content';
 
-export async function getStaticPaths() {
-  const projects = await getAllProjects();
-  return projects.map((project: Project) => ({
-    params: { id: project.id },
-    props: { project },
-  }));
+const id = Astro.params.id!;
+let project: Awaited<ReturnType<typeof getProjectById>> | null = null;
+let notFound = false;
+
+try {
+  project = await getProjectById(id);
+} catch {
+  notFound = true;
+  Astro.response.status = 404;
 }
 
-interface Props {
-  project: Project;
-}
-
-const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 ---
 
-<Layout title={`${project.title} | ridwanafazn`}>
-  <div class="pt-8 mb-8 relative z-10">
-    <a href={projectsLink} class="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold font-mono text-on-surface-variant hover:text-accent transition-colors">
-      <span class="material-symbols-outlined text-[16px]">arrow_back</span>
-      Kembali ke Proyek
-    </a>
-  </div>
-
-  <article class="max-w-4xl mx-auto relative z-10">
-    <header class="mb-12 text-center flex flex-col items-center">
-      <span class="font-mono text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-4">
-      {project.role}
-      </span>
-      <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-8 tracking-tight">
-        {project.title}
-      </h1>
-      
-      <div class="flex flex-wrap justify-center gap-2.5 mb-8">
-        {project.techStack.map((tech) => (
-          <Badge text={tech} />
-        ))}
+{
+  notFound || !project ? (
+    <Layout title="404 · Ridwan Pages">
+      <div class="mx-auto max-w-xl py-20 text-center">
+        <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent">404</p>
+        <h1 class="mt-3 text-3xl font-bold text-on-background">Project tidak ditemukan</h1>
+        <a href={projectsLink} class="mt-6 inline-block text-sm font-semibold text-accent hover:underline">
+          ← Kembali ke daftar project
+        </a>
+      </div>
+    </Layout>
+  ) : (
+    <Layout title={`${project.title} · Ridwan Pages`}>
+      <div class="mb-8 pt-8 relative z-10">
+        <a
+          href={projectsLink}
+          class="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-accent"
+        >
+          <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+          Kembali ke Proyek
+        </a>
       </div>
 
-      {project.links && project.links.length > 0 && (
-        <div class="flex flex-wrap justify-center gap-4 pt-2">
-          {project.links.map((link) => (
-            <a 
-              href={link.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md border border-outline-strong bg-surface text-[11px] font-mono font-bold uppercase tracking-widest text-on-surface-variant hover:bg-on-background hover:text-surface hover:border-on-background transition-all duration-300 group"
-            >
-              <span class="material-symbols-outlined text-[16px] group-hover:text-surface transition-colors">{link.icon}</span>
-              {link.label}
-            </a>
-          ))}
+      <article class="mx-auto max-w-5xl relative z-10">
+        <header class="mb-10 text-center flex flex-col items-center">
+          <span class="mb-4 font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+            {project.role}
+          </span>
+          <h1 class="mb-8 text-5xl font-bold tracking-tight text-on-background md:text-6xl">
+            {project.title}
+          </h1>
+
+          <div class="mb-8 flex flex-wrap justify-center gap-2.5">
+            {project.techStack.map((tech) => <Badge text={tech} />)}
+          </div>
+
+          {
+            project.links && project.links.length > 0 && (
+              <div class="flex flex-wrap justify-center gap-4 pt-2">
+                {project.links.map((link) => (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group inline-flex items-center justify-center gap-2 rounded-md border border-outline-strong bg-surface px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition-all duration-300 hover:border-on-background hover:bg-on-background hover:text-surface"
+                  >
+                    <span class="material-symbols-outlined text-[16px] transition-colors group-hover:text-surface">
+                      {link.icon}
+                    </span>
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )
+          }
+        </header>
+
+        {
+          project.coverImage && (
+            <figure class="mb-10 overflow-hidden rounded-xl border border-outline">
+              <img
+                src={project.coverImage}
+                alt={`${project.title} cover`}
+                class="aspect-[16/9] w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+            </figure>
+          )
+        }
+
+        <div class="bento-card p-6 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent reveal">
+          <div class="relative z-10">
+            <section class="mb-12 reveal from-behind">
+              <h2 class="mb-4 border-b border-outline/30 pb-4 text-2xl font-bold text-on-background">Ringkasan Proyek</h2>
+              <p class="text-left text-[15px] font-medium leading-relaxed text-on-surface-variant md:text-justify">
+                {project.longDescription || project.description}
+              </p>
+            </section>
+
+            {
+              project.highlights && project.highlights.length > 0 && (
+                <section class="mb-12 reveal from-behind reveal-delay-1">
+                  <h2 class="mb-4 border-b border-outline/30 pb-4 text-xl font-bold text-on-background">Highlights</h2>
+                  <ul class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {project.highlights.map((feat) => (
+                      <li class="flex items-start gap-3">
+                        <span class="material-symbols-outlined mt-0.5 text-[18px] text-accent">check_circle</span>
+                        <span class="text-[14px] font-medium text-on-surface-variant">{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )
+            }
+          </div>
         </div>
-      )}
-    </header>
 
-    <div class="bento-card p-8 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent reveal">
-      
-      <div class="relative z-10">
-        <section class="mb-12 reveal from-behind">
-          <h2 class="text-2xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">Ringkasan Proyek</h2>
-          <p class="text-left md:text-justify text-[15px] text-on-surface-variant leading-relaxed font-medium">
-            {project.longDescription || project.description}
-          </p>
-        </section>
+        {
+          project.gallery && project.gallery.length > 0 && (
+            <section class="mt-12 reveal from-behind">
+              <div class="mb-5 flex items-end justify-between border-b border-outline-strong pb-4">
+                <h2 class="text-xl font-bold text-on-background">Galeri</h2>
+                <div class="flex gap-2">
+                  <button
+                    type="button"
+                    data-gallery-prev
+                    class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant transition hover:border-accent hover:text-accent"
+                    aria-label="Gambar sebelumnya"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-gallery-next
+                    class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant transition hover:border-accent hover:text-accent"
+                    aria-label="Gambar berikutnya"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </button>
+                </div>
+              </div>
 
-        {project.highlights && project.highlights.length > 0 && (
-          <section class="mb-12 reveal from-behind reveal-delay-1">
-            <h2 class="text-xl font-bold text-on-background mb-4 border-b border-outline/30 pb-4">Highlights</h2>
-            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              {project.highlights.map((feat) => (
-                <li class="flex items-start gap-3">
-                  <span class="material-symbols-outlined text-accent mt-0.5 text-[18px]">check_circle</span>
-                  <span class="text-[14px] text-on-surface-variant font-medium">{feat}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+              <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri proyek, geser ke samping">
+                {project.gallery.map((img, i) => (
+                  <figure class="gallery-item overflow-hidden rounded-xl border border-outline bg-surface">
+                    <a href={img.url} target="_blank" rel="noopener noreferrer" class="block">
+                      <img
+                        src={img.url}
+                        alt={img.alt ?? `${project!.title} — gambar ${i + 1}`}
+                        loading="lazy"
+                        decoding="async"
+                        class="aspect-[4/3] w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
+                      />
+                    </a>
+                    {img.caption && (
+                      <figcaption class="border-t border-outline px-4 py-3 text-[12px] font-medium text-on-surface-variant">
+                        {img.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </article>
+    </Layout>
+  )
+}
 
-      </div>
-
-    </div>
-  </article>
-</Layout>
+<script>
+  const track = document.querySelector<HTMLElement>('[data-gallery]');
+  if (track) {
+    const step = (dir: number) => {
+      const item = track.querySelector<HTMLElement>('.gallery-item');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
+      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
+    };
+    document.querySelector('[data-gallery-prev]')?.addEventListener('click', () => step(-1));
+    document.querySelector('[data-gallery-next]')?.addEventListener('click', () => step(1));
+  }
+</script>

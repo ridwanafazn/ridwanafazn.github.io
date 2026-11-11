@@ -14,39 +14,57 @@ const visibleTech = project.techStack.slice(0, maxTech);
 const extraTech = project.techStack.length - visibleTech.length;
 ---
 
-<a href={projectLink} class="bento-card group flex flex-col p-6 md:p-7 h-full relative outline-none focus-visible:ring-2 focus-visible:ring-accent block reveal from-behind hover:-translate-y-1 transition-all duration-300">
-  
-  <div class="absolute top-8 right-8 opacity-0 group-hover:opacity-100 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300 z-10 bg-surface border border-outline rounded-md p-2 flex items-center justify-center">
-    <span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-accent transition-colors">arrow_forward</span>
-  </div>
+<a
+  href={projectLink}
+  class="bento-card group flex h-full flex-col overflow-hidden outline-none transition-all duration-300 reveal from-behind hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-accent"
+>
+  {
+    project.coverImage && (
+      <div class="relative aspect-[16/10] w-full overflow-hidden border-b border-outline">
+        <img
+          src={project.coverImage}
+          alt={project.title}
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        />
+      </div>
+    )
+  }
 
-  <div class="relative z-10 flex flex-col h-full flex-grow">
-    
+  <div class="relative flex flex-1 flex-col p-6 md:p-7">
+    <div
+      class="absolute right-6 top-6 z-10 flex items-center justify-center rounded-md border border-outline bg-surface p-2 opacity-0 transition-all duration-300 group-hover:opacity-100 md:right-7 md:top-7"
+    >
+      <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-colors group-hover:text-accent">
+        arrow_forward
+      </span>
+    </div>
+
     <div class="mb-4 pr-10">
-      <span class="font-mono text-[9px] font-bold tracking-widest text-on-surface-variant uppercase">
+      <span class="font-mono text-[9px] font-bold uppercase tracking-widest text-on-surface-variant">
         {project.role}
       </span>
     </div>
 
-    <div class="flex-grow flex flex-col mt-2">
-      <h3 class="text-2xl font-bold text-on-background mb-2 group-hover:text-accent transition-colors duration-300 tracking-tight">
+    <div class="mt-2 flex flex-grow flex-col">
+      <h3 class="mb-2 text-2xl font-bold tracking-tight text-on-background transition-colors duration-300 group-hover:text-accent">
         {project.title}
       </h3>
-      <p class="text-left md:text-justify text-on-surface-variant text-[13px] leading-relaxed mb-4 font-medium">
+      <p class="mb-4 text-left text-[13px] font-medium leading-relaxed text-on-surface-variant md:text-justify">
         {project.description}
       </p>
     </div>
 
-    <div class="flex flex-wrap gap-2 mt-auto pt-4">
-      {visibleTech.map((tech) => (
-        <Badge text={tech} />
-      ))}
-      {extraTech > 0 && (
-        <span class="rounded font-mono text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 border border-outline text-on-surface-variant">
-          +{extraTech}
-        </span>
-      )}
+    <div class="mt-auto flex flex-wrap gap-2 pt-4">
+      {visibleTech.map((tech) => <Badge text={tech} />)}
+      {
+        extraTech > 0 && (
+          <span class="rounded border border-outline px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+            +{extraTech}
+          </span>
+        )
+      }
     </div>
-    
   </div>
 </a>

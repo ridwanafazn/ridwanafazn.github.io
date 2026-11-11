@@ -1,0 +1,122 @@
+---
+// src/pages/admin/login.astro — login form (Better Auth email/password)
+export const prerender = false;
+
+import AuthLayout from '../../layouts/AuthLayout.astro';
+
+// Hanya izinkan path internal (cegah open redirect).
+const raw = Astro.url.searchParams.get('redirect') || '/admin';
+const redirect = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/admin';
+---
+
+<AuthLayout title="Login">
+  <div class="rounded-2xl border border-outline bg-surface/70 p-6 shadow-sm backdrop-blur-xl sm:p-8">
+    <h1 class="mb-2 text-2xl font-bold text-on-background">Admin Login</h1>
+    <p class="mb-8 text-sm text-on-surface-variant">Masuk untuk mengelola konten portofolio.</p>
+
+    <form id="login-form" data-redirect={redirect} class="flex w-full flex-col gap-4" novalidate>
+      <label class="flex flex-col gap-1.5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Email</span>
+        <input
+          type="email"
+          name="email"
+          autocomplete="username"
+          required
+          placeholder="Email admin"
+          class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"
+        />
+      </label>
+      <label class="flex flex-col gap-1.5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Password</span>
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+          minlength="8"
+          placeholder="••••••••"
+          class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"
+        />
+      </label>
+
+      <p id="login-error" class="hidden rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error" role="alert"></p>
+
+      <button
+        type="submit"
+        id="login-submit"
+        class="mt-2 rounded-md bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        Sign In
+      </button>
+    </form>
+  </div>
+
+  <p class="mt-6 text-center text-[11px] text-on-surface-variant">
+    <a href="/" class="underline underline-offset-4 hover:text-accent">← Kembali ke situs</a>
+  </p>
+</AuthLayout>
+
+<script>
+  const form = document.getElementById('login-form') as HTMLFormElement | null;
+  const errorEl = document.getElementById('login-error');
+  const submitBtn = document.getElementById('login-submit') as HTMLButtonElement | null;
+
+  const messages: Record<string, string> = {
+    INVALID_EMAIL_OR_PASSWORD: 'Email atau password salah.',
+    INVALID_EMAIL: 'Format email tidak valid.',
+    USER_NOT_FOUND: 'Email atau password salah.',
+    TOO_MANY_REQUESTS: 'Terlalu banyak percobaan. Coba lagi sebentar.',
+  };
+
+  const showError = (msg: string) => {
+    if (!errorEl) return;
+    errorEl.textContent = msg;
+    errorEl.classList.remove('hidden');
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl?.classList.add('hidden');
+
+    const data = new FormData(form);
+    const email = String(data.get('email') ?? '').trim();
+    const password = String(data.get('password') ?? '');
+    const redirectTo = form.dataset.redirect || '/admin';
+
+    if (!email || !password) {
+      showError('Email dan password wajib diisi.');
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in…';
+    }
+
+    try {
+      const res = await fetch('/api/auth/sign-in/email', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email, password, callbackURL: redirectTo }),
+      });
+
+      const payload = (await res.json().catch(() => ({}))) as { message?: string; code?: string };
+
+      if (!res.ok) {
+        showError(messages[payload.code ?? ''] ?? payload.message ?? 'Login gagal. Coba lagi.');
+        return;
+      }
+
+      // Cookie session sudah di-set oleh response di atas.
+      window.location.assign(redirectTo);
+    } catch {
+      showError('Tidak dapat menghubungi server. Cek koneksi lalu coba lagi.');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+      }
+    }
+  });
+</script>

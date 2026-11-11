@@ -1,0 +1,112 @@
+---
+// src/pages/admin/index.astro — dashboard (SSR, protected)
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getAdminStats, listPortfolios } from '../../lib/queries';
+
+const user = Astro.locals.user;
+
+let stats = { portfolios: 0, published: 0, draft: 0, assets: 0, activities: 0 };
+let recent: Awaited<ReturnType<typeof listPortfolios>> = [];
+let error: string | null = null;
+
+try {
+  [stats, recent] = await Promise.all([getAdminStats(), listPortfolios({ limit: 5 })]);
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+
+const cards = [
+  { label: 'Total Project', value: stats.portfolios, href: '/admin/portfolio', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
+  { label: 'Published', value: stats.published, href: '/admin/portfolio?status=published', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { label: 'Draft', value: stats.draft, href: '/admin/portfolio?status=draft', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
+  { label: 'Assets', value: stats.assets, href: '/admin/assets', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+  { label: 'Activities', value: stats.activities, href: '/admin/activities', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+];
+---
+
+<AdminLayout title="Dashboard">
+  <div class="mb-8">
+    <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent">Overview</p>
+    <h2 class="mt-1 text-2xl font-bold tracking-tight text-on-background sm:text-3xl">
+      Halo, {user?.name?.split(' ')[0] ?? 'Admin'}
+    </h2>
+    <p class="mt-1 text-sm text-on-surface-variant">Ringkasan konten portfolio kamu.</p>
+  </div>
+
+  {
+    error && (
+      <p class="mb-6 rounded-lg border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+        DB belum siap: <span class="font-mono">{error}</span>
+      </p>
+    )
+  }
+
+  <section class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    {
+      cards.map((c) => (
+        <a
+          href={c.href}
+          class="group rounded-xl border border-outline bg-surface p-4 transition hover:-translate-y-0.5 hover:border-accent/40"
+        >
+          <svg class="mb-3 h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+            <path stroke-linecap="round" stroke-linejoin="round" d={c.icon} />
+          </svg>
+          <p class="text-2xl font-bold tabular-nums text-on-background">{c.value}</p>
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">{c.label}</p>
+        </a>
+      ))
+    }
+  </section>
+
+  <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <section class="rounded-xl border border-outline bg-surface p-5 lg:col-span-2">
+      <div class="mb-4 flex items-center justify-between">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-on-surface-variant">Project terbaru</h3>
+        <a href="/admin/portfolio" class="text-[11px] font-semibold text-accent hover:underline">Lihat semua →</a>
+      </div>
+
+      {
+        recent.length === 0 ? (
+          <p class="text-sm text-on-surface-variant">Belum ada project.</p>
+        ) : (
+          <ul class="divide-y divide-outline/60">
+            {recent.map((p) => (
+              <li class="flex items-center justify-between gap-3 py-3">
+                <div class="min-w-0">
+                  <a href={`/admin/portfolio/${p.id}`} class="block truncate text-sm font-semibold text-on-background hover:text-accent">
+                    {p.title}
+                  </a>
+                  <p class="truncate text-[11px] text-on-surface-variant">{p.role}</p>
+                </div>
+                <span class:list={[
+                  'shrink-0 rounded border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider',
+                  p.status === 'published' ? 'border-success/25 bg-success/10 text-success' : p.status === 'archived' ? 'border-outline text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
+                ]}>{p.status}</span>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <section class="rounded-xl border border-outline bg-surface p-5">
+      <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Aksi cepat</h3>
+      <div class="space-y-2">
+        <a href="/admin/portfolio/new" class="flex items-center justify-between rounded-lg border border-outline px-3 py-2.5 text-sm transition hover:border-accent hover:text-accent">
+          Tambah project <span>＋</span>
+        </a>
+        <a href="/admin/assets" class="flex items-center justify-between rounded-lg border border-outline px-3 py-2.5 text-sm transition hover:border-accent hover:text-accent">
+          Upload asset <span>＋</span>
+        </a>
+        <a href="/admin/profile" class="flex items-center justify-between rounded-lg border border-outline px-3 py-2.5 text-sm transition hover:border-accent hover:text-accent">
+          Edit profile <span>→</span>
+        </a>
+        <a href="/" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between rounded-lg border border-outline px-3 py-2.5 text-sm transition hover:border-accent hover:text-accent">
+          Lihat situs <span>↗</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</AdminLayout>

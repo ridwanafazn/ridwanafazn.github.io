@@ -1,0 +1,221 @@
+---
+// src/pages/admin/portfolio/index.astro — daftar portofolio (SSR)
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { listPortfolios, getAssetUrlMap } from '../../../lib/queries';
+import { getTransformUrl } from '../../../lib/cloudinary';
+
+const statusFilter = Astro.url.searchParams.get('status') ?? undefined;
+
+let rows: Awaited<ReturnType<typeof listPortfolios>> = [];
+let assetById = new Map<string, string>();
+let error: string | null = null;
+
+try {
+  [rows, assetById] = await Promise.all([listPortfolios({ status: statusFilter }), getAssetUrlMap()]);
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+
+const cover = (id: string | null) => {
+  if (!id) return null;
+  const pid = assetById.get(id);
+  return pid ? getTransformUrl(pid, { w: 320, h: 200, c: 'fill' }) : null;
+};
+
+const tabs = [
+  { label: 'Semua', value: '' },
+  { label: 'Published', value: 'published' },
+  { label: 'Draft', value: 'draft' },
+  { label: 'Archived', value: 'archived' },
+];
+---
+
+<AdminLayout title="Portfolio">
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h2 class="text-2xl font-bold tracking-tight text-on-background sm:text-3xl">Portfolio</h2>
+      <p class="mt-1 text-sm text-on-surface-variant">
+        {rows.length} project{statusFilter ? ` · filter: ${statusFilter}` : ''}
+      </p>
+    </div>
+    <a
+      href="/admin/portfolio/new"
+      class="rounded-lg bg-on-background px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5"
+    >
+      + New Project
+    </a>
+  </div>
+
+  <div class="mb-5 flex flex-wrap gap-1.5">
+    {
+      tabs.map((t) => (
+        <a
+          href={t.value ? `/admin/portfolio?status=${t.value}` : '/admin/portfolio'}
+          class:list={[
+            'rounded-full border px-3.5 py-1.5 text-[11px] font-semibold transition',
+            (statusFilter ?? '') === t.value
+              ? 'border-accent/30 bg-accent/10 text-accent'
+              : 'border-outline text-on-surface-variant hover:border-accent hover:text-accent',
+          ]}
+        >
+          {t.label}
+        </a>
+      ))
+    }
+  </div>
+
+  {
+    error && (
+      <p class="mb-6 rounded-lg border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+        DB belum siap: <span class="font-mono">{error}</span>
+      </p>
+    )
+  }
+
+  {!error && rows.length === 0 && (
+    <div class="rounded-xl border border-dashed border-outline p-10 text-center">
+      <p class="text-sm text-on-surface-variant">Belum ada project.</p>
+      <a href="/admin/portfolio/new" class="mt-3 inline-block text-sm font-semibold text-accent hover:underline">
+        Buat project pertama →
+      </a>
+    </div>
+  )}
+
+  <!-- Desktop table -->
+  {
+    rows.length > 0 && (
+      <div class="hidden overflow-hidden rounded-xl border border-outline bg-surface md:block">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-surface-hover text-[10px] uppercase tracking-wider text-on-surface-variant">
+            <tr>
+              <th class="px-4 py-3 font-semibold">Project</th>
+              <th class="px-4 py-3 font-semibold">Status</th>
+              <th class="px-4 py-3 font-semibold">Order</th>
+              <th class="px-4 py-3 font-semibold">Update</th>
+              <th class="px-4 py-3 text-right font-semibold">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((p) => (
+              <tr class="border-t border-outline/60 transition hover:bg-surface-hover/60">
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-3">
+                    {cover(p.coverImageId) ? (
+                      <img src={cover(p.coverImageId)!} alt="" loading="lazy" class="h-10 w-16 rounded-md border border-outline object-cover" />
+                    ) : (
+                      <span class="grid h-10 w-16 place-items-center rounded-md border border-dashed border-outline text-[9px] uppercase text-on-surface-variant">no img</span>
+                    )}
+                    <div class="min-w-0">
+                      <a href={`/admin/portfolio/${p.id}`} class="block truncate font-semibold text-on-background hover:text-accent">{p.title}</a>
+                      <span class="block truncate text-[11px] text-on-surface-variant">{p.role}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <span class:list={[
+                    'rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                    p.status === 'published' ? 'border-success/25 bg-success/10 text-success' : p.status === 'archived' ? 'border-outline bg-surface-hover text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
+                  ]}>{p.status}</span>
+                </td>
+                <td class="px-4 py-3 font-mono text-xs text-on-surface-variant">{p.order}</td>
+                <td class="px-4 py-3 text-xs text-on-surface-variant">{p.updatedAt?.toISOString().slice(0, 10)}</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <a href={`/admin/portfolio/${p.id}`} class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Edit</a>
+                    <a href={`/preview/portfolio/${p.slug}`} target="_blank" rel="noopener noreferrer" class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Preview</a>
+                    <button type="button" data-action="duplicate" data-id={p.id} class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Duplicate</button>
+                    {p.status !== 'published' && (
+                      <button type="button" data-action="publish" data-id={p.id} class="rounded-md border border-success/30 px-2 py-1 text-[11px] font-semibold text-success hover:bg-success/10">Publish</button>
+                    )}
+                    {p.status === 'published' && (
+                      <button type="button" data-action="archive" data-id={p.id} class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Archive</button>
+                    )}
+                    <button type="button" data-action="delete" data-id={p.id} class="rounded-md border border-error/25 px-2 py-1 text-[11px] font-semibold text-error hover:bg-error/10">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  <!-- Mobile cards -->
+  {
+    rows.length > 0 && (
+      <div class="space-y-3 md:hidden">
+        {rows.map((p) => (
+          <div class="rounded-xl border border-outline bg-surface p-4">
+            <div class="flex items-start gap-3">
+              {cover(p.coverImageId) ? (
+                <img src={cover(p.coverImageId)!} alt="" loading="lazy" class="h-14 w-20 rounded-lg border border-outline object-cover" />
+              ) : (
+                <span class="grid h-14 w-20 place-items-center rounded-lg border border-dashed border-outline text-[9px] uppercase text-on-surface-variant">no img</span>
+              )}
+              <div class="min-w-0 flex-1">
+                <a href={`/admin/portfolio/${p.id}`} class="block truncate font-semibold text-on-background">{p.title}</a>
+                <p class="truncate text-[11px] text-on-surface-variant">{p.role}</p>
+                <div class="mt-1.5 flex items-center gap-2">
+                  <span class:list={[
+                    'rounded border px-1.5 py-0.5 text-[9px] font-bold uppercase',
+                    p.status === 'published' ? 'border-success/25 bg-success/10 text-success' : p.status === 'archived' ? 'border-outline text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
+                  ]}>{p.status}</span>
+                  <span class="font-mono text-[10px] text-on-surface-variant">#{p.order}</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <a href={`/admin/portfolio/${p.id}`} class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">Edit</a>
+              <a href={`/preview/portfolio/${p.slug}`} target="_blank" rel="noopener noreferrer" class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">Preview</a>
+              {p.status !== 'published' && (
+                <button type="button" data-action="publish" data-id={p.id} class="rounded-md border border-success/30 px-2.5 py-1 text-[11px] font-semibold text-success">Publish</button>
+              )}
+              {p.status === 'published' && (
+                <button type="button" data-action="archive" data-id={p.id} class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">Archive</button>
+              )}
+              <button type="button" data-action="delete" data-id={p.id} class="rounded-md border border-error/25 px-2.5 py-1 text-[11px] font-semibold text-error">Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+</AdminLayout>
+
+<script>
+  const run = async (btn: HTMLButtonElement) => {
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    if (!id || !action) return;
+
+    if (action === 'delete' && !confirm('Hapus project ini?')) return;
+
+    if (action === 'duplicate') {
+      const res = await fetch(`/admin/api/portfolio/${id}/duplicate`, { method: 'POST' });
+      if (res.ok) {
+        const row = await res.json();
+        (window as any).toast?.('Draft duplikat dibuat');
+        location.href = `/admin/portfolio/${row.id}`;
+      } else {
+        (window as any).toast?.(`Gagal: ${await res.text()}`, 'error');
+      }
+      return;
+    }
+
+    const url = `/admin/api/portfolio/${id}${action === 'publish' ? '/publish' : action === 'archive' ? '/archive' : ''}`;
+    const res = await fetch(url, { method: action === 'delete' ? 'DELETE' : 'POST' });
+    if (res.ok) {
+      (window as any).toast?.(action === 'delete' ? 'Project dihapus' : action === 'publish' ? 'Dipublish' : 'Diarsipkan');
+      setTimeout(() => location.reload(), 400);
+    } else {
+      (window as any).toast?.(`Gagal: ${await res.text()}`, 'error');
+    }
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-action]').forEach((btn) => {
+    btn.addEventListener('click', () => run(btn));
+  });
+</script>

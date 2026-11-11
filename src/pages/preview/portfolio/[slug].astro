@@ -1,0 +1,177 @@
+---
+// src/pages/preview/portfolio/[slug].astro — preview draft (SSR)
+export const prerender = false;
+
+import Layout from '../../../layouts/Layout.astro';
+import Badge from '../../../components/Badge.astro';
+import { getPortfolioBySlug, getAssetUrlMap } from '../../../lib/queries';
+import { getTransformUrl } from '../../../lib/cloudinary';
+
+const { slug } = Astro.params;
+let row: Awaited<ReturnType<typeof getPortfolioBySlug>> = null;
+let error: string | null = null;
+let cover: string | null = null;
+let gallery: { url: string; caption?: string; alt?: string }[] = [];
+
+try {
+  row = await getPortfolioBySlug(slug!);
+  if (!row) {
+    error = 'Draft tidak ditemukan.';
+  } else {
+    const byId = await getAssetUrlMap();
+    const coverPublic = row.coverImageId ? byId.get(row.coverImageId) : undefined;
+    cover = coverPublic ? getTransformUrl(coverPublic, { w: 1400, c: 'fill', h: 788 }) : null;
+    gallery = [];
+    for (const g of row.gallery ?? []) {
+      const publicId = byId.get(g.assetId);
+      if (!publicId) continue;
+      gallery.push({
+        url: getTransformUrl(publicId, { w: 1200, c: 'fill', h: 900 }),
+        caption: g.caption,
+        alt: g.alt,
+      });
+    }
+  }
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+---
+
+<Layout title={row ? `${row.title} · Preview · Ridwan Pages` : 'Preview · Ridwan Pages'}>
+  <div class="fixed inset-x-0 top-0 z-50 border-b border-accent/30 bg-on-background/95 px-4 py-2 text-center text-sm text-background backdrop-blur">
+    <span class="font-bold uppercase tracking-wider">Mode Preview</span>. Ini tampilan draft, belum dipublikasikan.
+    {row && <a href={`/admin/portfolio/${row.id}`} class="ml-4 underline underline-offset-4">← Kembali ke Edit</a>}
+  </div>
+
+  <div class="pt-12">
+    {
+      error && (
+        <p class="mx-auto max-w-xl rounded-md border border-accent/30 bg-accent/10 p-6 text-sm text-on-surface-variant">
+          {error}. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
+        </p>
+      )
+    }
+
+    {
+      row && (
+        <article class="mx-auto max-w-5xl pt-8">
+          <header class="mb-10 text-center">
+            <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+              {row.role}
+            </span>
+            <h1 class="mt-4 text-5xl font-bold text-on-background md:text-6xl">{row.title}</h1>
+
+            <div class="mt-6 flex flex-wrap justify-center gap-2.5">
+              {row.techStack.map((tech) => <Badge text={tech} />)}
+            </div>
+          </header>
+
+          {cover && (
+            <figure class="mb-10 overflow-hidden rounded-xl border border-outline">
+              <img src={cover} alt={`${row.title} cover`} class="aspect-[16/9] w-full object-cover" decoding="async" />
+            </figure>
+          )}
+
+          <div class="bento-card p-6 md:p-12">
+            <section>
+              <h2 class="mb-4 border-b border-outline/30 pb-4 text-2xl font-bold text-on-background">Ringkasan</h2>
+              <p class="text-justify text-[15px] leading-relaxed text-on-surface-variant">
+                {row.longDescription || row.description}
+              </p>
+            </section>
+
+            {
+              row.highlights.length > 0 && (
+                <section class="mt-12">
+                  <h2 class="mb-4 border-b border-outline/30 pb-4 text-xl font-bold text-on-background">Highlights</h2>
+                  <ul class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {row.highlights.map((feat) => (
+                      <li class="flex items-start gap-3">
+                        <span class="material-symbols-outlined mt-0.5 text-[18px] text-accent">check_circle</span>
+                        <span class="text-[14px] font-medium text-on-surface-variant">{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )
+            }
+
+            {
+              row.links.length > 0 && (
+                <section class="mt-12">
+                  <h2 class="mb-4 border-b border-outline/30 pb-4 text-xl font-bold text-on-background">Links</h2>
+                  <div class="mt-6 flex flex-wrap gap-4">
+                    {row.links.map((link) => (
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 rounded-md border border-outline-strong bg-surface px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition hover:bg-on-background hover:text-surface"
+                      >
+                        <span class="material-symbols-outlined text-[16px]">{link.icon}</span>
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )
+            }
+          </div>
+
+          {
+            gallery.length > 0 && (
+              <section class="mt-12">
+                <div class="mb-5 flex items-end justify-between border-b border-outline-strong pb-4">
+                  <h2 class="text-xl font-bold text-on-background">Galeri</h2>
+                  <div class="flex gap-2">
+                    <button type="button" data-gallery-prev class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant hover:border-accent hover:text-accent" aria-label="Sebelumnya">
+                      <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button type="button" data-gallery-next class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant hover:border-accent hover:text-accent" aria-label="Berikutnya">
+                      <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri preview">
+                  {gallery.map((img, i) => (
+                    <figure class="gallery-item overflow-hidden rounded-xl border border-outline bg-surface">
+                      <a href={img.url} target="_blank" rel="noopener noreferrer" class="block">
+                        <img
+                          src={img.url}
+                          alt={img.alt ?? `${row.title} — gambar ${i + 1}`}
+                          loading="lazy"
+                          decoding="async"
+                          class="aspect-[4/3] w-full object-cover"
+                        />
+                      </a>
+                      {img.caption && (
+                        <figcaption class="border-t border-outline px-4 py-3 text-[12px] font-medium text-on-surface-variant">
+                          {img.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            )
+          }
+        </article>
+      )
+    }
+  </div>
+</Layout>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-gallery]');
+  if (track) {
+    const step = (dir: number) => {
+      const item = track.querySelector<HTMLElement>('.gallery-item');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
+      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
+    };
+    document.querySelector('[data-gallery-prev]')?.addEventListener('click', () => step(-1));
+    document.querySelector('[data-gallery-next]')?.addEventListener('click', () => step(1));
+  }
+</script>

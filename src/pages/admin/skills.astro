@@ -1,0 +1,82 @@
+---
+// src/pages/admin/skills.astro — editor skills singleton (SSR)
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getSkills } from '../../lib/queries';
+
+let row: Awaited<ReturnType<typeof getSkills>> = null;
+let error: string | null = null;
+
+try {
+  row = await getSkills();
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+
+const categories = row?.categories ?? [];
+---
+
+<AdminLayout title="Skills">
+  <h1 class="mb-8 text-3xl font-bold text-on-background">Tech Skills</h1>
+
+  {
+    error && (
+      <p class="mb-6 rounded-md border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+        <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
+      </p>
+    )
+  }
+
+  <form id="skills-form" class="flex max-w-2xl flex-col gap-4">
+    <p class="text-sm text-on-surface-variant">
+      Format per kategori: <code class="font-mono">Kategori: item1, item2, item3</code> (satu kategori per baris).
+    </p>
+    <textarea
+      name="categories"
+      rows="10"
+      class="rounded-md border border-outline bg-surface px-3 py-2 font-mono text-sm text-on-background outline-none focus:border-accent"
+      placeholder={'Frontend: React, Astro, Tailwind\nBackend: Node.js, Postgres, Drizzle'}
+    >{categories.map((c) => `${c.category}: ${c.items.join(', ')}`).join('\n')}</textarea>
+    <button
+      type="submit"
+      id="save"
+      class="mt-2 w-fit rounded-md bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background hover:-translate-y-0.5"
+    >
+      Simpan Skills
+    </button>
+  </form>
+</AdminLayout>
+
+<script>
+  const form = document.getElementById('skills-form') as HTMLFormElement | null;
+  const notify = (m: string, t: 'success' | 'error' = 'success') => (window as any).toast?.(m, t);
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const raw = new FormData(form).get('categories');
+    const categories = String(raw ?? '')
+      .split('\n')
+      .map((line) => {
+        const [category, ...rest] = line.split(':');
+        if (!category?.trim()) return null;
+        const items = rest
+          .join(':')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        return { category: category.trim(), items };
+      })
+      .filter((c): c is { category: string; items: string[] } => Boolean(c));
+    try {
+      const res = await fetch('/admin/api/skills', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ categories }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      notify('Skills tersimpan');
+    } catch (err) {
+      notify(`Gagal: ${err}`, 'error');
+    }
+  });
+</script>

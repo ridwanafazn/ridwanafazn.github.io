@@ -1,0 +1,103 @@
+---
+// src/pages/admin/profile.astro — editor profil singleton (SSR)
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getProfile } from '../../lib/queries';
+
+let row: Awaited<ReturnType<typeof getProfile>> = null;
+let error: string | null = null;
+
+try {
+  row = await getProfile();
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+---
+
+<AdminLayout title="Profile">
+  <h1 class="mb-8 text-3xl font-bold text-on-background">Profile</h1>
+
+  {
+    error && (
+      <p class="mb-6 rounded-md border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+        <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
+      </p>
+    )
+  }
+
+  <form id="profile-form" class="flex max-w-2xl flex-col gap-4">
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Nama *</span>
+      <input name="name" required maxlength="100" value={row?.name ?? ''} class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Nickname</span>
+      <input name="nickname" maxlength="50" value={row?.nickname ?? ''} class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Role *</span>
+      <input name="role" required maxlength="100" value={row?.role ?? ''} class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Tagline</span>
+      <input name="tagline" maxlength="200" value={row?.tagline ?? ''} class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Bio</span>
+      <textarea name="bio" rows="4" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent">{row?.bio ?? ''}</textarea>
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">URL CV</span>
+      <input name="cvUrl" type="url" maxlength="500" placeholder="https://drive.google.com/..." value={row?.cvUrl ?? ''} class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+      <span class="text-[11px] text-on-surface-variant">Dipakai untuk tombol Resume di desktop dan mobile sekaligus.</span>
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Judul Current Focus</span>
+      <input name="currentFocusTitle" maxlength="100" value={row?.currentFocus?.title ?? ''} class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Deskripsi Current Focus</span>
+      <textarea name="currentFocusDescription" rows="3" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent">{row?.currentFocus?.description ?? ''}</textarea>
+    </label>
+    <button
+      type="submit"
+      id="save"
+      class="mt-4 w-fit rounded-md bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background hover:-translate-y-0.5"
+    >
+      Simpan Profile
+    </button>
+  </form>
+</AdminLayout>
+
+<script>
+  const form = document.getElementById('profile-form') as HTMLFormElement | null;
+  const notify = (m: string, t: 'success' | 'error' = 'success') => (window as any).toast?.(m, t);
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const payload = {
+      name: fd.get('name'),
+      nickname: fd.get('nickname') || undefined,
+      role: fd.get('role'),
+      tagline: fd.get('tagline') || undefined,
+      bio: fd.get('bio') || undefined,
+      cvUrl: fd.get('cvUrl') || undefined,
+      currentFocus:
+        fd.get('currentFocusTitle') || fd.get('currentFocusDescription')
+          ? { title: String(fd.get('currentFocusTitle')), description: String(fd.get('currentFocusDescription')) }
+          : undefined,
+    };
+    try {
+      const res = await fetch('/admin/api/profile', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      notify('Profile tersimpan');
+    } catch (err) {
+      notify(`Gagal: ${err}`, 'error');
+    }
+  });
+</script>

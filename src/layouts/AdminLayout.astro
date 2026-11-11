@@ -1,0 +1,337 @@
+---
+// src/layouts/AdminLayout.astro — admin shell (responsive sidebar + toast)
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const path = Astro.url.pathname;
+const user = Astro.locals.user;
+
+const nav = [
+  {
+    href: '/admin',
+    label: 'Dashboard',
+    d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+  },
+  {
+    href: '/admin/portfolio',
+    label: 'Portfolio',
+    d: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
+  },
+  {
+    href: '/admin/profile',
+    label: 'Profile',
+    d: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
+  },
+  {
+    href: '/admin/skills',
+    label: 'Skills',
+    d: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+  },
+  {
+    href: '/admin/activities',
+    label: 'Activities',
+    d: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+  },
+  {
+    href: '/admin/assets',
+    label: 'Assets',
+    d: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z',
+  },
+];
+
+const isActive = (href: string) =>
+  href === '/admin' ? path === '/admin' : path.startsWith(href);
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title} · Ridwan Pages</title>
+    <script is:inline>
+      try {
+        if (localStorage.getItem('admin-sidebar') === 'collapsed') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch {}
+    </script>
+    <style>
+      @media (min-width: 1024px) {
+        #admin-sidebar { transition: width 0.2s ease; }
+        #admin-content { transition: padding-left 0.2s ease; }
+        html.sidebar-collapsed #admin-sidebar { width: 5rem; }
+        html.sidebar-collapsed #admin-content { padding-left: 5rem; }
+        html.sidebar-collapsed .sidebar-label { display: none; }
+        html.sidebar-collapsed #admin-sidebar .sidebar-row { justify-content: center; padding-left: 0; padding-right: 0; }
+        html.sidebar-collapsed #admin-sidebar .sidebar-footer-actions { flex-direction: column; }
+        html.sidebar-collapsed #admin-sidebar .sidebar-footer-actions > * { flex: none; }
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen bg-background text-on-background antialiased">
+    <div class="lg:flex">
+      <!-- Sidebar desktop -->
+      <aside
+        id="admin-sidebar"
+        class="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-outline bg-surface/70 backdrop-blur-xl lg:flex"
+      >
+        <div class="sidebar-row flex h-16 items-center gap-2 border-b border-outline px-5">
+          <span class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-on-background font-mono text-sm font-bold text-background">
+            p
+          </span>
+          <div class="sidebar-label leading-tight">
+            <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-on-background">
+              ridwanafazn
+            </p>
+            <p class="text-[10px] text-on-surface-variant">admin panel</p>
+          </div>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto p-3">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                title={item.label}
+                class:list={[
+                  'sidebar-row group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                  isActive(item.href)
+                    ? 'bg-accent/10 text-accent'
+                    : 'text-on-surface-variant hover:bg-surface-hover hover:text-on-background',
+                ]}
+              >
+                <svg
+                  class="h-[18px] w-[18px] shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  set:html={`<path stroke-linecap="round" stroke-linejoin="round" d="${item.d}" />`}
+                />
+                <span class="sidebar-label truncate">{item.label}</span>
+              </a>
+            ))
+          }
+        </nav>
+
+        <div class="border-t border-outline p-3">
+          <div class="sidebar-row mb-3 flex items-center gap-2.5 rounded-lg bg-surface-hover/60 px-3 py-2.5">
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/15 text-accent">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </span>
+            <div class="sidebar-label min-w-0">
+              <p class="truncate text-xs font-semibold text-on-background">{user?.name ?? 'Admin'}</p>
+              <p class="truncate text-[11px] text-on-surface-variant">{user?.email ?? ''}</p>
+            </div>
+          </div>
+          <div class="sidebar-footer-actions flex gap-2">
+            <a
+              href="/"
+              title="Lihat situs"
+              class="sidebar-row flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-outline px-3 py-2 text-center text-[11px] font-semibold text-on-surface-variant transition hover:border-accent hover:text-accent"
+            >
+              <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              <span class="sidebar-label">Situs</span>
+            </a>
+            <button
+              type="button"
+              id="logout"
+              title="Logout"
+              class="sidebar-row flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-error/25 px-3 py-2 text-[11px] font-semibold text-error transition hover:bg-error/10"
+            >
+              <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              <span class="sidebar-label">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Drawer mobile -->
+      <div id="drawer" class="fixed inset-0 z-50 hidden lg:hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-drawer-close></div>
+        <aside class="absolute right-0 top-0 flex h-full w-[78%] max-w-xs flex-col border-l border-outline bg-background">
+          <div class="flex h-16 items-center justify-between border-b border-outline px-5">
+            <span class="font-mono text-[11px] font-bold uppercase tracking-widest text-on-background">ridwanafazn</span>
+            <button type="button" class="rounded-md p-2 text-on-surface-variant hover:bg-surface-hover" data-drawer-close aria-label="Tutup">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <nav class="flex-1 space-y-1 overflow-y-auto p-3">
+            {
+              nav.map((item) => (
+                <a
+                  href={item.href}
+                  class:list={[
+                    'flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium',
+                    isActive(item.href)
+                      ? 'bg-accent/10 text-accent'
+                      : 'text-on-surface-variant hover:bg-surface-hover',
+                  ]}
+                >
+                  <svg class="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+                    <path stroke-linecap="round" stroke-linejoin="round" d={item.d} />
+                  </svg>
+                  {item.label}
+                </a>
+              ))
+            }
+          </nav>
+          <div class="space-y-2 border-t border-outline p-4">
+            <p class="truncate text-xs text-on-surface-variant">{user?.email}</p>
+            <div class="flex gap-2">
+              <a href="/" class="flex-1 rounded-lg border border-outline px-3 py-2 text-center text-[11px] font-semibold text-on-surface-variant">
+                Situs
+              </a>
+              <button type="button" id="logout-mobile" class="flex-1 rounded-lg border border-error/25 px-3 py-2 text-[11px] font-semibold text-error">
+                Logout
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Content -->
+      <div id="admin-content" class="flex min-h-screen flex-1 flex-col lg:pl-64">
+        <header
+          class="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-outline bg-background/85 px-4 backdrop-blur-xl sm:px-6"
+        >
+          <button
+            type="button"
+            id="drawer-open"
+            class="rounded-lg border border-outline p-2 text-on-surface-variant lg:hidden"
+            aria-label="Buka menu"
+          >
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            id="sidebar-toggle"
+            class="hidden rounded-lg border border-outline p-2 text-on-surface-variant transition hover:border-accent hover:text-accent lg:inline-flex"
+            aria-label="Perkecil atau perlebar sidebar"
+            aria-pressed="false"
+            title="Perkecil sidebar"
+          >
+            <svg id="sidebar-toggle-icon" class="h-5 w-5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <h1 class="truncate text-sm font-semibold text-on-background sm:text-base">{title}</h1>
+
+          <div class="ml-auto flex items-center gap-2">
+            <a
+              href="/admin/portfolio/new"
+              class="hidden rounded-lg bg-on-background px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5 sm:inline-flex"
+            >
+              + Project
+            </a>
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-accent/15 text-[11px] font-bold uppercase text-accent">
+              {(user?.name ?? 'A').slice(0, 1)}
+            </span>
+          </div>
+        </header>
+
+        <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+          <slot />
+        </main>
+      </div>
+    </div>
+
+    <div id="toast-root" class="pointer-events-none fixed bottom-4 right-4 z-[100] flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2"></div>
+
+    <script>
+      // Sidebar collapse (desktop)
+      const docRoot = document.documentElement;
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+
+      const syncSidebarToggle = () => {
+        const collapsed = docRoot.classList.contains('sidebar-collapsed');
+        sidebarToggleIcon?.classList.toggle('rotate-180', collapsed);
+        sidebarToggle?.setAttribute('aria-pressed', String(collapsed));
+        sidebarToggle?.setAttribute('title', collapsed ? 'Perlebar sidebar' : 'Perkecil sidebar');
+      };
+
+      syncSidebarToggle();
+      sidebarToggle?.addEventListener('click', () => {
+        const collapsed = docRoot.classList.toggle('sidebar-collapsed');
+        try {
+          localStorage.setItem('admin-sidebar', collapsed ? 'collapsed' : 'expanded');
+        } catch {}
+        syncSidebarToggle();
+      });
+
+      // Drawer
+      const drawer = document.getElementById('drawer');
+      const openDrawer = () => drawer?.classList.remove('hidden');
+      const closeDrawer = () => drawer?.classList.add('hidden');
+      document.getElementById('drawer-open')?.addEventListener('click', openDrawer);
+      document.querySelectorAll('[data-drawer-close]').forEach((el) => el.addEventListener('click', closeDrawer));
+
+      // Logout
+      const logout = async () => {
+        try {
+          await fetch('/api/auth/sign-out', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: '{}',
+          });
+        } finally {
+          location.href = '/admin/login';
+        }
+      };
+      document.getElementById('logout')?.addEventListener('click', logout);
+      document.getElementById('logout-mobile')?.addEventListener('click', logout);
+
+      // Toast
+      const root = document.getElementById('toast-root');
+      const icon = (type: string) =>
+        type === 'error'
+          ? '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />';
+
+      (window as any).toast = (message: string, type: 'success' | 'error' = 'success') => {
+        const el = document.createElement('div');
+        el.className =
+          'pointer-events-auto flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm shadow-lg backdrop-blur ' +
+          (type === 'error'
+            ? 'border-error/30 bg-error/10 text-error'
+            : 'border-success/30 bg-success/10 text-success');
+        el.innerHTML = `<svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">${icon(type)}</svg><span class="text-on-background">${message}</span>`;
+        root?.appendChild(el);
+        setTimeout(() => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(6px)';
+          el.style.transition = 'all .25s';
+          setTimeout(() => el.remove(), 250);
+        }, 3200);
+      };
+    </script>
+  </body>
+</html>

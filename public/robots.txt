@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /preview
+Disallow: /preview/
+Disallow: /api/auth
+
+Sitemap: https://ridwanafazn.my.id/sitemap.xml

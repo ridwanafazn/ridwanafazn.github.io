@@ -1,0 +1,18 @@
+allowBuilds:
+  esbuild: true
+  workerd: true
+
+minimumReleaseAgeExclude:
+  - '@astrojs/cloudflare@14.4.7'
+  - '@astrojs/internal-helpers@0.13.2'
+  - '@astrojs/react-renderer@0.1.1'
+  - '@astrojs/react@7.1.7'
+  - '@astrojs/runtime@0.1.0'
+  - '@better-auth/core@1.7.20'
+  - '@better-auth/drizzle-adapter@1.7.20'
+  - '@better-auth/kysely-adapter@1.7.20'
+  - '@better-auth/memory-adapter@1.7.20'
+  - '@better-auth/mongo-adapter@1.7.20'
+  - '@better-auth/prisma-adapter@1.7.20'
+  - '@better-auth/telemetry@1.7.20'
+  - better-auth@1.7.20

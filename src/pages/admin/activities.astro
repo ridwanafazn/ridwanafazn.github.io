@@ -1,0 +1,209 @@
+---
+// src/pages/admin/activities.astro — CRUD activities (SSR)
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { listActivities } from '../../lib/queries';
+
+let rows: Awaited<ReturnType<typeof listActivities>> = [];
+let error: string | null = null;
+
+try {
+  rows = await listActivities();
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+---
+
+<AdminLayout title="Activities">
+  <h1 class="mb-8 text-3xl font-bold text-on-background">Activities</h1>
+
+  {
+    error && (
+      <p class="mb-6 rounded-md border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+        <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
+      </p>
+    )
+  }
+
+  <form id="activity-form" class="mb-10 flex max-w-2xl flex-col gap-4 rounded-lg border border-outline p-5">
+    <h2 id="activity-form-title" class="text-lg font-bold text-on-background">Tambah Activity</h2>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Type *</span>
+      <select name="type" required class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent">
+        <option value="Volunteer">Volunteer</option>
+        <option value="Publication">Publication</option>
+        <option value="Leadership">Leadership</option>
+      </select>
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Title *</span>
+      <input name="title" required maxlength="200" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Organization *</span>
+      <input name="organization" required maxlength="200" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Description</span>
+      <textarea name="description" rows="3" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"></textarea>
+    </label>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Highlights</span>
+      <input name="highlights" placeholder="Pisahkan dengan koma" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+    </label>
+    <div class="flex flex-wrap items-center gap-2">
+      <button type="submit" id="activity-submit" class="w-fit rounded-md bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background hover:-translate-y-0.5">
+        Tambah
+      </button>
+      <button type="button" id="activity-cancel" class="hidden w-fit rounded-md border border-outline px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-on-surface-variant hover:border-accent hover:text-accent">
+        Batal
+      </button>
+    </div>
+  </form>
+
+  {rows.length > 0 && (
+    <div class="overflow-x-auto rounded-lg border border-outline">
+      <table class="w-full min-w-[720px] text-left text-sm">
+        <thead class="bg-surface-hover text-xs uppercase tracking-wider text-on-surface-variant">
+          <tr>
+            <th class="px-4 py-3">Type</th>
+            <th class="px-4 py-3">Title</th>
+            <th class="px-4 py-3">Organization</th>
+            <th class="px-4 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((a) => (
+              <tr class="border-t border-outline/60 hover:bg-surface-hover/50">
+                <td class="px-4 py-3">
+                  <span class="rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/20">{a.type}</span>
+                </td>
+                <td class="px-4 py-3 font-semibold text-on-background">{a.title}</td>
+                <td class="px-4 py-3 text-on-surface-variant">{a.organization}</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      data-action="edit-activity"
+                      data-id={a.id}
+                      data-type={a.type}
+                      data-title={a.title}
+                      data-organization={a.organization}
+                      data-description={a.description ?? ''}
+                      data-slug={a.slug}
+                      data-highlights={(a.highlights ?? []).join(', ')}
+                      class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      data-action="delete-activity"
+                      data-id={a.id}
+                      class="rounded-md border border-error/30 px-2 py-1 text-[11px] font-semibold text-error hover:bg-error/10"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>
+
+<script>
+  const form = document.getElementById('activity-form') as HTMLFormElement | null;
+  const formTitle = document.getElementById('activity-form-title');
+  const submitBtn = document.getElementById('activity-submit');
+  const cancelBtn = document.getElementById('activity-cancel');
+  const notify = (m: string, t: 'success' | 'error' = 'success') => (window as any).toast?.(m, t);
+
+  let editing: { id: string; slug: string } | null = null;
+
+  const field = (name: string) => form?.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+
+  const resetForm = () => {
+    form?.reset();
+    editing = null;
+    if (formTitle) formTitle.textContent = 'Tambah Activity';
+    if (submitBtn) submitBtn.textContent = 'Tambah';
+    cancelBtn?.classList.add('hidden');
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const title = String(fd.get('title') ?? '').trim();
+    const slug =
+      editing?.slug ??
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    const payload = {
+      type: fd.get('type'),
+      title,
+      slug,
+      organization: String(fd.get('organization') ?? '').trim(),
+      description: String(fd.get('description') ?? ''),
+      highlights: String(fd.get('highlights') ?? '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    };
+
+    try {
+      const url = editing ? `/admin/api/activities/${editing.id}` : '/admin/api/activities';
+      const res = await fetch(url, {
+        method: editing ? 'PATCH' : 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      notify(editing ? 'Activity diperbarui' : 'Activity ditambahkan');
+      setTimeout(() => location.reload(), 600);
+    } catch (err) {
+      notify(`Gagal: ${err}`, 'error');
+    }
+  });
+
+  cancelBtn?.addEventListener('click', resetForm);
+
+  document.querySelectorAll<HTMLButtonElement>('[data-action="edit-activity"]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const d = btn.dataset;
+      editing = { id: d.id!, slug: d.slug! };
+
+      if (field('type')) field('type')!.value = d.type ?? 'Volunteer';
+      if (field('title')) field('title')!.value = d.title ?? '';
+      if (field('organization')) field('organization')!.value = d.organization ?? '';
+      if (field('description')) field('description')!.value = d.description ?? '';
+      if (field('highlights')) field('highlights')!.value = d.highlights ?? '';
+
+      if (formTitle) formTitle.textContent = 'Edit Activity';
+      if (submitBtn) submitBtn.textContent = 'Simpan Perubahan';
+      cancelBtn?.classList.remove('hidden');
+      form?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-action="delete-activity"]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Hapus activity ini?')) return;
+      try {
+        const res = await fetch(`/admin/api/activities/${btn.dataset.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(await res.text());
+        location.reload();
+      } catch (err) {
+        notify(`Gagal: ${err}`, 'error');
+      }
+    });
+  });
+</script>

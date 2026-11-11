@@ -1,12 +1,14 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { getAllProjects } from '../../lib/sanity';
+import { getAllProjects } from '../../lib/content';
 
 const allProjects = await getAllProjects();
 ---
 
-<Layout title="Project Vault">
+<Layout title="Project Vault · Ridwan Pages">
   <header class="pt-0 mb-16 relative z-10">
     <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">Portofolio Proyek</h1>
     <p class="text-left md:text-justify text-lg text-on-surface-variant max-w-2xl leading-relaxed">

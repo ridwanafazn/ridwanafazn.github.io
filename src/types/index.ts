@@ -33,6 +33,7 @@ export interface Profile {
   role: string;
   tagline: string;
   bio: string;
+  cvUrl?: string;
   currentFocus?: CurrentFocus;
   stats?: Stat[];
   experience?: Experience[];
@@ -67,6 +68,8 @@ export interface Project {
   highlights: string[];
   isTopProject: boolean;
   status?: string;
+  coverImage?: string;
+  gallery?: { url: string; caption?: string; alt?: string }[];
   links?: {
     label: string;
     url: string;

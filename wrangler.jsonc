@@ -1,0 +1,50 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portofx-v2",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "drop-trailing-slash"
+  },
+
+  "observability": {
+    "enabled": true
+  },
+
+  "vars": {
+    "NODE_ENV": "production",
+    "BETTER_AUTH_URL": "https://ridwanafazn.my.id",
+    "AUTH_COOKIE_NAME": "auth_session",
+    "AUTH_COOKIE_DOMAIN": "ridwanafazn.my.id",
+    "AUTH_COOKIE_SECURE": "true",
+    "AUTH_TRUSTED_ORIGINS": "https://ridwanafazn.my.id,https://portofx-v2.ridwanafzn.workers.dev",
+    "CLOUDINARY_CLOUD_NAME": "a5e2n4lq",
+    "CLOUDINARY_UPLOAD_PRESET": "ml_default",
+    "CLOUDINARY_FOLDER": "portfolio"
+  },
+
+  "env": {
+    "preview": {
+      "vars": {
+        "NODE_ENV": "preview",
+        "BETTER_AUTH_URL": "https://preview.ridwanafazn.my.id",
+        "AUTH_COOKIE_DOMAIN": "ridwanafazn.my.id",
+        "AUTH_TRUSTED_ORIGINS": "https://preview.ridwanafazn.my.id"
+      }
+    }
+  },
+
+  // KV binding SESSION (untuk Astro sessions di Workers)
+  "kv_namespaces": [
+    { "binding": "SESSION", "id": "0caf957ffab8428687ada2d8bef1e809" }
+  ]
+
+  // Secrets: gunakan `wrangler secret put <KEY>` (jangan taruh di sini).
+  // DATABASE_URL, DATABASE_URL_UNPOOLED, BETTER_AUTH_SECRET, AUTH_SECRET,
+  // CSRF_SECRET, ADMIN_PASSWORD_HASH, CLOUDINARY_API_KEY,
+  // CLOUDINARY_API_SECRET, TURNSTILE_SECRET_KEY, RESEND_API_KEY, SENTRY_DSN
+}

@@ -1,0 +1,250 @@
+---
+// src/pages/admin/portfolio/[id].astro — edit project (SSR)
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AssetPicker from '../../../components/admin/AssetPicker.astro';
+import { getPortfolio, listAssets } from '../../../lib/queries';
+
+const id = Astro.params.id!;
+let row: Awaited<ReturnType<typeof getPortfolio>> = null;
+let assets: Awaited<ReturnType<typeof listAssets>> = [];
+let error: string | null = null;
+
+try {
+  [row, assets] = await Promise.all([getPortfolio(id), listAssets({})]);
+  if (!row) error = 'Project tidak ditemukan.';
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+
+const galleryIds = (row?.gallery ?? []).map((g) => g.assetId);
+const linksText = (row?.links ?? []).map((l) => `${l.label} | ${l.url} | ${l.icon}`).join('\n');
+---
+
+<AdminLayout title={row ? row.title : 'Edit Project'}>
+  <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <a href="/admin/portfolio" class="text-sm text-on-surface-variant hover:text-accent">← Kembali</a>
+      <h2 class="mt-1 text-2xl font-bold tracking-tight text-on-background sm:text-3xl">
+        {row ? row.title : 'Edit Project'}
+      </h2>
+      <div class="mt-2 flex flex-wrap items-center gap-2">
+        <span class:list={[
+          'rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+          row?.status === 'published' ? 'border-success/25 bg-success/10 text-success' : row?.status === 'archived' ? 'border-outline bg-surface-hover text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
+        ]}>{row?.status ?? '—'}</span>
+        {row && (
+          <a href={`/preview/portfolio/${row.slug}`} target="_blank" rel="noopener noreferrer" class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant transition hover:border-accent hover:text-accent">
+            Preview
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {
+    error && (
+      <p class="mb-6 rounded-lg border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+        <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
+      </p>
+    )
+  }
+
+  {
+    row && (
+      <form id="portfolio-form" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="space-y-5 lg:col-span-2">
+          <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Info utama</h3>
+            <div class="space-y-4">
+              <label class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Title *</span>
+                <input name="title" required maxlength="200" value={row.title} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+              </label>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <label class="flex flex-col gap-1.5">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Slug *</span>
+                  <input name="slug" required maxlength="180" pattern="[a-z0-9-]+" value={row.slug} class="rounded-lg border border-outline bg-background px-3 py-2.5 font-mono text-sm outline-none focus:border-accent" />
+                </label>
+                <label class="flex flex-col gap-1.5">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Role *</span>
+                  <input name="role" required maxlength="100" value={row.role} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+                </label>
+              </div>
+              <label class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Description *</span>
+                <textarea name="description" required maxlength="500" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.description}</textarea>
+              </label>
+              <label class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Long Description</span>
+                <textarea name="longDescription" maxlength="5000" rows="6" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.longDescription ?? ''}</textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Media</h3>
+            <AssetPicker assets={assets} coverImageId={row.coverImageId} galleryIds={galleryIds} />
+          </div>
+
+          <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Detail teknis</h3>
+            <div class="space-y-4">
+              <label class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Tech Stack *</span>
+                <input name="techStack" placeholder="Pisahkan dengan koma" value={row.techStack.join(', ')} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+              </label>
+              <label class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Highlights</span>
+                <textarea name="highlights" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.highlights.join('\n')}</textarea>
+              </label>
+              <label class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Links</span>
+                <textarea name="links" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 font-mono text-xs outline-none focus:border-accent">{linksText}</textarea>
+                <span class="text-[11px] text-on-surface-variant">Satu link per baris. Format: label | url | icon.</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div class="rounded-xl border border-outline bg-surface p-5">
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Publikasi</h3>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="isTopProject" checked={row.isTopProject} class="h-4 w-4 accent-[var(--color-accent)]" />
+              <span class="text-sm text-on-surface-variant">Featured di halaman utama</span>
+            </label>
+            <label class="mt-4 flex flex-col gap-1.5">
+              <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Urutan</span>
+              <input name="order" type="number" value={row.order} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+            </label>
+          </div>
+
+          <div class="sticky top-20 space-y-2 rounded-xl border border-outline bg-surface p-5">
+            <button type="submit" id="save" class="w-full rounded-lg bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5">
+              Simpan Perubahan
+            </button>
+            {
+              row.status !== 'published' ? (
+                <button type="button" id="publish" class="w-full rounded-lg border border-success/30 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-success transition hover:bg-success/10">
+                  Publish
+                </button>
+              ) : (
+                <button type="button" id="archive" class="w-full rounded-lg border border-outline px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-on-surface-variant transition hover:border-accent hover:text-accent">
+                  Archive
+                </button>
+              )
+            }
+            <button type="button" id="duplicate" class="w-full rounded-lg border border-outline px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant transition hover:border-accent hover:text-accent">
+              Duplicate to Draft
+            </button>
+          </div>
+        </div>
+      </form>
+    )
+  }
+</AdminLayout>
+
+<script>
+  const form = document.getElementById('portfolio-form') as HTMLFormElement | null;
+  const id = new URL(location.href).pathname.split('/').filter(Boolean).pop();
+  if (form && id) {
+    let galleryIds: string[] = Array.from(
+      form.querySelectorAll<HTMLInputElement>('[data-gallery-input]:checked'),
+    ).map((i) => i.value);
+    form.querySelectorAll<HTMLInputElement>('[data-gallery-input]').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          if (!galleryIds.includes(input.value)) galleryIds.push(input.value);
+        } else {
+          galleryIds = galleryIds.filter((x) => x !== input.value);
+        }
+      });
+    });
+
+    const parseLinks = (raw: string) =>
+      raw
+        .split('\n')
+        .map((line) => line.split('|').map((s) => s.trim()))
+        .filter((parts) => parts[0] && parts[1])
+        .map(([label, url, icon]) => ({ label, url, icon: icon || 'link' }));
+
+    const buildPayload = () => {
+      const fd = new FormData(form);
+      return {
+        title: fd.get('title'),
+        slug: fd.get('slug'),
+        role: fd.get('role'),
+        description: fd.get('description'),
+        longDescription: fd.get('longDescription') || null,
+        techStack: String(fd.get('techStack') ?? '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        highlights: String(fd.get('highlights') ?? '')
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        links: parseLinks(String(fd.get('links') ?? '')),
+        coverImageId: (fd.get('coverImageId') as string) || null,
+        gallery: galleryIds.map((assetId) => ({ assetId })),
+        isTopProject: fd.get('isTopProject') === 'on',
+        order: Number(fd.get('order') ?? 0),
+      };
+    };
+
+    const save = async (silent = false) => {
+      try {
+        const res = await fetch(`/admin/api/portfolio/${id}`, {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(buildPayload()),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        if (!silent) (window as any).toast?.('Tersimpan');
+        return true;
+      } catch (err) {
+        (window as any).toast?.(`Gagal: ${err}`, 'error');
+        return false;
+      }
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      save();
+    });
+
+    document.getElementById('publish')?.addEventListener('click', async () => {
+      if (!(await save(true))) return;
+      const res = await fetch(`/admin/api/portfolio/${id}/publish`, { method: 'POST' });
+      if (res.ok) {
+        (window as any).toast?.('Project dipublish');
+        setTimeout(() => location.reload(), 500);
+      } else {
+        (window as any).toast?.(`Gagal publish: ${await res.text()}`, 'error');
+      }
+    });
+
+    document.getElementById('archive')?.addEventListener('click', async () => {
+      const res = await fetch(`/admin/api/portfolio/${id}/archive`, { method: 'POST' });
+      if (res.ok) {
+        (window as any).toast?.('Project diarsipkan');
+        setTimeout(() => location.reload(), 500);
+      } else {
+        (window as any).toast?.(`Gagal archive: ${await res.text()}`, 'error');
+      }
+    });
+
+    document.getElementById('duplicate')?.addEventListener('click', async () => {
+      const res = await fetch(`/admin/api/portfolio/${id}/duplicate`, { method: 'POST' });
+      if (res.ok) {
+        const row = await res.json();
+        (window as any).toast?.('Draft duplikat dibuat');
+        setTimeout(() => (location.href = `/admin/portfolio/${row.id}`), 400);
+      } else {
+        (window as any).toast?.(`Gagal duplicate: ${await res.text()}`, 'error');
+      }
+    });
+  }
+</script>

@@ -1,0 +1,192 @@
+---
+// src/pages/admin/portfolio/new.astro — form buat project (SSR)
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AssetPicker from '../../../components/admin/AssetPicker.astro';
+import { listAssets } from '../../../lib/queries';
+
+let assets: Awaited<ReturnType<typeof listAssets>> = [];
+try {
+  assets = await listAssets({});
+} catch {
+  assets = [];
+}
+---
+
+<AdminLayout title="New Project">
+  <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <a href="/admin/portfolio" class="text-sm text-on-surface-variant hover:text-accent">← Kembali</a>
+      <h2 class="mt-1 text-2xl font-bold tracking-tight text-on-background sm:text-3xl">New Project</h2>
+      <p class="mt-1 text-sm text-on-surface-variant">Isi detail project, pilih cover dan galeri, lalu simpan.</p>
+    </div>
+  </div>
+
+  <form id="portfolio-form" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="space-y-5 lg:col-span-2">
+      <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+        <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Info utama</h3>
+        <div class="space-y-4">
+          <label class="flex flex-col gap-1.5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Title *</span>
+            <input name="title" required maxlength="200" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+          </label>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Slug *</span>
+              <input name="slug" required maxlength="180" pattern="[a-z0-9-]+" placeholder="nama-project" class="rounded-lg border border-outline bg-background px-3 py-2.5 font-mono text-sm outline-none focus:border-accent" />
+            </label>
+            <label class="flex flex-col gap-1.5">
+              <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Role *</span>
+              <input name="role" required maxlength="100" placeholder="Fullstack Developer" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+            </label>
+          </div>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Description *</span>
+            <textarea name="description" required maxlength="500" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent"></textarea>
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Long Description</span>
+            <textarea name="longDescription" maxlength="5000" rows="6" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent"></textarea>
+          </label>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+        <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Media</h3>
+        <AssetPicker assets={assets} />
+      </div>
+
+      <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+        <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Detail teknis</h3>
+        <div class="space-y-4">
+          <label class="flex flex-col gap-1.5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Tech Stack *</span>
+            <input name="techStack" placeholder="Pisahkan dengan koma" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Highlights</span>
+            <textarea name="highlights" rows="3" placeholder="Satu highlight per baris" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent"></textarea>
+          </label>
+          <label class="flex flex-col gap-1.5">
+            <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Links</span>
+            <textarea name="links" rows="3" placeholder="label | url | icon" class="rounded-lg border border-outline bg-background px-3 py-2.5 font-mono text-xs outline-none focus:border-accent"></textarea>
+            <span class="text-[11px] text-on-surface-variant">Satu link per baris. Format: label | url | icon.</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-5">
+      <div class="rounded-xl border border-outline bg-surface p-5">
+        <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Publikasi</h3>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" name="isTopProject" class="h-4 w-4 accent-[var(--color-accent)]" />
+          <span class="text-sm text-on-surface-variant">Featured di halaman utama</span>
+        </label>
+        <label class="mt-4 flex flex-col gap-1.5">
+          <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Urutan</span>
+          <input name="order" type="number" value="0" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+        </label>
+      </div>
+
+      <div class="sticky top-20 space-y-2 rounded-xl border border-outline bg-surface p-5">
+        <button type="submit" id="save-draft" class="w-full rounded-lg border border-outline px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-on-background transition hover:border-accent hover:text-accent">
+          Simpan Draft
+        </button>
+        <button type="submit" id="save-publish" class="w-full rounded-lg bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5">
+          Simpan dan Publish
+        </button>
+        <p class="pt-1 text-center text-[11px] text-on-surface-variant">Preview tersedia setelah disimpan.</p>
+      </div>
+    </div>
+  </form>
+</AdminLayout>
+
+<script>
+  const form = document.getElementById('portfolio-form') as HTMLFormElement | null;
+  if (form) {
+    const title = form.querySelector<HTMLInputElement>('[name="title"]')!;
+    const slug = form.querySelector<HTMLInputElement>('[name="slug"]')!;
+    let slugTouched = false;
+    slug.addEventListener('input', () => (slugTouched = true));
+    title.addEventListener('input', () => {
+      if (slugTouched) return;
+      slug.value = title.value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    });
+
+    let galleryIds: string[] = Array.from(
+      form.querySelectorAll<HTMLInputElement>('[data-gallery-input]:checked'),
+    ).map((i) => i.value);
+    form.querySelectorAll<HTMLInputElement>('[data-gallery-input]').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          if (!galleryIds.includes(input.value)) galleryIds.push(input.value);
+        } else {
+          galleryIds = galleryIds.filter((id) => id !== input.value);
+        }
+      });
+    });
+
+    const parseLinks = (raw: string) =>
+      raw
+        .split('\n')
+        .map((line) => line.split('|').map((s) => s.trim()))
+        .filter((parts) => parts[0] && parts[1])
+        .map(([label, url, icon]) => ({ label, url, icon: icon || 'link' }));
+
+    const buildPayload = (status: 'draft' | 'published') => {
+      const fd = new FormData(form);
+      return {
+        title: fd.get('title'),
+        slug: fd.get('slug'),
+        role: fd.get('role'),
+        description: fd.get('description'),
+        longDescription: fd.get('longDescription') || null,
+        techStack: String(fd.get('techStack') ?? '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        highlights: String(fd.get('highlights') ?? '')
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        links: parseLinks(String(fd.get('links') ?? '')),
+        coverImageId: (fd.get('coverImageId') as string) || null,
+        gallery: galleryIds.map((assetId) => ({ assetId })),
+        isTopProject: fd.get('isTopProject') === 'on',
+        order: Number(fd.get('order') ?? 0),
+        status,
+      };
+    };
+
+    const submit = async (status: 'draft' | 'published') => {
+      try {
+        const res = await fetch('/admin/api/portfolio', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(buildPayload(status)),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const row = await res.json();
+        (window as any).toast?.('Project tersimpan');
+        setTimeout(() => (location.href = `/admin/portfolio/${row.id}`), 500);
+      } catch (err) {
+        (window as any).toast?.(`Gagal: ${err}`, 'error');
+      }
+    };
+
+    document.getElementById('save-draft')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      submit('draft');
+    });
+    document.getElementById('save-publish')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      submit('published');
+    });
+  }
+</script>

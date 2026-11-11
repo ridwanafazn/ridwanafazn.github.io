@@ -1,13 +1,15 @@
 ---
+export const prerender = false;
+
 import Layout from '../layouts/Layout.astro';
 import Timeline from '../components/Timeline.astro';
-import { getProfile, getActivities } from '../lib/sanity';
+import { getProfile, getActivities } from '../lib/content';
 
 const profileData = await getProfile();
 const activitiesData = await getActivities();
 ---
 
-<Layout title="Tentang — ridwanafazn">
+<Layout title="Tentang · Ridwan Pages">
   <header class="mb-14 pt-0 relative z-10">
     <div class="max-w-2xl">
       <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-4">Latar Belakang</span>
