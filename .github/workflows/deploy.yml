@@ -36,6 +36,10 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # Generate .astro types (astro:env, astro:middleware) sebelum typecheck.
+      - name: Astro sync
+        run: pnpm exec astro sync
+
       - name: Typecheck
         run: pnpm typecheck
 
