@@ -59,7 +59,12 @@ jobs:
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
 
       - name: Deploy to Cloudflare Workers
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
         run: pnpm exec wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy skipped
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' }}
+        run: echo "::warning title=Deploy dilewati::Secret CLOUDFLARE_API_TOKEN belum di-set. Build lolos, tapi deploy ke Workers dilewati."
