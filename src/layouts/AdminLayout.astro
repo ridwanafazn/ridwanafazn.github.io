@@ -246,18 +246,16 @@ const isActive = (href: string) =>
 
           <div class="ml-auto flex items-center gap-2">
             <a
-              href="/admin/portfolio/new"
-              class="hidden rounded-lg bg-on-background px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5 sm:inline-flex"
+              href="/admin/profile"
+              title={user?.email ?? 'Profil admin'}
+              class="grid h-9 w-9 place-items-center rounded-full bg-accent/15 text-[11px] font-bold uppercase text-accent ring-1 ring-accent/10 transition hover:ring-accent/40"
             >
-              + Project
-            </a>
-            <span class="grid h-9 w-9 place-items-center rounded-full bg-accent/15 text-[11px] font-bold uppercase text-accent">
               {(user?.name ?? 'A').slice(0, 1)}
-            </span>
+            </a>
           </div>
         </header>
 
-        <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+        <main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
           <slot />
         </main>
       </div>

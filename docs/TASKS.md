@@ -295,6 +295,10 @@
 - [x] URL CV editable, sinkron desktop dan mobile
 - [x] Sidebar admin expand/shrink (persist localStorage)
 - [x] Judul dokumen `Ridwan Pages`, brand sidebar `ridwanafazn`
+- [x] Dashboard + Aksi cepat redesain (grid kartu)
+- [x] Portfolio list drag & drop urutan (kolom Order dihapus)
+- [x] Pengalaman editable + sortable di Profile
+- [x] Tombol `+ Project` di header admin dihapus
 - [x] Fix Zod default leak pada PATCH parsial
 - [x] Restore data `open-house` & `vessel` dari Sanity
 

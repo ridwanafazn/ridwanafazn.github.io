@@ -163,6 +163,9 @@ src/
 18. **Activities editable** lewat tombol Edit di `/admin/activities` (PATCH). PATCH memfilter key yang dikirim agar `order`/`highlights` tidak ter-reset default Zod.
 19. **Profile PUT di-merge dengan row existing** — jangan kembalikan ke `upsertProfile(parsed)` langsung, karena form hanya mengirim sebagian field (experience/education/stats bisa hilang).
 20. **Sidebar admin collapsible** (desktop): state di `localStorage['admin-sidebar']`, kelas `sidebar-collapsed` di `<html>`. Judul dokumen memakai **Ridwan Pages**; brand sidebar **ridwanafazn**.
+21. **Urutan project** diubah lewat drag & drop di `/admin/portfolio` (endpoint `POST /admin/api/portfolio/reorder`, body `{ ids: string[] }`). Drag hanya aktif saat filter **Semua**; kolom `order` tidak ditampilkan.
+22. **Pengalaman** diedit di `/admin/profile` (tambah/hapus/seret urutan). Urutan array = urutan tampil di `/about`; disimpan saat form disubmit.
+23. **Dashboard** memakai grid stat + aksi cepat; tombol `+ Project` di header sudah dihapus (buat project dari halaman Portfolio atau aksi cepat).
 
 ---
 

@@ -74,6 +74,18 @@ export async function softDeletePortfolio(id: string) {
     .then((r) => r[0] ?? null);
 }
 
+/** Simpan urutan baru: index array = nilai `order`. */
+export async function reorderPortfolios(ids: string[]) {
+  await Promise.all(
+    ids.map((id, index) =>
+      db
+        .update(portfolios)
+        .set({ order: index, updatedAt: new Date() })
+        .where(eq(portfolios.id, id)),
+    ),
+  );
+}
+
 // ─── Assets ──────────────────────────────────────────────────────────────────
 
 export async function listAssets(opts: { folder?: string; limit?: number } = {}) {

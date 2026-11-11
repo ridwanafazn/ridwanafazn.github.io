@@ -7,6 +7,7 @@ import { listPortfolios, getAssetUrlMap } from '../../../lib/queries';
 import { getTransformUrl } from '../../../lib/cloudinary';
 
 const statusFilter = Astro.url.searchParams.get('status') ?? undefined;
+const canReorder = !statusFilter;
 
 let rows: Awaited<ReturnType<typeof listPortfolios>> = [];
 let assetById = new Map<string, string>();
@@ -30,34 +31,38 @@ const tabs = [
   { label: 'Draft', value: 'draft' },
   { label: 'Archived', value: 'archived' },
 ];
+
+const actionBtn =
+  'rounded-lg border border-outline px-2.5 py-1.5 text-[11px] font-semibold text-on-surface-variant transition hover:border-accent hover:text-accent';
 ---
 
 <AdminLayout title="Portfolio">
-  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+  <section class="mb-7 flex flex-wrap items-end justify-between gap-4">
     <div>
-      <h2 class="text-2xl font-bold tracking-tight text-on-background sm:text-3xl">Portfolio</h2>
-      <p class="mt-1 text-sm text-on-surface-variant">
-        {rows.length} project{statusFilter ? ` · filter: ${statusFilter}` : ''}
+      <p class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">Konten</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-on-background">Portfolio</h1>
+      <p class="mt-1.5 text-sm text-on-surface-variant">
+        {rows.length} project{statusFilter ? ` · filter ${statusFilter}` : ''}{canReorder ? ' · seret baris untuk mengubah urutan' : ''}
       </p>
     </div>
     <a
       href="/admin/portfolio/new"
-      class="rounded-lg bg-on-background px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5"
+      class="rounded-xl bg-on-background px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5"
     >
-      + New Project
+      Project baru
     </a>
-  </div>
+  </section>
 
-  <div class="mb-5 flex flex-wrap gap-1.5">
+  <div class="mb-5 inline-flex flex-wrap gap-1 rounded-xl border border-outline bg-surface p-1">
     {
       tabs.map((t) => (
         <a
           href={t.value ? `/admin/portfolio?status=${t.value}` : '/admin/portfolio'}
           class:list={[
-            'rounded-full border px-3.5 py-1.5 text-[11px] font-semibold transition',
+            'rounded-lg px-3.5 py-1.5 text-[11px] font-semibold transition',
             (statusFilter ?? '') === t.value
-              ? 'border-accent/30 bg-accent/10 text-accent'
-              : 'border-outline text-on-surface-variant hover:border-accent hover:text-accent',
+              ? 'bg-on-background text-background'
+              : 'text-on-surface-variant hover:text-on-background',
           ]}
         >
           {t.label}
@@ -68,44 +73,63 @@ const tabs = [
 
   {
     error && (
-      <p class="mb-6 rounded-lg border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+      <p class="mb-6 rounded-xl border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
         DB belum siap: <span class="font-mono">{error}</span>
       </p>
     )
   }
 
   {!error && rows.length === 0 && (
-    <div class="rounded-xl border border-dashed border-outline p-10 text-center">
+    <div class="rounded-2xl border border-dashed border-outline p-12 text-center">
       <p class="text-sm text-on-surface-variant">Belum ada project.</p>
       <a href="/admin/portfolio/new" class="mt-3 inline-block text-sm font-semibold text-accent hover:underline">
-        Buat project pertama →
+        Buat project pertama
       </a>
     </div>
   )}
 
-  <!-- Desktop table -->
   {
     rows.length > 0 && (
-      <div class="hidden overflow-hidden rounded-xl border border-outline bg-surface md:block">
-        <table class="w-full text-left text-sm">
-          <thead class="bg-surface-hover text-[10px] uppercase tracking-wider text-on-surface-variant">
+      <div class="hidden overflow-x-auto rounded-2xl border border-outline bg-surface md:block">
+        <table class="w-full min-w-[860px] text-left text-sm">
+          <thead class="border-b border-outline/70 bg-surface-hover/60 text-[10px] uppercase tracking-[0.12em] text-on-surface-variant">
             <tr>
-              <th class="px-4 py-3 font-semibold">Project</th>
-              <th class="px-4 py-3 font-semibold">Status</th>
-              <th class="px-4 py-3 font-semibold">Order</th>
-              <th class="px-4 py-3 font-semibold">Update</th>
-              <th class="px-4 py-3 text-right font-semibold">Aksi</th>
+              <th class="w-10 px-2 py-3" aria-label="Urutan" />
+              <th class="px-3 py-3 font-semibold">Project</th>
+              <th class="px-3 py-3 font-semibold">Status</th>
+              <th class="px-3 py-3 font-semibold">Diperbarui</th>
+              <th class="px-3 py-3 text-right font-semibold">Aksi</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="portfolio-rows" data-can-reorder={canReorder ? 'true' : 'false'}>
             {rows.map((p) => (
-              <tr class="border-t border-outline/60 transition hover:bg-surface-hover/60">
-                <td class="px-4 py-3">
+              <tr
+                draggable={canReorder ? 'true' : 'false'}
+                data-id={p.id}
+                class="group border-t border-outline/60 transition hover:bg-surface-hover/60"
+              >
+                <td class="px-2 py-3 align-middle">
+                  {canReorder && (
+                    <span class="flex cursor-grab items-center justify-center text-on-surface-variant/50 transition group-hover:text-on-surface-variant active:cursor-grabbing" aria-hidden="true">
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="9" cy="6" r="1.4" />
+                        <circle cx="15" cy="6" r="1.4" />
+                        <circle cx="9" cy="12" r="1.4" />
+                        <circle cx="15" cy="12" r="1.4" />
+                        <circle cx="9" cy="18" r="1.4" />
+                        <circle cx="15" cy="18" r="1.4" />
+                      </svg>
+                    </span>
+                  )}
+                </td>
+                <td class="px-3 py-3">
                   <div class="flex items-center gap-3">
                     {cover(p.coverImageId) ? (
-                      <img src={cover(p.coverImageId)!} alt="" loading="lazy" class="h-10 w-16 rounded-md border border-outline object-cover" />
+                      <img src={cover(p.coverImageId)!} alt="" loading="lazy" class="h-10 w-16 rounded-lg border border-outline object-cover" />
                     ) : (
-                      <span class="grid h-10 w-16 place-items-center rounded-md border border-dashed border-outline text-[9px] uppercase text-on-surface-variant">no img</span>
+                      <span class="grid h-10 w-16 place-items-center rounded-lg border border-dashed border-outline text-[9px] uppercase tracking-wider text-on-surface-variant">
+                        no img
+                      </span>
                     )}
                     <div class="min-w-0">
                       <a href={`/admin/portfolio/${p.id}`} class="block truncate font-semibold text-on-background hover:text-accent">{p.title}</a>
@@ -113,26 +137,31 @@ const tabs = [
                     </div>
                   </div>
                 </td>
-                <td class="px-4 py-3">
+                <td class="px-3 py-3">
                   <span class:list={[
-                    'rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
-                    p.status === 'published' ? 'border-success/25 bg-success/10 text-success' : p.status === 'archived' ? 'border-outline bg-surface-hover text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
+                    'rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                    p.status === 'published'
+                      ? 'border-success/25 bg-success/10 text-success'
+                      : p.status === 'archived'
+                        ? 'border-outline bg-surface-hover text-on-surface-variant'
+                        : 'border-accent/25 bg-accent/10 text-accent',
                   ]}>{p.status}</span>
                 </td>
-                <td class="px-4 py-3 font-mono text-xs text-on-surface-variant">{p.order}</td>
-                <td class="px-4 py-3 text-xs text-on-surface-variant">{p.updatedAt?.toISOString().slice(0, 10)}</td>
-                <td class="px-4 py-3">
-                  <div class="flex items-center justify-end gap-1.5">
-                    <a href={`/admin/portfolio/${p.id}`} class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Edit</a>
-                    <a href={`/preview/portfolio/${p.slug}`} target="_blank" rel="noopener noreferrer" class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Preview</a>
-                    <button type="button" data-action="duplicate" data-id={p.id} class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Duplicate</button>
+                <td class="px-3 py-3 text-xs text-on-surface-variant">
+                  {new Date(p.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </td>
+                <td class="px-3 py-3">
+                  <div class="flex flex-wrap items-center justify-end gap-1.5">
+                    <a href={`/admin/portfolio/${p.id}`} class="rounded-lg bg-on-background px-2.5 py-1.5 text-[11px] font-semibold text-background transition hover:opacity-85">Edit</a>
+                    <a href={`/preview/portfolio/${p.slug}`} target="_blank" rel="noopener noreferrer" class={actionBtn}>Preview</a>
+                    <button type="button" data-action="duplicate" data-id={p.id} class={actionBtn}>Duplicate</button>
                     {p.status !== 'published' && (
-                      <button type="button" data-action="publish" data-id={p.id} class="rounded-md border border-success/30 px-2 py-1 text-[11px] font-semibold text-success hover:bg-success/10">Publish</button>
+                      <button type="button" data-action="publish" data-id={p.id} class="rounded-lg border border-success/30 px-2.5 py-1.5 text-[11px] font-semibold text-success transition hover:bg-success/10">Publish</button>
                     )}
                     {p.status === 'published' && (
-                      <button type="button" data-action="archive" data-id={p.id} class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent">Archive</button>
+                      <button type="button" data-action="archive" data-id={p.id} class={actionBtn}>Archive</button>
                     )}
-                    <button type="button" data-action="delete" data-id={p.id} class="rounded-md border border-error/25 px-2 py-1 text-[11px] font-semibold text-error hover:bg-error/10">Delete</button>
+                    <button type="button" data-action="delete" data-id={p.id} class="rounded-lg border border-error/25 px-2.5 py-1.5 text-[11px] font-semibold text-error transition hover:bg-error/10">Delete</button>
                   </div>
                 </td>
               </tr>
@@ -143,40 +172,45 @@ const tabs = [
     )
   }
 
-  <!-- Mobile cards -->
   {
     rows.length > 0 && (
       <div class="space-y-3 md:hidden">
         {rows.map((p) => (
-          <div class="rounded-xl border border-outline bg-surface p-4">
+          <div class="rounded-2xl border border-outline bg-surface p-4">
             <div class="flex items-start gap-3">
               {cover(p.coverImageId) ? (
                 <img src={cover(p.coverImageId)!} alt="" loading="lazy" class="h-14 w-20 rounded-lg border border-outline object-cover" />
               ) : (
-                <span class="grid h-14 w-20 place-items-center rounded-lg border border-dashed border-outline text-[9px] uppercase text-on-surface-variant">no img</span>
+                <span class="grid h-14 w-20 place-items-center rounded-lg border border-dashed border-outline text-[9px] uppercase tracking-wider text-on-surface-variant">no img</span>
               )}
               <div class="min-w-0 flex-1">
                 <a href={`/admin/portfolio/${p.id}`} class="block truncate font-semibold text-on-background">{p.title}</a>
                 <p class="truncate text-[11px] text-on-surface-variant">{p.role}</p>
                 <div class="mt-1.5 flex items-center gap-2">
                   <span class:list={[
-                    'rounded border px-1.5 py-0.5 text-[9px] font-bold uppercase',
-                    p.status === 'published' ? 'border-success/25 bg-success/10 text-success' : p.status === 'archived' ? 'border-outline text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
+                    'rounded-full border px-1.5 py-0.5 text-[9px] font-bold uppercase',
+                    p.status === 'published'
+                      ? 'border-success/25 bg-success/10 text-success'
+                      : p.status === 'archived'
+                        ? 'border-outline text-on-surface-variant'
+                        : 'border-accent/25 bg-accent/10 text-accent',
                   ]}>{p.status}</span>
-                  <span class="font-mono text-[10px] text-on-surface-variant">#{p.order}</span>
+                  <span class="text-[10px] text-on-surface-variant">
+                    {new Date(p.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                  </span>
                 </div>
               </div>
             </div>
             <div class="mt-3 flex flex-wrap gap-1.5">
-              <a href={`/admin/portfolio/${p.id}`} class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">Edit</a>
-              <a href={`/preview/portfolio/${p.slug}`} target="_blank" rel="noopener noreferrer" class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">Preview</a>
+              <a href={`/admin/portfolio/${p.id}`} class="rounded-lg bg-on-background px-2.5 py-1 text-[11px] font-semibold text-background">Edit</a>
+              <a href={`/preview/portfolio/${p.slug}`} target="_blank" rel="noopener noreferrer" class={actionBtn}>Preview</a>
               {p.status !== 'published' && (
-                <button type="button" data-action="publish" data-id={p.id} class="rounded-md border border-success/30 px-2.5 py-1 text-[11px] font-semibold text-success">Publish</button>
+                <button type="button" data-action="publish" data-id={p.id} class="rounded-lg border border-success/30 px-2.5 py-1 text-[11px] font-semibold text-success">Publish</button>
               )}
               {p.status === 'published' && (
-                <button type="button" data-action="archive" data-id={p.id} class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant">Archive</button>
+                <button type="button" data-action="archive" data-id={p.id} class={actionBtn}>Archive</button>
               )}
-              <button type="button" data-action="delete" data-id={p.id} class="rounded-md border border-error/25 px-2.5 py-1 text-[11px] font-semibold text-error">Delete</button>
+              <button type="button" data-action="delete" data-id={p.id} class="rounded-lg border border-error/25 px-2.5 py-1 text-[11px] font-semibold text-error">Delete</button>
             </div>
           </div>
         ))}
@@ -186,6 +220,8 @@ const tabs = [
 </AdminLayout>
 
 <script>
+  const notify = (m: string, t: 'success' | 'error' = 'success') => (window as any).toast?.(m, t);
+
   const run = async (btn: HTMLButtonElement) => {
     const id = btn.dataset.id;
     const action = btn.dataset.action;
@@ -197,10 +233,10 @@ const tabs = [
       const res = await fetch(`/admin/api/portfolio/${id}/duplicate`, { method: 'POST' });
       if (res.ok) {
         const row = await res.json();
-        (window as any).toast?.('Draft duplikat dibuat');
+        notify('Draft duplikat dibuat');
         location.href = `/admin/portfolio/${row.id}`;
       } else {
-        (window as any).toast?.(`Gagal: ${await res.text()}`, 'error');
+        notify(`Gagal: ${await res.text()}`, 'error');
       }
       return;
     }
@@ -208,14 +244,71 @@ const tabs = [
     const url = `/admin/api/portfolio/${id}${action === 'publish' ? '/publish' : action === 'archive' ? '/archive' : ''}`;
     const res = await fetch(url, { method: action === 'delete' ? 'DELETE' : 'POST' });
     if (res.ok) {
-      (window as any).toast?.(action === 'delete' ? 'Project dihapus' : action === 'publish' ? 'Dipublish' : 'Diarsipkan');
+      notify(action === 'delete' ? 'Project dihapus' : action === 'publish' ? 'Dipublish' : 'Diarsipkan');
       setTimeout(() => location.reload(), 400);
     } else {
-      (window as any).toast?.(`Gagal: ${await res.text()}`, 'error');
+      notify(`Gagal: ${await res.text()}`, 'error');
     }
   };
 
   document.querySelectorAll<HTMLButtonElement>('[data-action]').forEach((btn) => {
     btn.addEventListener('click', () => run(btn));
   });
+
+  // Drag & drop urutan project (hanya saat filter "Semua").
+  const tbody = document.getElementById('portfolio-rows');
+  if (tbody && tbody.dataset.canReorder === 'true') {
+    let dragging: HTMLTableRowElement | null = null;
+
+    tbody.addEventListener('dragstart', (e) => {
+      const target = e.target as HTMLElement;
+      const row = target.closest<HTMLTableRowElement>('tr[data-id]');
+      if (!row) return;
+      if (target.closest('a, button, input, textarea')) {
+        e.preventDefault();
+        return;
+      }
+      dragging = row;
+      row.classList.add('opacity-40');
+      e.dataTransfer?.setData('text/plain', row.dataset.id ?? '');
+      if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+    });
+
+    tbody.addEventListener('dragover', (e) => {
+      if (!dragging) return;
+      e.preventDefault();
+      const rows = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr[data-id]')).filter((r) => r !== dragging);
+      const next = rows.find((r) => {
+        const rect = r.getBoundingClientRect();
+        return e.clientY < rect.top + rect.height / 2;
+      });
+      if (next) tbody.insertBefore(dragging, next);
+      else tbody.appendChild(dragging);
+    });
+
+    tbody.addEventListener('drop', (e) => e.preventDefault());
+
+    tbody.addEventListener('dragend', async () => {
+      if (!dragging) return;
+      dragging.classList.remove('opacity-40');
+      dragging = null;
+
+      const ids = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr[data-id]')).map(
+        (r) => r.dataset.id!,
+      );
+
+      try {
+        const res = await fetch('/admin/api/portfolio/reorder', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ids }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        notify('Urutan project disimpan');
+      } catch (err) {
+        notify(`Gagal menyimpan urutan: ${err}`, 'error');
+        location.reload();
+      }
+    });
+  }
 </script>
