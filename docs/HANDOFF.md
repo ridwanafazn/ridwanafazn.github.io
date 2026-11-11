@@ -166,6 +166,7 @@ src/
 21. **Urutan project** diubah lewat drag & drop di `/admin/portfolio` (endpoint `POST /admin/api/portfolio/reorder`, body `{ ids: string[] }`). Drag hanya aktif saat filter **Semua**; kolom `order` tidak ditampilkan.
 22. **Pengalaman** diedit di `/admin/profile` (tambah/hapus/seret urutan). Urutan array = urutan tampil di `/about`; disimpan saat form disubmit.
 23. **Dashboard** memakai grid stat + aksi cepat; tombol `+ Project` di header sudah dihapus (buat project dari halaman Portfolio atau aksi cepat).
+24. **Admin styling sharp**: tidak ada `rounded-*`, tanpa backdrop blur, transisi 150ms (color/opacity), tanpa hover translate. Jangan tambahkan kembali komponen rounded di area admin.
 
 ---
 

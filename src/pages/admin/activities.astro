@@ -20,17 +20,17 @@ try {
 
   {
     error && (
-      <p class="mb-6 rounded-md border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+      <p class="mb-6 border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
         <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
       </p>
     )
   }
 
-  <form id="activity-form" class="mb-10 flex max-w-2xl flex-col gap-4 rounded-lg border border-outline p-5">
+  <form id="activity-form" class="mb-10 flex max-w-2xl flex-col gap-4 border border-outline p-5">
     <h2 id="activity-form-title" class="text-lg font-bold text-on-background">Tambah Activity</h2>
     <label class="flex flex-col gap-1.5">
       <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Type *</span>
-      <select name="type" required class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent">
+      <select name="type" required class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent">
         <option value="Volunteer">Volunteer</option>
         <option value="Publication">Publication</option>
         <option value="Leadership">Leadership</option>
@@ -38,32 +38,32 @@ try {
     </label>
     <label class="flex flex-col gap-1.5">
       <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Title *</span>
-      <input name="title" required maxlength="200" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+      <input name="title" required maxlength="200" class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
     </label>
     <label class="flex flex-col gap-1.5">
       <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Organization *</span>
-      <input name="organization" required maxlength="200" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+      <input name="organization" required maxlength="200" class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
     </label>
     <label class="flex flex-col gap-1.5">
       <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Description</span>
-      <textarea name="description" rows="3" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"></textarea>
+      <textarea name="description" rows="3" class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"></textarea>
     </label>
     <label class="flex flex-col gap-1.5">
       <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Highlights</span>
-      <input name="highlights" placeholder="Pisahkan dengan koma" class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
+      <input name="highlights" placeholder="Pisahkan dengan koma" class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent" />
     </label>
     <div class="flex flex-wrap items-center gap-2">
-      <button type="submit" id="activity-submit" class="w-fit rounded-md bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background hover:-translate-y-0.5">
+      <button type="submit" id="activity-submit" class="w-fit bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background">
         Tambah
       </button>
-      <button type="button" id="activity-cancel" class="hidden w-fit rounded-md border border-outline px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-on-surface-variant hover:border-accent hover:text-accent">
+      <button type="button" id="activity-cancel" class="hidden w-fit border border-outline px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-on-surface-variant hover:border-accent hover:text-accent">
         Batal
       </button>
     </div>
   </form>
 
   {rows.length > 0 && (
-    <div class="overflow-x-auto rounded-lg border border-outline">
+    <div class="overflow-x-auto border border-outline">
       <table class="w-full min-w-[720px] text-left text-sm">
         <thead class="bg-surface-hover text-xs uppercase tracking-wider text-on-surface-variant">
           <tr>
@@ -78,7 +78,7 @@ try {
             rows.map((a) => (
               <tr class="border-t border-outline/60 hover:bg-surface-hover/50">
                 <td class="px-4 py-3">
-                  <span class="rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/20">{a.type}</span>
+                  <span class="bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent border border-accent/20">{a.type}</span>
                 </td>
                 <td class="px-4 py-3 font-semibold text-on-background">{a.title}</td>
                 <td class="px-4 py-3 text-on-surface-variant">{a.organization}</td>
@@ -94,7 +94,7 @@ try {
                       data-description={a.description ?? ''}
                       data-slug={a.slug}
                       data-highlights={(a.highlights ?? []).join(', ')}
-                      class="rounded-md border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent"
+                      class="border border-outline px-2 py-1 text-[11px] font-semibold text-on-surface-variant hover:border-accent hover:text-accent"
                     >
                       Edit
                     </button>
@@ -102,7 +102,7 @@ try {
                       type="button"
                       data-action="delete-activity"
                       data-id={a.id}
-                      class="rounded-md border border-error/30 px-2 py-1 text-[11px] font-semibold text-error hover:bg-error/10"
+                      class="border border-error/30 px-2 py-1 text-[11px] font-semibold text-error hover:bg-error/10"
                     >
                       Delete
                     </button>

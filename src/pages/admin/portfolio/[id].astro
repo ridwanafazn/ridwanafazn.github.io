@@ -31,11 +31,11 @@ const linksText = (row?.links ?? []).map((l) => `${l.label} | ${l.url} | ${l.ico
       </h2>
       <div class="mt-2 flex flex-wrap items-center gap-2">
         <span class:list={[
-          'rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+          'border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
           row?.status === 'published' ? 'border-success/25 bg-success/10 text-success' : row?.status === 'archived' ? 'border-outline bg-surface-hover text-on-surface-variant' : 'border-accent/25 bg-accent/10 text-accent',
         ]}>{row?.status ?? '—'}</span>
         {row && (
-          <a href={`/preview/portfolio/${row.slug}`} target="_blank" rel="noopener noreferrer" class="rounded-md border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant transition hover:border-accent hover:text-accent">
+          <a href={`/preview/portfolio/${row.slug}`} target="_blank" rel="noopener noreferrer" class="border border-outline px-2.5 py-1 text-[11px] font-semibold text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent">
             Preview
           </a>
         )}
@@ -45,7 +45,7 @@ const linksText = (row?.links ?? []).map((l) => `${l.label} | ${l.url} | ${l.ico
 
   {
     error && (
-      <p class="mb-6 rounded-lg border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+      <p class="mb-6 border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
         <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
       </p>
     )
@@ -55,53 +55,53 @@ const linksText = (row?.links ?? []).map((l) => `${l.label} | ${l.url} | ${l.ico
     row && (
       <form id="portfolio-form" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="space-y-5 lg:col-span-2">
-          <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+          <div class="border border-outline bg-surface p-5 sm:p-6">
             <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Info utama</h3>
             <div class="space-y-4">
               <label class="flex flex-col gap-1.5">
                 <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Title *</span>
-                <input name="title" required maxlength="200" value={row.title} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+                <input name="title" required maxlength="200" value={row.title} class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
               </label>
               <div class="grid gap-4 sm:grid-cols-2">
                 <label class="flex flex-col gap-1.5">
                   <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Slug *</span>
-                  <input name="slug" required maxlength="180" pattern="[a-z0-9-]+" value={row.slug} class="rounded-lg border border-outline bg-background px-3 py-2.5 font-mono text-sm outline-none focus:border-accent" />
+                  <input name="slug" required maxlength="180" pattern="[a-z0-9-]+" value={row.slug} class="border border-outline bg-background px-3 py-2.5 font-mono text-sm outline-none focus:border-accent" />
                 </label>
                 <label class="flex flex-col gap-1.5">
                   <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Role *</span>
-                  <input name="role" required maxlength="100" value={row.role} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+                  <input name="role" required maxlength="100" value={row.role} class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
                 </label>
               </div>
               <label class="flex flex-col gap-1.5">
                 <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Description *</span>
-                <textarea name="description" required maxlength="500" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.description}</textarea>
+                <textarea name="description" required maxlength="500" rows="3" class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.description}</textarea>
               </label>
               <label class="flex flex-col gap-1.5">
                 <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Long Description</span>
-                <textarea name="longDescription" maxlength="5000" rows="6" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.longDescription ?? ''}</textarea>
+                <textarea name="longDescription" maxlength="5000" rows="6" class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.longDescription ?? ''}</textarea>
               </label>
             </div>
           </div>
 
-          <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+          <div class="border border-outline bg-surface p-5 sm:p-6">
             <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Media</h3>
             <AssetPicker assets={assets} coverImageId={row.coverImageId} galleryIds={galleryIds} />
           </div>
 
-          <div class="rounded-xl border border-outline bg-surface p-5 sm:p-6">
+          <div class="border border-outline bg-surface p-5 sm:p-6">
             <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Detail teknis</h3>
             <div class="space-y-4">
               <label class="flex flex-col gap-1.5">
                 <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Tech Stack *</span>
-                <input name="techStack" placeholder="Pisahkan dengan koma" value={row.techStack.join(', ')} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+                <input name="techStack" placeholder="Pisahkan dengan koma" value={row.techStack.join(', ')} class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
               </label>
               <label class="flex flex-col gap-1.5">
                 <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Highlights</span>
-                <textarea name="highlights" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.highlights.join('\n')}</textarea>
+                <textarea name="highlights" rows="3" class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent">{row.highlights.join('\n')}</textarea>
               </label>
               <label class="flex flex-col gap-1.5">
                 <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Links</span>
-                <textarea name="links" rows="3" class="rounded-lg border border-outline bg-background px-3 py-2.5 font-mono text-xs outline-none focus:border-accent">{linksText}</textarea>
+                <textarea name="links" rows="3" class="border border-outline bg-background px-3 py-2.5 font-mono text-xs outline-none focus:border-accent">{linksText}</textarea>
                 <span class="text-[11px] text-on-surface-variant">Satu link per baris. Format: label | url | icon.</span>
               </label>
             </div>
@@ -109,7 +109,7 @@ const linksText = (row?.links ?? []).map((l) => `${l.label} | ${l.url} | ${l.ico
         </div>
 
         <div class="space-y-5">
-          <div class="rounded-xl border border-outline bg-surface p-5">
+          <div class="border border-outline bg-surface p-5">
             <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-on-surface-variant">Publikasi</h3>
             <label class="flex items-center gap-2">
               <input type="checkbox" name="isTopProject" checked={row.isTopProject} class="h-4 w-4 accent-[var(--color-accent)]" />
@@ -117,26 +117,26 @@ const linksText = (row?.links ?? []).map((l) => `${l.label} | ${l.url} | ${l.ico
             </label>
             <label class="mt-4 flex flex-col gap-1.5">
               <span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Urutan</span>
-              <input name="order" type="number" value={row.order} class="rounded-lg border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
+              <input name="order" type="number" value={row.order} class="border border-outline bg-background px-3 py-2.5 text-sm outline-none focus:border-accent" />
             </label>
           </div>
 
-          <div class="sticky top-20 space-y-2 rounded-xl border border-outline bg-surface p-5">
-            <button type="submit" id="save" class="w-full rounded-lg bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5">
+          <div class="sticky top-20 space-y-2 border border-outline bg-surface p-5">
+            <button type="submit" id="save" class="w-full bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition-colors duration-150">
               Simpan Perubahan
             </button>
             {
               row.status !== 'published' ? (
-                <button type="button" id="publish" class="w-full rounded-lg border border-success/30 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-success transition hover:bg-success/10">
+                <button type="button" id="publish" class="w-full border border-success/30 px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-success transition-colors duration-150 hover:bg-success/10">
                   Publish
                 </button>
               ) : (
-                <button type="button" id="archive" class="w-full rounded-lg border border-outline px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-on-surface-variant transition hover:border-accent hover:text-accent">
+                <button type="button" id="archive" class="w-full border border-outline px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent">
                   Archive
                 </button>
               )
             }
-            <button type="button" id="duplicate" class="w-full rounded-lg border border-outline px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant transition hover:border-accent hover:text-accent">
+            <button type="button" id="duplicate" class="w-full border border-outline px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent">
               Duplicate to Draft
             </button>
           </div>

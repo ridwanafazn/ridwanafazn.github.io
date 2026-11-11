@@ -22,7 +22,7 @@ const categories = row?.categories ?? [];
 
   {
     error && (
-      <p class="mb-6 rounded-md border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+      <p class="mb-6 border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
         <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
       </p>
     )
@@ -35,13 +35,13 @@ const categories = row?.categories ?? [];
     <textarea
       name="categories"
       rows="10"
-      class="rounded-md border border-outline bg-surface px-3 py-2 font-mono text-sm text-on-background outline-none focus:border-accent"
+      class="border border-outline bg-surface px-3 py-2 font-mono text-sm text-on-background outline-none focus:border-accent"
       placeholder={'Frontend: React, Astro, Tailwind\nBackend: Node.js, Postgres, Drizzle'}
     >{categories.map((c) => `${c.category}: ${c.items.join(', ')}`).join('\n')}</textarea>
     <button
       type="submit"
       id="save"
-      class="mt-2 w-fit rounded-md bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background hover:-translate-y-0.5"
+      class="mt-2 w-fit bg-on-background px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-background"
     >
       Simpan Skills
     </button>

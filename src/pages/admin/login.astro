@@ -10,7 +10,7 @@ const redirect = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/admin';
 ---
 
 <AuthLayout title="Login">
-  <div class="rounded-2xl border border-outline bg-surface/70 p-6 shadow-sm backdrop-blur-xl sm:p-8">
+  <div class="border border-outline bg-surface p-6 sm:p-8">
     <h1 class="mb-2 text-2xl font-bold text-on-background">Admin Login</h1>
     <p class="mb-8 text-sm text-on-surface-variant">Masuk untuk mengelola konten portofolio.</p>
 
@@ -23,7 +23,7 @@ const redirect = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/admin';
           autocomplete="username"
           required
           placeholder="Email admin"
-          class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"
+          class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"
         />
       </label>
       <label class="flex flex-col gap-1.5">
@@ -35,16 +35,16 @@ const redirect = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/admin';
           required
           minlength="8"
           placeholder="••••••••"
-          class="rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"
+          class="border border-outline bg-surface px-3 py-2 text-sm text-on-background outline-none focus:border-accent"
         />
       </label>
 
-      <p id="login-error" class="hidden rounded-md border border-error/30 bg-error/10 px-3 py-2 text-xs text-error" role="alert"></p>
+      <p id="login-error" class="hidden border border-error/30 bg-error/10 px-3 py-2 text-xs text-error" role="alert"></p>
 
       <button
         type="submit"
         id="login-submit"
-        class="mt-2 rounded-md bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+        class="mt-2 bg-on-background px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-background transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60"
       >
         Sign In
       </button>

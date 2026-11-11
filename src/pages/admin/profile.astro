@@ -17,7 +17,7 @@ try {
 const experience = row?.experience ?? [];
 
 const inputClass =
-  'w-full rounded-lg border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition focus:border-accent';
+  'w-full border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition-colors duration-150 focus:border-accent';
 const labelClass = 'flex flex-col gap-1.5';
 const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant';
 ---
@@ -31,14 +31,14 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
 
   {
     error && (
-      <p class="mb-6 rounded-xl border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
+      <p class="mb-6 border border-accent/30 bg-accent/10 p-4 text-sm text-on-surface-variant">
         <span class="font-mono">{error}</span>. Cek koneksi Neon di <code class="font-mono">.env.local</code>.
       </p>
     )
   }
 
   <form id="profile-form" class="space-y-6">
-    <section class="rounded-2xl border border-outline bg-surface p-5 sm:p-6">
+    <section class="border border-outline bg-surface p-5 sm:p-6">
       <div class="mb-5">
         <h2 class="text-sm font-bold text-on-background">Identitas</h2>
         <p class="mt-0.5 text-[11px] text-on-surface-variant">Nama, role, dan deskripsi singkat.</p>
@@ -73,7 +73,7 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
       </div>
     </section>
 
-    <section class="rounded-2xl border border-outline bg-surface p-5 sm:p-6">
+    <section class="border border-outline bg-surface p-5 sm:p-6">
       <div class="mb-5">
         <h2 class="text-sm font-bold text-on-background">Current focus</h2>
         <p class="mt-0.5 text-[11px] text-on-surface-variant">Yang sedang kamu kerjakan sekarang.</p>
@@ -90,7 +90,7 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
       </div>
     </section>
 
-    <section class="rounded-2xl border border-outline bg-surface p-5 sm:p-6">
+    <section class="border border-outline bg-surface p-5 sm:p-6">
       <div class="mb-5 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 class="text-sm font-bold text-on-background">Pengalaman</h2>
@@ -99,7 +99,7 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
         <button
           type="button"
           id="experience-add"
-          class="rounded-lg border border-outline px-3 py-2 text-[11px] font-semibold text-on-surface-variant transition hover:border-accent hover:text-accent"
+          class="border border-outline px-3 py-2 text-[11px] font-semibold text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent"
         >
           Tambah pengalaman
         </button>
@@ -108,9 +108,9 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
       <div id="experience-list" class="space-y-3">
         {
           experience.map((exp) => (
-            <div class="exp-item rounded-xl border border-outline bg-background/50 p-4" data-exp>
+            <div class="exp-item border border-outline bg-background/50 p-4" data-exp>
               <div class="flex items-start gap-3">
-                <span class="exp-drag mt-1 cursor-grab text-on-surface-variant/60 transition hover:text-on-surface-variant active:cursor-grabbing" draggable="true" title="Seret untuk mengurutkan" aria-label="Seret untuk mengurutkan">
+                <span class="exp-drag mt-1 cursor-grab text-on-surface-variant/60 transition-colors duration-150 hover:text-on-surface-variant active:cursor-grabbing" draggable="true" title="Seret untuk mengurutkan" aria-label="Seret untuk mengurutkan">
                   <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <circle cx="9" cy="6" r="1.4" />
                     <circle cx="15" cy="6" r="1.4" />
@@ -143,7 +143,7 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
                 <button
                   type="button"
                   data-remove-exp
-                  class="rounded-lg border border-error/25 px-2 py-1 text-[10px] font-semibold text-error transition hover:bg-error/10"
+                  class="border border-error/25 px-2 py-1 text-[10px] font-semibold text-error transition-colors duration-150 hover:bg-error/10"
                   aria-label="Hapus pengalaman"
                 >
                   Hapus
@@ -164,7 +164,7 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
       <button
         type="submit"
         id="save"
-        class="rounded-xl bg-on-background px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-background transition hover:-translate-y-0.5"
+        class="bg-on-background px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-background transition-colors duration-150"
       >
         Simpan profile
       </button>
@@ -172,9 +172,9 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
   </form>
 
   <template id="experience-template">
-    <div class="exp-item rounded-xl border border-outline bg-background/50 p-4" data-exp>
+    <div class="exp-item border border-outline bg-background/50 p-4" data-exp>
       <div class="flex items-start gap-3">
-        <span class="exp-drag mt-1 cursor-grab text-on-surface-variant/60 transition hover:text-on-surface-variant active:cursor-grabbing" draggable="true" title="Seret untuk mengurutkan" aria-label="Seret untuk mengurutkan">
+        <span class="exp-drag mt-1 cursor-grab text-on-surface-variant/60 transition-colors duration-150 hover:text-on-surface-variant active:cursor-grabbing" draggable="true" title="Seret untuk mengurutkan" aria-label="Seret untuk mengurutkan">
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="9" cy="6" r="1.4" />
             <circle cx="15" cy="6" r="1.4" />
@@ -188,26 +188,26 @@ const labelText = 'text-[11px] font-semibold uppercase tracking-[0.12em] text-on
         <div class="grid flex-1 gap-3 sm:grid-cols-2">
           <label class="flex flex-col gap-1.5">
             <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">Posisi</span>
-            <input data-field="role" maxlength="120" class="w-full rounded-lg border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition focus:border-accent" />
+            <input data-field="role" maxlength="120" class="w-full border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition-colors duration-150 focus:border-accent" />
           </label>
           <label class="flex flex-col gap-1.5">
             <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">Organisasi</span>
-            <input data-field="organization" maxlength="160" class="w-full rounded-lg border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition focus:border-accent" />
+            <input data-field="organization" maxlength="160" class="w-full border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition-colors duration-150 focus:border-accent" />
           </label>
           <label class="flex flex-col gap-1.5">
             <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">Periode</span>
-            <input data-field="period" maxlength="80" placeholder="2024 - Sekarang" class="w-full rounded-lg border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition focus:border-accent" />
+            <input data-field="period" maxlength="80" placeholder="2024 - Sekarang" class="w-full border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition-colors duration-150 focus:border-accent" />
           </label>
           <label class="flex flex-col gap-1.5 sm:col-span-2">
             <span class="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">Deskripsi</span>
-            <textarea data-field="description" rows="2" class="w-full rounded-lg border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition focus:border-accent"></textarea>
+            <textarea data-field="description" rows="2" class="w-full border border-outline bg-surface px-3 py-2.5 text-sm text-on-background outline-none transition-colors duration-150 focus:border-accent"></textarea>
           </label>
         </div>
 
         <button
           type="button"
           data-remove-exp
-          class="rounded-lg border border-error/25 px-2 py-1 text-[10px] font-semibold text-error transition hover:bg-error/10"
+          class="border border-error/25 px-2 py-1 text-[10px] font-semibold text-error transition-colors duration-150 hover:bg-error/10"
           aria-label="Hapus pengalaman"
         >
           Hapus
