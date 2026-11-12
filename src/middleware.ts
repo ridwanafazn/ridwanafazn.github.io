@@ -30,6 +30,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // www → apex (301). `www` tetap terpasang sebagai custom domain Worker,
+  // tapi seluruh trafik disatukan ke domain kanonik.
+  if (url.hostname === 'www.ridwanafazn.my.id') {
+    return redirect(`https://ridwanafazn.my.id${path}${url.search}`, 301);
+  }
+
   // Admin & preview selalu SSR + wajib login.
   const isProtectedArea = path.startsWith('/admin') || path.startsWith('/preview');
 

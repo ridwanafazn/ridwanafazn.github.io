@@ -3,7 +3,7 @@
 > **Stack**: Astro 7.4.5 (SSR public + cache 60s) + Cloudflare Workers + Neon + Cloudinary + Better Auth
 > **Live**: https://portofx-v2.ridwanafzn.workers.dev
 > **Deploy**: `pnpm build` lalu `wrangler deploy` (bukan `wrangler pages deploy`)
-> **Domain target**: `https://ridwanafazn.my.id` (pending pindah NS ke Cloudflare)
+> **Domain live**: `https://ridwanafazn.my.id` (`www` → 301 apex)
 
 ---
 
@@ -245,20 +245,26 @@ sanity dataset export production backups/sanity-$(date +%Y%m%d).tar.gz
 
 ---
 
-## 8. Custom Domain (status: PENDING)
+## 8. Custom Domain (status: LIVE)
 
-Saat ini `ridwanafazn.my.id` ada di NS `dnscloud.id` dan mengarah ke GitHub Pages.
+`https://ridwanafazn.my.id` dilayani Cloudflare Workers (`portofx-v2`). `www.ridwanafazn.my.id` **301 → apex** (middleware `src/middleware.ts`).
 
-1. Cloudflare Dashboard → **Add a site** → `ridwanafazn.my.id` (Free).
-2. Ganti nameserver di registrar ke NS Cloudflare.
-3. Tunggu zone **Active**.
-4. Workers → `portofx-v2` → **Custom Domains** → add `ridwanafazn.my.id` (+ `www`).
-5. Hapus `public/CNAME`; disable GitHub Pages.
+Riwayat cutover (2026-11-12):
+
+1. NS di registrar **idcloudhost** (bukan dnscloud.id) → `bart.ns.cloudflare.com` + `keira.ns.cloudflare.com`.
+   - Zona sempat stuck `pending` karena typo `keirs.ns.cloudflare.com`; perbaiki ke `keira`. Setelah NS cocok, klik **Check nameservers now**.
+2. Hapus 4 A record GitHub Pages (`185.199.108-111.153`) + CNAME `www` → `ridwanafazn.github.io`.
+3. Workers → `portofx-v2` → **Domains** → Add Domain: `ridwanafazn.my.id` + `www.ridwanafazn.my.id` (record + sertifikat otomatis).
+4. `public/CNAME` dihapus dari repo.
+5. GitHub Pages: custom domain dilepas (`PUT /repos/.../pages` dengan `cname: null`); repo `<user>.github.io` tidak bisa di-disable total oleh GitHub.
 6. Verify:
 
 ```bash
-curl -I https://ridwanafazn.my.id
+curl -I https://ridwanafazn.my.id        # 200
+curl -I https://www.ridwanafazn.my.id    # 301 → apex
 ```
+
+> Jika zona kembali `pending`: cek RDAP registrar (`https://rdap.org/domain/ridwanafazn.my.id`) — kedua NS harus persis `bart.ns.cloudflare.com` dan `keira.ns.cloudflare.com`.
 
 ---
 

@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-11
+> **Terakhir diperbarui:** 2026-11-12
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -7,7 +7,7 @@
 
 ## 1. Ringkasan 1 paragraf
 
-Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postgres + Cloudinary**, punya **admin panel custom** (CRUD project + upload asset), **public pages SSR dengan edge cache 60 detik**, dan **sudah deploy ke Cloudflare Workers**. Yang tersisa utama: **custom domain `ridwanafazn.my.id`** (masih DNS di `dnscloud.id`, mengarah ke GitHub Pages) dan **upload gambar project asli**.
+Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postgres + Cloudinary**, punya **admin panel custom** (CRUD project + upload asset), **public pages SSR dengan edge cache 60 detik**, dan **live di Cloudflare Workers pada `https://ridwanafazn.my.id`** (`www` → 301 apex; GitHub Pages sudah dilepas). Sisa: **upload gambar project asli**.
 
 ---
 
@@ -15,14 +15,15 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 
 | Item | Nilai |
 |---|---|
-| **Live (Workers)** | https://portofx-v2.ridwanafzn.workers.dev |
+| **Live (canonical)** | https://ridwanafazn.my.id |
+| **Fallback** | https://portofx-v2.ridwanafazn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `502a15d0-abf0-4ccc-a769-b1b968ab030a` (cek ulang: `wrangler deployments list`) |
+| **Versi terakhir** | `7e6190ec-5c29-47ee-8014-2a5c7eaf7490` (cek ulang: `wrangler deployments list`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
-| **Domain target** | `https://ridwanafazn.my.id` |
-| **Domain saat ini** | NS `candra.ns.dnscloud.id` / `dewi.ns.dnscloud.id` → A record GitHub Pages `185.199.108-111.153`, `www` CNAME `ridwanafazn.github.io` |
-| **Admin login** | `https://portofx-v2.ridwanafzn.workers.dev/admin/login` |
+| **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
+| **DNS** | NS Cloudflare `bart` + `keira`; apex & `www` proxied ke Worker; record GitHub Pages sudah dihapus |
+| **Admin login** | `https://ridwanafazn.my.id/admin/login` |
 | **Dev server** | `http://localhost:4321/` (jalankan `pnpm dev`) |
 
 ---
@@ -152,7 +153,7 @@ src/
 7. **Cloudinary:** preset `ml_default` (Signed). Upload lewat `/auto/upload`; signed params dari `/admin/api/assets/sign-upload`. Hapus asset dari admin = **soft delete DB saja** (objek Cloudinary belum dihapus) → TODO.
 8. **Cache publik 60s:** perubahan DB tidak langsung jika URL sama. Gunakan `?v=timestamp` untuk melihat instan (response `x-cache: BYPASS`).
 9. **Deploy:** `pnpm build` → `pnpm exec wrangler deploy`. `wrangler deploy` **tidak** build. Sitemap sekarang SSR, jadi build tidak lagi merender halaman yang query DB (CI tetap menyuplai `DATABASE_URL` untuk env schema).
-10. **Login di workers.dev** sudah diizinkan via trusted origins; cookie host-only.
+10. **Domain kanonik** `ridwanafazn.my.id` (cookie host-only). Login admin di domain ini; `www` di-redirect 301 di middleware sebelum auth. workers.dev tetap di trusted origins sebagai fallback.
 11. **Sanity** sudah dihapus dari kode/deps. Project Sanity (`exvebwem`) masih ada di cloud tapi tidak dipakai; token tidak disimpan.
 12. **Jangan** taruh `BETTER_AUTH_SECRET`/API secret di `wrangler.jsonc` vars.
 13. **Jangan jalankan `pnpm build` saat `pnpm dev` hidup** — dev server (workerd) bisa korup dan semua route jadi 500 (`fetch failed`). Kalau terjadi: `pnpm exec astro dev stop` lalu `pnpm dev` lagi.
@@ -174,14 +175,12 @@ src/
 
 ## 9. TODO / next steps
 
-### Wajib untuk go-live domain
-1. Cloudflare Dashboard → **Add site** `ridwanafazn.my.id` → ganti NS di registrar (`dnscloud.id`) ke NS Cloudflare.
-2. Setelah zone **Active**:
-   - Tambahkan **Workers → Custom Domains**: `ridwanafazn.my.id` (+ `www`).
-   - Hapus `public/CNAME`.
-   - Disable **GitHub Pages** di repo settings.
-   - Verifikasi HTTPS/HSTS, login admin di domain baru.
-3. (Opsional) Redirect `www` → apex.
+### Go-live domain — SELESAI (2026-11-12)
+1. ✅ Zona `ridwanafazn.my.id` aktif di Cloudflare (NS `bart` + `keira`; registrar **idcloudhost**).
+2. ✅ Workers Custom Domain: `ridwanafazn.my.id` + `www.ridwanafazn.my.id`.
+3. ✅ `public/CNAME` dihapus; custom domain GitHub Pages dilepas (`cname: null`) + workflow deploy di-disable.
+4. ✅ `www` → apex 301 (middleware); login admin diverifikasi di domain baru.
+5. ⚠️ Sisa: ganti password admin sementara.
 
 ### Konten
 4. Upload gambar via `/admin/assets`, lalu edit project → pilih **cover** + **galeri** (urutan klik = urutan tampil).

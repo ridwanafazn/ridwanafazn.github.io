@@ -24,8 +24,8 @@
 
 - Migrasi Sanity → Neon **selesai** (10 project, profile, skills, 2 activities).
 - Admin panel + galeri gambar **selesai**; public **SSR + cache**.
-- Deploy: https://portofx-v2.ridwanafzn.workers.dev
-- **Sisa**: custom domain `ridwanafazn.my.id` (NS masih di dnscloud.id) + upload gambar project.
+- **Live**: https://ridwanafazn.my.id (`www` → 301 apex) · fallback https://portofx-v2.ridwanafzn.workers.dev
+- **Sisa**: upload gambar project.
 
 ## Dokumen
 
@@ -44,4 +44,4 @@
 
 ## Konteks untuk agent baru
 
-> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan; deploy di https://portofx-v2.ridwanafazn.workers.dev. Sisa: custom domain `ridwanafazn.my.id` (ubah NS di registrar ke Cloudflare) dan upload gambar project. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`."
+> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan; live di https://ridwanafazn.my.id (www → 301 apex). Sisa: upload gambar project. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`."

@@ -28,7 +28,7 @@
 - Data model: **flat first** (Fase 1) + blocks (Fase 3) + pages (Fase 4)
 
 **Open Questions:**
-- [ ] Custom domain: `ridwanafazn.dev` atau stay `ridwanafazn.github.io`?
+- [x] Custom domain: `ridwanafazn.my.id` → Cloudflare Workers (bukan GitHub Pages).
 - [ ] Deploy hook untuk rebuild static setelah publish? Atau rely on GitHub Actions on push to `main`?
 - [ ] Preview password protection needed? Atau public draft URL dengan noindex?
 
@@ -137,7 +137,7 @@
 | KV `SESSION` | ✅ Done | id `0caf957ffab8428687ada2d8bef1e809` |
 | Secrets production | ✅ Done | `DATABASE_URL`, `UNPOOLED`, `BETTER_AUTH_SECRET`, `CLOUDINARY_API_KEY/SECRET` |
 | Deploy Workers | ✅ Done | https://portofx-v2.ridwanafzn.workers.dev |
-| Custom domain `ridwanafazn.my.id` | ⏳ Pending | zone masih di `dnscloud.id`; perlu pindah NS ke Cloudflare |
+| Custom domain `ridwanafazn.my.id` | ✅ Done | Live di Workers; `www` 301 → apex; GitHub Pages dilepas |
 | Hapus `public/CNAME` + disable GH Pages | ⏳ Pending | setelah domain aktif |
 
 ---

@@ -14,7 +14,7 @@
 | **Repo** | `github.com/ridwanafazn/portofx-v2` |
 | **Branch aktif** | `migrate/astro-ssr-neon` (belum ada commit migrasi) |
 | **Stack** | **Astro 7.4.5** (SSR + edge cache) · **Neon Postgres** · **Drizzle ORM 0.45.4** · **Better Auth 1.7.20** · **Cloudinary** · **Cloudflare Workers 14.4.7** |
-| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan. **Sisa: custom domain `ridwanafazn.my.id`** |
+| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Sisa: upload gambar project |
 
 ---
 

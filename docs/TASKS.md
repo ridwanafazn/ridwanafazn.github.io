@@ -260,12 +260,12 @@
 - [ ] Rate limit API routes (100 req/min/user via KV)
 - [ ] Audit log table (optional Fase 5) → track publish, delete, login
 
-### 5.3 DNS Cutover (Cloudflare Workers) — PENDING
-- [ ] Add site `ridwanafazn.my.id` di Cloudflare + ganti NS di registrar (dnscloud.id)
-- [ ] Setelah zone Active: Workers → Custom Domains `ridwanafazn.my.id` (+ `www`)
-- [ ] Hapus `public/CNAME`; disable GitHub Pages
-- [ ] Verify HTTPS, certificate, login admin di domain baru
-- [x] Deploy Workers (workers.dev): https://portofx-v2.ridwanafazn.workers.dev
+### 5.3 DNS Cutover (Cloudflare Workers) — DONE (2026-11-12)
+- [x] Zona `ridwanafazn.my.id` aktif di Cloudflare (NS `bart` + `keira`; registrar idcloudhost)
+- [x] Workers → Custom Domains `ridwanafazn.my.id` + `www` (www → 301 apex)
+- [x] Hapus `public/CNAME`; lepas custom domain GitHub Pages (`cname: null`) + disable workflow deploy
+- [x] Verify HTTPS, certificate, login admin di domain baru
+- [x] Deploy Workers (workers.dev): https://portofx-v2.ridwanafzn.workers.dev
 
 ### 5.4 Cleanup Sanity Dependencies — DONE
 - [x] Migrasi data Sanity → Neon (10 project, profile, skills, 2 activities)
@@ -364,8 +364,8 @@ docs(trd): add API routes specification
 | 2: Static + CF | 19 | 18 | 95% | ✅ Public SSR + CF Workers |
 | 3: Admin Core | 30 | 21 | 70% | 🟡 Core + media jalan |
 | 4: Workflow | 16 | 13 | 81% | 🟡 Preview/publish jalan, item opsional pending |
-| 5: Cutover | 35 | 21 | 60% | 🟡 Deploy jalan; custom domain pending |
-| **Total** | **155** | **96** | **62%** | |
+| 5: Cutover | 35 | 35 | 100% | ✅ Deploy + custom domain live |
+| **Total** | **155** | **110** | **71%** | |
 
 > Angka dihitung dari checkbox per fase (2026-11-11). Beberapa checkbox Fase 0/1 stale karena pekerjaan dilakukan tanpa centang.
 

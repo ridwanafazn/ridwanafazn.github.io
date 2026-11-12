@@ -1,6 +1,6 @@
 # Portofx v2 — Personal Portfolio
 
-> **Live**: https://portofx-v2.ridwanafazn.workers.dev
+> **Live**: https://ridwanafazn.my.id · fallback: https://portofx-v2.ridwanafzn.workers.dev
 > **Stack**: Astro 7.4.5 (SSR public + edge cache) · Cloudflare Workers · Neon Postgres · Drizzle ORM · Better Auth · Cloudinary · Tailwind CSS 4
 
 Portfolio pribadi dengan admin panel custom: CRUD project, cover & galeri gambar, profile/skills/activities, SEO, preview draft, publish/archive.
