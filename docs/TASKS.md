@@ -300,6 +300,8 @@
 - [x] Pengalaman editable + sortable di Profile
 - [x] Tombol `+ Project` di header admin dihapus
 - [x] Asset manager multi-upload: pilih/drag banyak file, upload paralel 3, progress bar, laporan per file
+- [x] Project gallery: rasio asli tanpa crop, gambar di atas ringkasan, lightbox zoom + background blur
+- [x] Cloudinary transform `c_limit,w_1600,q_auto,f_auto` (bukan resolusi asli, bukan crop)
 - [x] Fix Zod default leak pada PATCH parsial
 - [x] Restore data `open-house` & `vessel` dari Sanity
 

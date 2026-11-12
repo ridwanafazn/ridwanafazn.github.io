@@ -20,13 +20,13 @@ try {
   } else {
     const byId = await getAssetUrlMap();
     const coverPublic = row.coverImageId ? byId.get(row.coverImageId) : undefined;
-    cover = coverPublic ? getTransformUrl(coverPublic, { w: 1400, c: 'fill', h: 788 }) : null;
+    cover = coverPublic ? getTransformUrl(coverPublic, { w: 1600, c: 'limit' }) : null;
     gallery = [];
     for (const g of row.gallery ?? []) {
       const publicId = byId.get(g.assetId);
       if (!publicId) continue;
       gallery.push({
-        url: getTransformUrl(publicId, { w: 1200, c: 'fill', h: 900 }),
+        url: getTransformUrl(publicId, { w: 1600, c: 'limit' }),
         caption: g.caption,
         alt: g.alt,
       });
@@ -67,10 +67,59 @@ try {
           </header>
 
           {cover && (
-            <figure class="mb-10 overflow-hidden rounded-xl border border-outline">
-              <img src={cover} alt={`${row.title} cover`} class="aspect-[16/9] w-full object-cover" decoding="async" />
+            <figure class="mb-10 flex justify-center overflow-hidden rounded-xl border border-outline bg-surface">
+              <img src={cover} alt={`${row.title} cover`} class="h-auto max-h-[72vh] w-auto max-w-full object-contain" decoding="async" />
             </figure>
           )}
+
+          {
+            gallery.length > 0 && (
+              <section class="mb-12">
+                <div class="mb-5 flex items-end justify-between border-b border-outline-strong pb-4">
+                  <div>
+                    <h2 class="text-xl font-bold text-on-background">Galeri</h2>
+                    <p class="mt-1 text-[11px] text-on-surface-variant">Klik gambar untuk memperbesar.</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button type="button" data-gallery-prev class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent" aria-label="Sebelumnya">
+                      <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button type="button" data-gallery-next class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent" aria-label="Berikutnya">
+                      <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri preview">
+                  {gallery.map((img, i) => (
+                    <figure class="gallery-item overflow-hidden rounded-xl border border-outline bg-surface">
+                      <button
+                        type="button"
+                        data-lightbox
+                        data-src={img.url}
+                        data-alt={img.alt ?? `${row.title} - gambar ${i + 1}`}
+                        class="block cursor-zoom-in"
+                        aria-label="Perbesar gambar"
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.alt ?? `${row.title} - gambar ${i + 1}`}
+                          loading="lazy"
+                          decoding="async"
+                          class="transition-opacity duration-150 hover:opacity-90"
+                        />
+                      </button>
+                      {img.caption && (
+                        <figcaption class="border-t border-outline px-4 py-3 text-[12px] font-medium text-on-surface-variant">
+                          {img.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            )
+          }
 
           <div class="bento-card p-6 md:p-12">
             <section>
@@ -117,46 +166,25 @@ try {
               )
             }
           </div>
-
-          {
-            gallery.length > 0 && (
-              <section class="mt-12">
-                <div class="mb-5 flex items-end justify-between border-b border-outline-strong pb-4">
-                  <h2 class="text-xl font-bold text-on-background">Galeri</h2>
-                  <div class="flex gap-2">
-                    <button type="button" data-gallery-prev class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant hover:border-accent hover:text-accent" aria-label="Sebelumnya">
-                      <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                    </button>
-                    <button type="button" data-gallery-next class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant hover:border-accent hover:text-accent" aria-label="Berikutnya">
-                      <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri preview">
-                  {gallery.map((img, i) => (
-                    <figure class="gallery-item overflow-hidden rounded-xl border border-outline bg-surface">
-                      <a href={img.url} target="_blank" rel="noopener noreferrer" class="block">
-                        <img
-                          src={img.url}
-                          alt={img.alt ?? `${row.title} — gambar ${i + 1}`}
-                          loading="lazy"
-                          decoding="async"
-                          class="aspect-[4/3] w-full object-cover"
-                        />
-                      </a>
-                      {img.caption && (
-                        <figcaption class="border-t border-outline px-4 py-3 text-[12px] font-medium text-on-surface-variant">
-                          {img.caption}
-                        </figcaption>
-                      )}
-                    </figure>
-                  ))}
-                </div>
-              </section>
-            )
-          }
         </article>
+
+        <div
+          id="lightbox"
+          class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/80 p-4 backdrop-blur-md"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Gambar diperbesar"
+        >
+          <button
+            type="button"
+            id="lightbox-close"
+            class="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/30 text-white transition-colors duration-150 hover:bg-black/50"
+            aria-label="Tutup gambar"
+          >
+            <span class="material-symbols-outlined text-[22px]">close</span>
+          </button>
+          <img id="lightbox-img" alt="" class="max-h-[90vh] max-w-[92vw] object-contain shadow-2xl" />
+        </div>
       )
     }
   </div>
@@ -174,4 +202,35 @@ try {
     document.querySelector('[data-gallery-prev]')?.addEventListener('click', () => step(-1));
     document.querySelector('[data-gallery-next]')?.addEventListener('click', () => step(1));
   }
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  const closeLightbox = () => {
+    if (!lightbox) return;
+    lightbox.classList.add('hidden');
+    lightbox.classList.remove('flex');
+    document.body.style.overflow = '';
+    if (lightboxImg) lightboxImg.removeAttribute('src');
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-lightbox]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!lightbox || !lightboxImg) return;
+      lightboxImg.src = btn.dataset.src ?? '';
+      lightboxImg.alt = btn.dataset.alt ?? 'Gambar proyek';
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  lightboxClose?.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
 </script>

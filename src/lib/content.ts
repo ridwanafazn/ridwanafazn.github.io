@@ -7,8 +7,9 @@ import type { Project, Profile, SkillCategory, Activity } from '../types';
 
 const publishedOnly = and(eq(portfolios.status, 'published'), isNull(portfolios.deletedAt));
 
-function cdn(publicId: string, w = 1200) {
-  return `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,w_${w},q_auto,f_auto/${publicId}`;
+function cdn(publicId: string, w = 1600) {
+  // c_limit = pertahankan rasio asli (tanpa crop), q_auto/f_auto = versi ringan.
+  return `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_limit,w_${w},q_auto,f_auto/${publicId}`;
 }
 
 async function assetMap() {
@@ -28,7 +29,7 @@ function toProject(
   for (const g of row.gallery ?? []) {
     const publicId = byId.get(g.assetId);
     if (!publicId) continue;
-    gallery.push({ url: cdn(publicId, 1400), caption: g.caption, alt: g.alt });
+    gallery.push({ url: cdn(publicId, 1600), caption: g.caption, alt: g.alt });
   }
 
   return {
@@ -40,7 +41,7 @@ function toProject(
     techStack: row.techStack ?? [],
     highlights: row.highlights ?? [],
     isTopProject: row.isTopProject,
-    coverImage: coverPublicId ? cdn(coverPublicId, 1200) : undefined,
+    coverImage: coverPublicId ? cdn(coverPublicId, 1600) : undefined,
     gallery,
     links: row.links ?? [],
   };
