@@ -299,6 +299,7 @@
 - [x] Portfolio list drag & drop urutan (kolom Order dihapus)
 - [x] Pengalaman editable + sortable di Profile
 - [x] Tombol `+ Project` di header admin dihapus
+- [x] Asset manager multi-upload: pilih/drag banyak file, upload paralel 3, progress bar, laporan per file
 - [x] Fix Zod default leak pada PATCH parsial
 - [x] Restore data `open-house` & `vessel` dari Sanity
 

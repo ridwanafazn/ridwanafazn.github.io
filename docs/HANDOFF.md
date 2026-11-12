@@ -167,6 +167,7 @@ src/
 22. **Pengalaman** diedit di `/admin/profile` (tambah/hapus/seret urutan). Urutan array = urutan tampil di `/about`; disimpan saat form disubmit.
 23. **Dashboard** memakai grid stat + aksi cepat; tombol `+ Project` di header sudah dihapus (buat project dari halaman Portfolio atau aksi cepat).
 24. **Admin styling sharp**: tidak ada `rounded-*`, tanpa backdrop blur, transisi 150ms (color/opacity), tanpa hover translate. Jangan tambahkan kembali komponen rounded di area admin.
+25. **Multi-upload asset**: `/admin/assets` menerima banyak file sekaligus (input `multiple` + drag & drop), upload paralel maks 3, signature Cloudinary diminta sekali per batch, progress bar + daftar error per file.
 
 ---
 

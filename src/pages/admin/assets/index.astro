@@ -33,6 +33,7 @@ try {
   <form id="upload-form" class="mb-8 border border-outline bg-surface p-5">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
       <label
+        id="drop-zone"
         for="asset-file"
         class="flex flex-1 cursor-pointer items-center gap-3 border border-dashed border-outline px-4 py-4 transition-colors duration-150 hover:border-accent"
       >
@@ -42,10 +43,10 @@ try {
           </svg>
         </span>
         <span class="min-w-0">
-          <span id="file-label" class="block truncate text-sm font-semibold text-on-background">Pilih gambar…</span>
-          <span class="block text-[11px] text-on-surface-variant">JPG, PNG, WEBP, AVIF · maks 10 MB</span>
+          <span id="file-label" class="block truncate text-sm font-semibold text-on-background">Pilih gambar atau tarik ke sini</span>
+          <span class="block text-[11px] text-on-surface-variant">Bisa banyak file sekaligus · JPG, PNG, WEBP, AVIF · maks 10 MB per file</span>
         </span>
-        <input id="asset-file" type="file" name="file" accept="image/*" class="sr-only" />
+        <input id="asset-file" type="file" name="file" accept="image/*" multiple class="sr-only" />
       </label>
 
       <button
@@ -56,7 +57,15 @@ try {
         Upload
       </button>
     </div>
-    <p id="upload-status" class="mt-3 text-xs text-on-surface-variant"></p>
+
+    <div id="upload-progress" class="mt-4 hidden">
+      <div class="h-1 w-full bg-outline/60">
+        <div id="upload-bar" class="h-full w-0 bg-accent transition-[width] duration-150"></div>
+      </div>
+      <p id="upload-status" class="mt-2 text-xs text-on-surface-variant"></p>
+    </div>
+
+    <ul id="upload-errors" class="mt-3 hidden space-y-1 text-xs text-error"></ul>
   </form>
 
   {
@@ -98,30 +107,148 @@ try {
 </AdminLayout>
 
 <script>
+  const MAX_BYTES = 10 * 1024 * 1024;
+  const CONCURRENCY = 3;
+
   const statusEl = document.getElementById('upload-status');
+  const progressEl = document.getElementById('upload-progress');
+  const barEl = document.getElementById('upload-bar');
+  const errorsEl = document.getElementById('upload-errors');
   const form = document.getElementById('upload-form') as HTMLFormElement | null;
   const fileInput = document.getElementById('asset-file') as HTMLInputElement | null;
   const fileLabel = document.getElementById('file-label');
+  const dropZone = document.getElementById('drop-zone');
   const submitBtn = document.getElementById('upload') as HTMLButtonElement | null;
-
-  fileInput?.addEventListener('change', () => {
-    const f = fileInput.files?.[0];
-    if (fileLabel) fileLabel.textContent = f ? f.name : 'Pilih gambar…';
-  });
 
   const notify = (m: string, t: 'success' | 'error' = 'success') =>
     (window as any).toast?.(m, t);
 
+  const selectedFiles = () => Array.from(fileInput?.files ?? []);
+
+  const refreshLabel = () => {
+    if (!fileLabel) return;
+    const files = selectedFiles();
+    if (files.length === 0) fileLabel.textContent = 'Pilih gambar atau tarik ke sini';
+    else if (files.length === 1) fileLabel.textContent = files[0].name;
+    else fileLabel.textContent = `${files.length} gambar dipilih`;
+  };
+
+  const setProgress = (done: number, total: number, text: string) => {
+    progressEl?.classList.remove('hidden');
+    if (barEl) barEl.style.width = `${total > 0 ? Math.round((done / total) * 100) : 0}%`;
+    if (statusEl) statusEl.textContent = text;
+  };
+
+  const showErrors = (failures: { name: string; message: string }[]) => {
+    if (!errorsEl) return;
+    errorsEl.innerHTML = '';
+    if (failures.length === 0) {
+      errorsEl.classList.add('hidden');
+      return;
+    }
+    for (const failure of failures) {
+      const li = document.createElement('li');
+      li.textContent = `${failure.name}: ${failure.message}`;
+      errorsEl.appendChild(li);
+    }
+    errorsEl.classList.remove('hidden');
+  };
+
+  fileInput?.addEventListener('change', refreshLabel);
+
+  // Drag & drop ke area upload
+  if (dropZone && fileInput) {
+    const setDragging = (on: boolean) => {
+      dropZone.classList.toggle('border-accent', on);
+      dropZone.classList.toggle('bg-accent/5', on);
+    };
+
+    for (const event of ['dragenter', 'dragover']) {
+      dropZone.addEventListener(event, (e) => {
+        e.preventDefault();
+        setDragging(true);
+      });
+    }
+
+    for (const event of ['dragleave', 'dragend']) {
+      dropZone.addEventListener(event, () => setDragging(false));
+    }
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      setDragging(false);
+      const dropped = (e as DragEvent).dataTransfer?.files;
+      if (dropped && dropped.length > 0) {
+        fileInput.files = dropped;
+        fileInput.dispatchEvent(new Event('change'));
+      }
+    });
+  }
+
+  const uploadOne = async (
+    file: File,
+    sign: Record<string, string | number>,
+  ): Promise<void> => {
+    const fd = new FormData();
+    for (const [key, value] of Object.entries(sign)) fd.append(key, String(value));
+    fd.append('file', file);
+
+    const cloudName = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+      method: 'POST',
+      body: fd,
+    });
+    if (!cloudRes.ok) throw new Error((await cloudRes.text()).slice(0, 180));
+
+    const uploaded = await cloudRes.json();
+    const saveRes = await fetch('/admin/api/assets', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        cloudinaryPublicId: uploaded.public_id,
+        originalName: file.name,
+        mimeType: uploaded.resource_type === 'image' ? `image/${uploaded.format}` : undefined,
+        width: uploaded.width,
+        height: uploaded.height,
+        bytes: uploaded.bytes,
+        format: uploaded.format,
+        folder: 'portfolio',
+      }),
+    });
+    if (!saveRes.ok) throw new Error(await saveRes.text());
+  };
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const file = fileInput?.files?.[0];
-    if (!file) {
-      notify('Pilih file dulu', 'error');
+
+    const picked = selectedFiles();
+    if (picked.length === 0) {
+      notify('Pilih minimal satu gambar', 'error');
       return;
     }
 
-    submitBtn!.disabled = true;
-    statusEl!.textContent = 'Meminta signature…';
+    const valid = picked.filter((file) => file.type.startsWith('image/') && file.size <= MAX_BYTES);
+    const skipped = picked
+      .filter((file) => !valid.includes(file))
+      .map((file) => ({
+        name: file.name,
+        message: file.size > MAX_BYTES ? 'lebih dari 10 MB' : 'bukan file gambar',
+      }));
+
+    if (valid.length === 0) {
+      showErrors(skipped);
+      notify('Tidak ada file yang bisa diupload', 'error');
+      return;
+    }
+
+    if (submitBtn) submitBtn.disabled = true;
+    showErrors([...skipped]);
+    setProgress(0, valid.length, 'Meminta signature…');
+
+    const failures: { name: string; message: string }[] = [...skipped];
+    let succeeded = 0;
+    let completed = 0;
+
     try {
       const signRes = await fetch('/admin/api/assets/sign-upload', {
         method: 'POST',
@@ -131,44 +258,48 @@ try {
       if (!signRes.ok) throw new Error(await signRes.text());
       const sign = await signRes.json();
 
-      const fd = new FormData();
-      for (const [k, v] of Object.entries(sign)) fd.append(k, String(v));
-      fd.append('file', file);
+      let cursor = 0;
+      const worker = async () => {
+        while (cursor < valid.length) {
+          const file = valid[cursor++];
+          try {
+            await uploadOne(file, sign);
+            succeeded++;
+          } catch (err) {
+            failures.push({
+              name: file.name,
+              message: err instanceof Error ? err.message : String(err),
+            });
+          } finally {
+            completed++;
+            setProgress(completed, valid.length, `Mengunggah ${completed} dari ${valid.length}…`);
+          }
+        }
+      };
 
-      statusEl!.textContent = `Uploading ${file.name}…`;
-      const cloudName = import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME;
-      const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
-        method: 'POST',
-        body: fd,
-      });
-      if (!cloudRes.ok) throw new Error(await cloudRes.text());
-      const uploaded = await cloudRes.json();
+      await Promise.all(
+        Array.from({ length: Math.min(CONCURRENCY, valid.length) }, () => worker()),
+      );
 
-      statusEl!.textContent = 'Menyimpan metadata…';
-      const saveRes = await fetch('/admin/api/assets', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          cloudinaryPublicId: uploaded.public_id,
-          originalName: file.name,
-          mimeType: uploaded.resource_type === 'image' ? `image/${uploaded.format}` : undefined,
-          width: uploaded.width,
-          height: uploaded.height,
-          bytes: uploaded.bytes,
-          format: uploaded.format,
-          folder: 'portfolio',
-        }),
-      });
-      if (!saveRes.ok) throw new Error(await saveRes.text());
-
-      statusEl!.textContent = '';
-      notify('Asset berhasil diupload');
-      setTimeout(() => location.reload(), 600);
+      if (failures.length === 0) {
+        setProgress(valid.length, valid.length, `Selesai. ${succeeded} asset diunggah.`);
+        notify(`${succeeded} asset berhasil diupload`);
+        setTimeout(() => location.reload(), 700);
+      } else {
+        showErrors(failures);
+        setProgress(
+          valid.length,
+          valid.length,
+          `Selesai. ${succeeded} berhasil, ${failures.length} gagal.`,
+        );
+        notify(`${succeeded} berhasil, ${failures.length} gagal`, 'error');
+        if (succeeded > 0) setTimeout(() => location.reload(), 1800);
+      }
     } catch (err) {
-      statusEl!.textContent = '';
+      setProgress(completed, valid.length, 'Upload gagal.');
       notify(`Gagal upload: ${err}`, 'error');
     } finally {
-      submitBtn!.disabled = false;
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 
