@@ -1,7 +1,7 @@
 # DESIGN — UI/UX & Technical Design Decisions
 ## Portofx v2: Admin Panel & Public Website
 
-> **Catatan implementasi (2026-11-12):** Admin memakai **Astro components + Tailwind** (bukan Shadcn/React islands) demi performa; navigasi responsive (sidebar desktop, drawer mobile) + toast. Galeri project publik memakai **grid justified** (tile 16:10, caption nama file tanpa background) dengan lightbox prev/next + counter, bukan lagi slider horizontal. State terbaru: **`docs/HANDOFF.md`**.
+> **Catatan implementasi (2026-11-12):** Admin memakai **Astro components + Tailwind** (bukan Shadcn/React islands) demi performa; navigasi responsive (sidebar desktop, drawer mobile) + toast. Galeri project publik memakai **slider Play Store style** (scroll-snap per kartu, tombol prev/next dengan state disabled, progress bar tipis, caption nama file tanpa background) plus lightbox prev/next + counter; klik area luar gambar menutup lightbox. State terbaru: **`docs/HANDOFF.md`**.
 
 > **Philosophy**: "Backend-first, FE remeh tapi rapi" — Admin panel powerful & accessible, Public site zero-JS, performant, accessible.
 

@@ -252,6 +252,37 @@
 }
 
 @layer utilities {
+  /* =========================================
+     PROJECT GALLERY — Play Store style slider
+     ========================================= */
+  .gallery-track {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+  }
+  .gallery-track::-webkit-scrollbar { display: none; }
+
+  .gallery-item {
+    flex: 0 0 auto;
+    width: clamp(15rem, 38vw, 21rem);
+    scroll-snap-align: start;
+  }
+  @media (max-width: 640px) {
+    .gallery-item { width: 82vw; }
+  }
+
+  .gallery-nav:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 

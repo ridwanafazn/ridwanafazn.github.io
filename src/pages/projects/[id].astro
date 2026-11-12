@@ -57,13 +57,13 @@ const summaryParagraphs = summary
             {project.title}
           </h1>
 
-          <div class="mb-8 flex flex-wrap justify-center gap-2.5">
+          <div class="mb-8 flex w-full flex-wrap justify-center gap-2.5">
             {project.techStack.map((tech) => <Badge text={tech} />)}
           </div>
 
           {
             project.links && project.links.length > 0 && (
-              <div class="flex flex-wrap justify-center gap-4 pt-2">
+              <div class="flex w-full flex-wrap justify-center gap-4 pt-2">
                 {project.links.map((link) => (
                   <a
                     href={link.url}
@@ -99,22 +99,39 @@ const summaryParagraphs = summary
         {
           project.gallery && project.gallery.length > 0 && (
             <section class="mb-12 reveal from-behind">
-              <div class="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-outline-strong pb-4">
+              <div class="mb-5 flex items-end justify-between gap-3 border-b border-outline-strong pb-4">
                 <div>
                   <h2 class="text-xl font-bold text-on-background">Galeri</h2>
-                  <p class="mt-1 text-[11px] text-on-surface-variant">Klik gambar untuk melihat versi penuh.</p>
+                  <p class="mt-1 text-[11px] text-on-surface-variant">
+                    {project.gallery.length} foto · geser atau klik untuk memperbesar.
+                  </p>
                 </div>
-                <span class="rounded-full border border-outline px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                  {project.gallery.length} foto
-                </span>
+                <div class="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    data-gallery-prev
+                    class="gallery-nav grid h-9 w-9 place-items-center rounded-full border border-outline bg-surface text-on-surface-variant transition-all duration-200 hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    aria-label="Gambar sebelumnya"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                  </button>
+                  <button
+                    type="button"
+                    data-gallery-next
+                    class="gallery-nav grid h-9 w-9 place-items-center rounded-full border border-outline bg-surface text-on-surface-variant transition-all duration-200 hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    aria-label="Gambar berikutnya"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </button>
+                </div>
               </div>
 
-              <div class="grid grid-cols-1 gap-x-3 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri proyek, geser ke samping">
                 {project.gallery.map((img, i) => {
                   const alt = img.alt ?? `${project!.title} - gambar ${i + 1}`;
                   const caption = img.caption || img.name || '';
                   return (
-                    <figure class="group">
+                    <figure class="gallery-item group">
                       <button
                         type="button"
                         data-lightbox
@@ -145,6 +162,10 @@ const summaryParagraphs = summary
                     </figure>
                   );
                 })}
+              </div>
+
+              <div class="mt-4 h-0.5 w-full overflow-hidden rounded-full bg-outline/70" aria-hidden="true">
+                <span data-gallery-progress class="block h-full rounded-full bg-on-background/50 transition-[width] duration-200" style="width: 30%"></span>
               </div>
             </section>
           )
@@ -238,6 +259,49 @@ const summaryParagraphs = summary
 }
 
 <script>
+  // Slider galeri: geser per kartu, state tombol, progress bar.
+  const track = document.querySelector<HTMLElement>('[data-gallery]');
+  const galleryPrev = document.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+  const galleryNext = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
+  const galleryProgress = document.querySelector<HTMLElement>('[data-gallery-progress]');
+
+  if (track) {
+    const step = (dir: number) => {
+      const item = track.querySelector<HTMLElement>('.gallery-item');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
+      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
+    };
+
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      if (galleryPrev) galleryPrev.disabled = track.scrollLeft <= 2;
+      if (galleryNext) galleryNext.disabled = track.scrollLeft >= max - 2;
+      if (galleryProgress) {
+        const ratio = track.scrollWidth > 0 ? track.clientWidth / track.scrollWidth : 1;
+        galleryProgress.style.width = `${Math.min(100, ratio * 100)}%`;
+        const travel = max > 0 && ratio < 1 ? (track.scrollLeft / max) * ((1 - ratio) / ratio) * 100 : 0;
+        galleryProgress.style.transform = `translateX(${travel}%)`;
+      }
+    };
+
+    galleryPrev?.addEventListener('click', () => step(-1));
+    galleryNext?.addEventListener('click', () => step(1));
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        step(-1);
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        step(1);
+      }
+    });
+    sync();
+  }
+
   // Lightbox galeri: navigasi prev/next, counter, keyboard.
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
@@ -282,7 +346,10 @@ const summaryParagraphs = summary
   document.querySelector('[data-lightbox-next]')?.addEventListener('click', () => render(current + 1));
 
   lightbox?.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
+    const target = e.target as HTMLElement;
+    // Klik area luar gambar menutup lightbox; klik gambar/nav tidak.
+    if (target === lightboxImg || target.closest('button')) return;
+    closeLightbox();
   });
   lightboxClose?.addEventListener('click', closeLightbox);
   document.addEventListener('keydown', (e) => {

@@ -37,6 +37,12 @@ try {
 } catch (err) {
   error = err instanceof Error ? err.message : String(err);
 }
+
+const summary = row ? row.longDescription || row.description : '';
+const summaryParagraphs = summary
+  .split(/\n\s*\n/)
+  .map((paragraph) => paragraph.trim())
+  .filter(Boolean);
 ---
 
 <Layout title={row ? `${row.title} · Preview · Ridwan Pages` : 'Preview · Ridwan Pages'}>
@@ -82,22 +88,39 @@ try {
           {
             gallery.length > 0 && (
               <section class="mb-12">
-                <div class="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-outline-strong pb-4">
+                <div class="mb-5 flex items-end justify-between gap-3 border-b border-outline-strong pb-4">
                   <div>
                     <h2 class="text-xl font-bold text-on-background">Galeri</h2>
-                    <p class="mt-1 text-[11px] text-on-surface-variant">Klik gambar untuk melihat versi penuh.</p>
+                    <p class="mt-1 text-[11px] text-on-surface-variant">
+                      {gallery.length} foto · geser atau klik untuk memperbesar.
+                    </p>
                   </div>
-                  <span class="rounded-full border border-outline px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-                    {gallery.length} foto
-                  </span>
+                  <div class="flex shrink-0 gap-2">
+                    <button
+                      type="button"
+                      data-gallery-prev
+                      class="gallery-nav grid h-9 w-9 place-items-center rounded-full border border-outline bg-surface text-on-surface-variant transition-all duration-200 hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      aria-label="Gambar sebelumnya"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button
+                      type="button"
+                      data-gallery-next
+                      class="gallery-nav grid h-9 w-9 place-items-center rounded-full border border-outline bg-surface text-on-surface-variant transition-all duration-200 hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      aria-label="Gambar berikutnya"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-x-3 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri preview, geser ke samping">
                   {gallery.map((img, i) => {
                     const alt = img.alt ?? `${row!.title} - gambar ${i + 1}`;
                     const caption = img.caption || img.name || '';
                     return (
-                      <figure class="group">
+                      <figure class="gallery-item group">
                         <button
                           type="button"
                           data-lightbox
@@ -129,6 +152,10 @@ try {
                     );
                   })}
                 </div>
+
+                <div class="mt-4 h-0.5 w-full overflow-hidden rounded-full bg-outline/70" aria-hidden="true">
+                  <span data-gallery-progress class="block h-full rounded-full bg-on-background/50 transition-[width] duration-200" style="width: 30%"></span>
+                </div>
               </section>
             )
           }
@@ -136,9 +163,9 @@ try {
           <div class="bento-card p-6 md:p-12">
             <section>
               <h2 class="mb-4 border-b border-outline/30 pb-4 text-2xl font-bold text-on-background">Ringkasan</h2>
-              <p class="text-justify text-[15px] leading-relaxed text-on-surface-variant">
-                {row.longDescription || row.description}
-              </p>
+              <div class="space-y-4 text-justify text-[15px] leading-relaxed text-on-surface-variant">
+                {summaryParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+              </div>
             </section>
 
             {
@@ -241,6 +268,49 @@ try {
 </Layout>
 
 <script>
+  // Slider galeri: geser per kartu, state tombol, progress bar.
+  const track = document.querySelector<HTMLElement>('[data-gallery]');
+  const galleryPrev = document.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+  const galleryNext = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
+  const galleryProgress = document.querySelector<HTMLElement>('[data-gallery-progress]');
+
+  if (track) {
+    const step = (dir: number) => {
+      const item = track.querySelector<HTMLElement>('.gallery-item');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
+      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
+    };
+
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      if (galleryPrev) galleryPrev.disabled = track.scrollLeft <= 2;
+      if (galleryNext) galleryNext.disabled = track.scrollLeft >= max - 2;
+      if (galleryProgress) {
+        const ratio = track.scrollWidth > 0 ? track.clientWidth / track.scrollWidth : 1;
+        galleryProgress.style.width = `${Math.min(100, ratio * 100)}%`;
+        const travel = max > 0 && ratio < 1 ? (track.scrollLeft / max) * ((1 - ratio) / ratio) * 100 : 0;
+        galleryProgress.style.transform = `translateX(${travel}%)`;
+      }
+    };
+
+    galleryPrev?.addEventListener('click', () => step(-1));
+    galleryNext?.addEventListener('click', () => step(1));
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        step(-1);
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        step(1);
+      }
+    });
+    sync();
+  }
+
   // Lightbox galeri: navigasi prev/next, counter, keyboard.
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
@@ -285,7 +355,10 @@ try {
   document.querySelector('[data-lightbox-next]')?.addEventListener('click', () => render(current + 1));
 
   lightbox?.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
+    const target = e.target as HTMLElement;
+    // Klik area luar gambar menutup lightbox; klik gambar/nav tidak.
+    if (target === lightboxImg || target.closest('button')) return;
+    closeLightbox();
   });
   lightboxClose?.addEventListener('click', closeLightbox);
   document.addEventListener('keydown', (e) => {
