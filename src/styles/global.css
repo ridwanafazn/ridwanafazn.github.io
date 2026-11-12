@@ -252,46 +252,6 @@
 }
 
 @layer utilities {
-  /* =========================================
-     PROJECT GALLERY — Play Store style
-     ========================================= */
-  .gallery-track {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.75rem;
-    scrollbar-width: thin;
-  }
-  .gallery-track > * {
-    scroll-snap-align: start;
-    flex: 0 0 auto;
-  }
-  /* Rasio asli: lebar mengikuti foto, tinggi dibatasi viewport. */
-  .gallery-item {
-    width: auto;
-  }
-  .gallery-item img {
-    display: block;
-    width: auto;
-    height: auto;
-    max-height: 54vh;
-    max-width: min(88vw, 1200px);
-    object-fit: contain;
-  }
-  @media (max-width: 767px) {
-    .gallery-item img { max-height: 40vh; }
-  }
-  .gallery-track::-webkit-scrollbar { height: 6px; }
-  .gallery-track::-webkit-scrollbar-thumb {
-    background: var(--color-outline-strong);
-    border-radius: 999px;
-  }
-  .gallery-track::-webkit-scrollbar-track { background: transparent; }
-
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 

@@ -69,55 +69,65 @@ try {
           </header>
 
           {cover && (
-            <figure class="mb-10 flex justify-center overflow-hidden rounded-xl border border-outline bg-surface">
-              <img src={cover} alt={`${row.title} cover`} class="h-auto max-h-[72vh] w-auto max-w-full object-contain" decoding="async" />
+            <figure class="mb-12 flex justify-center">
+              <img
+                src={cover}
+                alt={`${row.title} cover`}
+                class="h-auto max-h-[250px] w-auto max-w-full rounded-lg border border-outline bg-surface object-contain shadow-sm md:max-h-[360px]"
+                decoding="async"
+              />
             </figure>
           )}
 
           {
             gallery.length > 0 && (
               <section class="mb-12">
-                <div class="mb-5 flex items-end justify-between border-b border-outline-strong pb-4">
+                <div class="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-outline-strong pb-4">
                   <div>
                     <h2 class="text-xl font-bold text-on-background">Galeri</h2>
-                    <p class="mt-1 text-[11px] text-on-surface-variant">Klik gambar untuk memperbesar.</p>
+                    <p class="mt-1 text-[11px] text-on-surface-variant">Klik gambar untuk melihat versi penuh.</p>
                   </div>
-                  <div class="flex gap-2">
-                    <button type="button" data-gallery-prev class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent" aria-label="Sebelumnya">
-                      <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                    </button>
-                    <button type="button" data-gallery-next class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface-variant transition-colors duration-150 hover:border-accent hover:text-accent" aria-label="Berikutnya">
-                      <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                    </button>
-                  </div>
+                  <span class="rounded-full border border-outline px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                    {gallery.length} foto
+                  </span>
                 </div>
 
-                <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri preview">
-                  {gallery.map((img, i) => (
-                    <figure class="gallery-item overflow-hidden rounded-xl border border-outline bg-surface">
-                      <button
-                        type="button"
-                        data-lightbox
-                        data-src={img.url}
-                        data-alt={img.alt ?? `${row.title} - gambar ${i + 1}`}
-                        class="block cursor-zoom-in"
-                        aria-label="Perbesar gambar"
-                      >
-                        <img
-                          src={img.url}
-                          alt={img.alt ?? `${row.title} - gambar ${i + 1}`}
-                          loading="lazy"
-                          decoding="async"
-                          class="transition-opacity duration-150 hover:opacity-90"
-                        />
-                      </button>
-                      {(img.caption || img.name) && (
-                        <figcaption class="border-t border-outline px-4 py-3 text-[12px] font-medium text-on-surface-variant">
-                          {img.caption || img.name}
-                        </figcaption>
-                      )}
-                    </figure>
-                  ))}
+                <div class="grid grid-cols-1 gap-x-3 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {gallery.map((img, i) => {
+                    const alt = img.alt ?? `${row!.title} - gambar ${i + 1}`;
+                    const caption = img.caption || img.name || '';
+                    return (
+                      <figure class="group">
+                        <button
+                          type="button"
+                          data-lightbox
+                          data-src={img.url}
+                          data-alt={alt}
+                          data-caption={caption}
+                          data-index={i}
+                          class="relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-outline bg-surface transition-all duration-300 hover:border-outline-strong hover:shadow-[0_14px_34px_-18px_rgb(22_21_26/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          aria-label={`Perbesar ${caption || alt}`}
+                        >
+                          <img
+                            src={img.url}
+                            alt={alt}
+                            loading="lazy"
+                            decoding="async"
+                            class="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                          />
+                          <span class="pointer-events-none absolute inset-0 bg-on-background/0 transition-colors duration-300 group-hover:bg-on-background/10" />
+                          <span class="pointer-events-none absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full border border-white/25 bg-black/35 text-white opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:opacity-100">
+                            <span class="material-symbols-outlined text-[17px]">zoom_in</span>
+                          </span>
+                        </button>
+                        {caption ? (
+                          <figcaption class="mt-2 truncate font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/90">
+                            {caption}
+                          </figcaption>
+                        ) : null}
+                      </figure>
+                    );
+                  })}
                 </div>
               </section>
             )
@@ -173,20 +183,56 @@ try {
         <Fragment slot="overlay">
           <div
             id="lightbox"
-            class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/80 p-4 backdrop-blur-md"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/90 p-4 backdrop-blur-lg"
             role="dialog"
             aria-modal="true"
             aria-label="Gambar diperbesar"
           >
+            <div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 p-4 md:p-6">
+              <span
+                id="lightbox-counter"
+                class="pointer-events-auto rounded-full border border-white/15 bg-white/10 px-3 py-1 font-mono text-[10px] font-semibold tracking-[0.14em] text-white backdrop-blur"
+              >
+                1 / 1
+              </span>
+              <button
+                type="button"
+                id="lightbox-close"
+                class="pointer-events-auto grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-black/30 text-white transition-colors duration-150 hover:bg-black/60"
+                aria-label="Tutup gambar"
+              >
+                <span class="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
             <button
               type="button"
-              id="lightbox-close"
-              class="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/30 text-white transition-colors duration-150 hover:bg-black/50"
-              aria-label="Tutup gambar"
+              data-lightbox-prev
+              class="absolute left-3 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition-colors duration-150 hover:bg-black/60 md:left-6"
+              aria-label="Gambar sebelumnya"
             >
-              <span class="material-symbols-outlined text-[22px]">close</span>
+              <span class="material-symbols-outlined text-[22px]">chevron_left</span>
             </button>
-            <img id="lightbox-img" alt="" class="max-h-[86vh] max-w-[92vw] object-contain shadow-2xl" />
+            <button
+              type="button"
+              data-lightbox-next
+              class="absolute right-3 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition-colors duration-150 hover:bg-black/60 md:right-6"
+              aria-label="Gambar berikutnya"
+            >
+              <span class="material-symbols-outlined text-[22px]">chevron_right</span>
+            </button>
+
+            <figure class="flex max-h-[88vh] w-full max-w-5xl flex-col items-center gap-3 px-1 md:px-10">
+              <img
+                id="lightbox-img"
+                alt=""
+                class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-2xl md:max-h-[76vh]"
+              />
+              <figcaption
+                id="lightbox-caption"
+                class="max-w-full truncate text-center font-mono text-[11px] uppercase tracking-[0.12em] text-white/60">
+              </figcaption>
+            </figure>
           </div>
         </Fragment>
       )
@@ -195,21 +241,33 @@ try {
 </Layout>
 
 <script>
-  const track = document.querySelector<HTMLElement>('[data-gallery]');
-  if (track) {
-    const step = (dir: number) => {
-      const item = track.querySelector<HTMLElement>('.gallery-item');
-      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
-      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
-      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
-    };
-    document.querySelector('[data-gallery-prev]')?.addEventListener('click', () => step(-1));
-    document.querySelector('[data-gallery-next]')?.addEventListener('click', () => step(1));
-  }
-
+  // Lightbox galeri: navigasi prev/next, counter, keyboard.
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightboxCounter = document.getElementById('lightbox-counter');
   const lightboxClose = document.getElementById('lightbox-close');
+  const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lightbox]'));
+  let current = 0;
+
+  const render = (index: number) => {
+    const total = triggers.length;
+    if (!lightboxImg || !total) return;
+    current = (index + total) % total;
+    const btn = triggers[current];
+    lightboxImg.src = btn.dataset.src ?? '';
+    lightboxImg.alt = btn.dataset.alt ?? 'Gambar proyek';
+    if (lightboxCaption) lightboxCaption.textContent = btn.dataset.caption ?? '';
+    if (lightboxCounter) lightboxCounter.textContent = `${current + 1} / ${total}`;
+  };
+
+  const openLightbox = (index: number) => {
+    if (!lightbox) return;
+    render(index);
+    lightbox.classList.remove('hidden');
+    lightbox.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  };
 
   const closeLightbox = () => {
     if (!lightbox) return;
@@ -219,22 +277,21 @@ try {
     if (lightboxImg) lightboxImg.removeAttribute('src');
   };
 
-  document.querySelectorAll<HTMLButtonElement>('[data-lightbox]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (!lightbox || !lightboxImg) return;
-      lightboxImg.src = btn.dataset.src ?? '';
-      lightboxImg.alt = btn.dataset.alt ?? 'Gambar proyek';
-      lightbox.classList.remove('hidden');
-      lightbox.classList.add('flex');
-      document.body.style.overflow = 'hidden';
-    });
+  triggers.forEach((btn, index) => {
+    btn.addEventListener('click', () => openLightbox(index));
   });
+
+  document.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => render(current - 1));
+  document.querySelector('[data-lightbox-next]')?.addEventListener('click', () => render(current + 1));
 
   lightbox?.addEventListener('click', (e) => {
     if (e.target === lightbox) closeLightbox();
   });
   lightboxClose?.addEventListener('click', closeLightbox);
   document.addEventListener('keydown', (e) => {
+    if (!lightbox || lightbox.classList.contains('hidden')) return;
     if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') render(current - 1);
+    if (e.key === 'ArrowRight') render(current + 1);
   });
 </script>
