@@ -25,10 +25,12 @@ try {
     for (const g of row.gallery ?? []) {
       const publicId = byId.get(g.assetId);
       if (!publicId) continue;
+      const name = (publicId.split('/').pop() ?? publicId).replace(/\.[^.]+$/, '');
       gallery.push({
         url: getTransformUrl(publicId, { w: 1600, c: 'limit' }),
         caption: g.caption,
         alt: g.alt,
+        name,
       });
     }
   }
@@ -109,9 +111,9 @@ try {
                           class="transition-opacity duration-150 hover:opacity-90"
                         />
                       </button>
-                      {img.caption && (
+                      {(img.caption || img.name) && (
                         <figcaption class="border-t border-outline px-4 py-3 text-[12px] font-medium text-on-surface-variant">
-                          {img.caption}
+                          {img.caption || img.name}
                         </figcaption>
                       )}
                     </figure>
@@ -168,23 +170,25 @@ try {
           </div>
         </article>
 
-        <div
-          id="lightbox"
-          class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/80 p-4 backdrop-blur-md"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Gambar diperbesar"
-        >
-          <button
-            type="button"
-            id="lightbox-close"
-            class="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/30 text-white transition-colors duration-150 hover:bg-black/50"
-            aria-label="Tutup gambar"
+        <Fragment slot="overlay">
+          <div
+            id="lightbox"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/80 p-4 backdrop-blur-md"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Gambar diperbesar"
           >
-            <span class="material-symbols-outlined text-[22px]">close</span>
-          </button>
-          <img id="lightbox-img" alt="" class="max-h-[90vh] max-w-[92vw] object-contain shadow-2xl" />
-        </div>
+            <button
+              type="button"
+              id="lightbox-close"
+              class="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/30 text-white transition-colors duration-150 hover:bg-black/50"
+              aria-label="Tutup gambar"
+            >
+              <span class="material-symbols-outlined text-[22px]">close</span>
+            </button>
+            <img id="lightbox-img" alt="" class="max-h-[86vh] max-w-[92vw] object-contain shadow-2xl" />
+          </div>
+        </Fragment>
       )
     }
   </div>

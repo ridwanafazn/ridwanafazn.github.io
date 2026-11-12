@@ -168,7 +168,7 @@ src/
 23. **Dashboard** memakai grid stat + aksi cepat; tombol `+ Project` di header sudah dihapus (buat project dari halaman Portfolio atau aksi cepat).
 24. **Admin styling sharp**: tidak ada `rounded-*`, tanpa backdrop blur, transisi 150ms (color/opacity), tanpa hover translate. Jangan tambahkan kembali komponen rounded di area admin.
 25. **Multi-upload asset**: `/admin/assets` menerima banyak file sekaligus (input `multiple` + drag & drop), upload paralel maks 3, signature Cloudinary diminta sekali per batch, progress bar + daftar error per file.
-26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Jangan ganti ke `c_fill` atau `object-cover`; gambar memakai `object-contain`. Klik gambar membuka lightbox dengan background blur (Escape/klik luar untuk tutup). Urutan halaman: cover → galeri → ringkasan.
+26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Jangan ganti ke `c_fill` atau `object-cover`; gambar memakai `object-contain` dengan tinggi maks 54vh (40vh mobile), lebar mengikuti rasio. Caption fallback = nama file tanpa ekstensi (mis. `zledger-01-login`). Klik gambar membuka lightbox blur (maks 86vh, Escape/klik luar untuk tutup) yang dirender lewat slot `overlay` di `Layout` agar menutup navbar. Navbar publik memakai frosted glass (`backdrop-blur-md`). Urutan halaman: cover → galeri → ringkasan.
 
 ---
 

@@ -69,7 +69,7 @@ export interface Project {
   isTopProject: boolean;
   status?: string;
   coverImage?: string;
-  gallery?: { url: string; caption?: string; alt?: string }[];
+  gallery?: { url: string; caption?: string; alt?: string; name?: string }[];
   links?: {
     label: string;
     url: string;

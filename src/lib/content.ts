@@ -7,6 +7,11 @@ import type { Project, Profile, SkillCategory, Activity } from '../types';
 
 const publishedOnly = and(eq(portfolios.status, 'published'), isNull(portfolios.deletedAt));
 
+function fileName(publicId: string) {
+  const last = publicId.split('/').pop() ?? publicId;
+  return last.replace(/\.[^.]+$/, '');
+}
+
 function cdn(publicId: string, w = 1600) {
   // c_limit = pertahankan rasio asli (tanpa crop), q_auto/f_auto = versi ringan.
   return `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_limit,w_${w},q_auto,f_auto/${publicId}`;
@@ -25,11 +30,11 @@ function toProject(
   byId: Map<string, string>,
 ): Project {
   const coverPublicId = row.coverImageId ? byId.get(row.coverImageId) : undefined;
-  const gallery: { url: string; caption?: string; alt?: string }[] = [];
+  const gallery: { url: string; caption?: string; alt?: string; name?: string }[] = [];
   for (const g of row.gallery ?? []) {
     const publicId = byId.get(g.assetId);
     if (!publicId) continue;
-    gallery.push({ url: cdn(publicId, 1600), caption: g.caption, alt: g.alt });
+    gallery.push({ url: cdn(publicId, 1600), caption: g.caption, alt: g.alt, name: fileName(publicId) });
   }
 
   return {

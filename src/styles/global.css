@@ -278,12 +278,12 @@
     display: block;
     width: auto;
     height: auto;
-    max-height: 68vh;
-    max-width: min(86vw, 1100px);
+    max-height: 54vh;
+    max-width: min(88vw, 1200px);
     object-fit: contain;
   }
   @media (max-width: 767px) {
-    .gallery-item img { max-height: 52vh; }
+    .gallery-item img { max-height: 40vh; }
   }
   .gallery-track::-webkit-scrollbar { height: 6px; }
   .gallery-track::-webkit-scrollbar-thumb {

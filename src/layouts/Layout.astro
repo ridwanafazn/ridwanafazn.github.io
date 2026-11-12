@@ -39,6 +39,8 @@ const faviconUrl = `${base.endsWith('/') ? base : base + '/'}favicon.svg`;
         
         <Footer />
 
+        <slot name="overlay" />
+
         <script>
           // Global scroll reveal observer
           const observer = new IntersectionObserver(
