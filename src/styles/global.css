@@ -264,10 +264,13 @@
   overflow-y: auto;
   background: var(--color-background);
   opacity: 1;
+  /* Header induknya pointer-events:none — menu harus mengaktifkan sendiri. */
+  pointer-events: auto;
 }
 
 .mobile-menu[data-open='true'] {
   display: flex;
+  pointer-events: auto;
   animation: mobile-menu-in 160ms ease-out;
 }
 
