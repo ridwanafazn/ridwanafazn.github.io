@@ -1,6 +1,9 @@
 # ERD — Entity Relationship Diagram
 ## Portofx v2 Database Schema (Neon Postgres + Drizzle ORM 0.45.4)
 
+> **Reality check (2026-11-15):** tabel yang **benar-benar ada di migrasi**: `users`, `sessions`, `accounts`, `verifications`, `assets`, `portfolio_blocks`, `portfolios`, `activities`, `pages`, `profile`, `skills`.
+> `portfolio_blocks` dan `pages` **ada di schema tapi belum dipakai aplikasi** (block editor belum dibangun). `audit_logs` **tidak ada** — masih rencana Fase 5.
+>
 > **Notation**: Crow's Foot (Mermaid)
 > **Tool**: Mermaid.js (render di GitHub/VS Code/Notion)
 > **Source of Truth**: `/db/schema/*.ts` (Drizzle definitions)

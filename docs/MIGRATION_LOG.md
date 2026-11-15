@@ -1,6 +1,9 @@
 # MIGRATION LOG — Execution Tracking
 ## Portofx v2: Sanity → Neon + Astro 7 Static + per-route SSR + Cloudflare Workers
 
+> **Dokumen historis (2026-11-15).** Ini catatan eksekusi migrasi Sanity → Neon. Beberapa rencana di dalamnya **tidak dipakai** di implementasi final: Shadcn/React islands, Cloudinary Media Library Widget, `@astrojs/sitemap`, folder `scripts/`.
+> Status terbaru: `docs/HANDOFF.md`. Desain aktual: `docs/DESIGN.md`.
+
 > **Format**: Tanggal | Fase | Task | Status | Notes/Decisions/Blockers
 > **Updated**: Setiap commit `chore(migration): log ...`
 > **State terbaru / handoff:** lihat **`docs/HANDOFF.md`**

@@ -1,7 +1,7 @@
 # RUNBOOK — Deploy, Rollback, Incident
 
 > **Stack**: Astro 7.4.5 (SSR public + cache 60s) + Cloudflare Workers + Neon + Cloudinary + Better Auth
-> **Live**: https://portofx-v2.ridwanafzn.workers.dev
+> **Live**: https://ridwanafazn.my.id (canonical) · fallback https://portofx-v2.ridwanafzn.workers.dev
 > **Deploy**: `pnpm build` lalu `wrangler deploy` (bukan `wrangler pages deploy`)
 > **Domain live**: `https://ridwanafazn.my.id` (`www` → 301 apex)
 

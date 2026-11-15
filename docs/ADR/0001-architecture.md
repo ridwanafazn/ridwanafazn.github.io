@@ -30,7 +30,7 @@ Gunakan **`output: 'static'`** (default) + `export const prerender = false` di r
 
 **Alasan:** `hybrid` sudah dihapus; `static` + per-route adalah cara resmi Astro 7 untuk mencampur prerendered dan SSR.
 
-**Konsekuensi:** Public pages tetap static; admin/preview SSR. Tidak ada `output: 'hybrid'`.
+**Konsekuensi:** ~~Public pages tetap static; admin/preview SSR.~~ **Dikoreksi 2026-11-11:** public juga SSR (`prerender = false`) + edge cache 60s, supaya edit admin langsung tampil. Lihat `docs/HANDOFF.md` §6.
 
 ### 2. Auth
 

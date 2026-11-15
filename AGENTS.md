@@ -22,10 +22,11 @@
 
 ## Status
 
-- Migrasi Sanity → Neon **selesai** (10 project, profile, skills, 2 activities).
+- Migrasi Sanity → Neon **selesai** (13 project, 55 asset, 54 gambar galeri, profile, skills, 2 activities).
 - Admin panel + galeri gambar **selesai**; public **SSR + cache**.
 - **Live**: https://ridwanafazn.my.id (`www` → 301 apex) · fallback https://portofx-v2.ridwanafzn.workers.dev
-- **Sisa**: upload gambar project.
+- **Sisa**: gambar cover project — **0 dari 13** project punya cover; galeri sudah terisi.
+- **Branch**: `main` (sudah ada commit + deploy; branch `migrate/astro-ssr-neon` sudah selesai).
 
 ## Dokumen
 
@@ -44,4 +45,4 @@
 
 ## Konteks untuk agent baru
 
-> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan; live di https://ridwanafazn.my.id (www → 301 apex). Sisa: upload gambar project. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`."
+> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan (54 foto); live di https://ridwanafazn.my.id (www → 301 apex). Sisa: **cover image 0/13**. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`. Public site **bukan** zero-JS (three.js + reveal + carousel)."

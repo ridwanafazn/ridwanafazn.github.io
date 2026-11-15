@@ -12,9 +12,9 @@
 | **Name** | `portofx-v2` — Personal Portfolio |
 | **Owner** | Ridwan Afazn (`ridwanafazn`) |
 | **Repo** | `github.com/ridwanafazn/portofx-v2` |
-| **Branch aktif** | `migrate/astro-ssr-neon` (belum ada commit migrasi) |
+| **Branch aktif** | `main` (20 commit, working tree bersih) — `migrate/astro-ssr-neon` sudah selesai |
 | **Stack** | **Astro 7.4.5** (SSR + edge cache) · **Neon Postgres** · **Drizzle ORM 0.45.4** · **Better Auth 1.7.20** · **Cloudinary** · **Cloudflare Workers 14.4.7** |
-| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Sisa: upload gambar project |
+| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Sisa: **cover image 0/13** (galeri 54 foto sudah ada) |
 
 ---
 
@@ -56,7 +56,7 @@ Cloudflare Workers (portofx-v2)
 
 ### Git
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `migrate:`)
-- Branch `migrate/astro-ssr-neon`; PR sebelum `main`
+- Branch aktif `main`; kerja fitur pakai branch baru + PR sebelum merge
 
 ---
 
@@ -119,6 +119,9 @@ neon status | branches list | connection-string --pooled
 8. Profile PUT di-merge dengan row existing (form admin hanya mengirim sebagian field). `profile.cv_url` = satu sumber tombol Resume desktop + mobile.
 9. Activities bisa diedit (PATCH). Filter key yang dikirim agar default Zod tidak mereset `order`/`highlights`.
 10. Sidebar admin collapse/expand: state `localStorage['admin-sidebar']`, kelas `sidebar-collapsed` di `<html>`. Judul dokumen `Ridwan Pages`, brand `ridwanafazn`.
+11. **Public site BUKAN zero-JS.** Halaman publik memuat three.js (globe, ±139 KB), IntersectionObserver reveal, carousel, lightbox, count-up, dan menu mobile. Jangan menuliskan/mengarahkan "zero-JS" untuk public.
+12. **`AUTH_COOKIE_NAME` / `AUTH_COOKIE_DOMAIN` / `AUTH_COOKIE_SECURE` di `wrangler.jsonc` tidak dibaca kode.** `src/lib/auth.ts` hanya memakai `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AUTH_TRUSTED_ORIGINS`; nama cookie memakai default Better Auth. Jangan menganggapnya sebagai konfigurasi aktif.
+13. **`pnpm lint` belum bisa jalan** — `eslint` tidak ada di `devDependencies` dan tidak ada config. Pakai `pnpm typecheck` dulu sampai lint di-setup.
 
 ---
 
@@ -127,7 +130,7 @@ neon status | branches list | connection-string --pooled
 - Stack: Neon + Drizzle + Better Auth + Cloudinary + Cloudflare Workers ✅
 - Public SSR + edge cache, admin/preview SSR ✅
 - Sanity **sudah dihapus** ✅
-- Data 10 project sudah di Neon ✅
+- Data 13 project sudah di Neon ✅ (cover: 0/13; galeri: 54 foto)
 - Deploy: Workers (`wrangler deploy`) ✅
 - Auth: session cookie + scrypt ✅
 

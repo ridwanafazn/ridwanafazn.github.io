@@ -1,9 +1,15 @@
 # TRD — Technical Requirements Document
 ## Portofx v2: Astro 7 Static + per-route SSR + Neon + Custom Admin Panel
 
-> **Version**: 1.1 (koreksi Astro 7 / Cloudflare Workers / Better Auth)
-> **Status**: 🟡 Draft — Aligned dengan PRD v2.0
+> **Version**: 1.2 (koreksi Astro 7 / Cloudflare Workers / Better Auth)
+> **Status**: ✅ **Implemented** — spec awal, dengan koreksi di §4.3/§4.4 dan §7 yang tidak sesuai implementasi.
 > **Stack**: Astro 7.4.5, Drizzle ORM 0.45.4, Neon Postgres 1.2.0, Better Auth 1.7.20, Cloudinary, Cloudflare Workers 14.4.7
+
+> **Reality check (2026-11-15):**
+> - Tidak ada React island / file `.tsx`. Semua admin = **Astro components**.
+> - Rate limit, CSP, HSTS, RBAC, Sentry, Resend, `@astrojs/sitemap` **belum diimplementasikan** (lihat §7).
+> - KV hanya binding `SESSION`; tidak ada namespace `RATE_LIMIT`.
+> - `AUTH_COOKIE_*` di `wrangler.jsonc` tidak dibaca `src/lib/auth.ts`.
 
 > **Koreksi penting dibanding v1.0:**
 > - `output: 'hybrid'` **sudah dihapus** di Astro 7 → pakai `output: 'static'` + `export const prerender = false` per route.
@@ -50,9 +56,9 @@
               ▼                       ▼                       ▼
 ┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
 │   NEON POSTGRES     │   │    CLOUDINARY       │   │  CLOUDFLARE KV      │
-│   (Primary DB)      │   │    (Asset CDN)      │   │  (Rate Limit,       │
-│   - Drizzle ORM     │   │   - Signed Upload   │   │   Session cache,    │
-│   - Branch per env  │   │   - Transform URL   │   │   Deploy hooks)     │
+│   (Primary DB)      │   │    (Asset CDN)      │   │  (SESSION only)     │
+│   - Drizzle ORM     │   │   - Signed Upload   │   │   Session cache     │
+│   - Branch per env  │   │   - Transform URL   │   │                     │
 │   - HTTP Driver     │   │   - Auto WebP/AVIF  │   │                     │
 └─────────────────────┘   └─────────────────────┘   └─────────────────────┘
 ```
@@ -603,30 +609,39 @@ export const onRequest = defineMiddleware(async (context, next) => {
 });
 ```
 
-### 4.3 React Islands (Admin UI Only)
+### 4.3 React Islands (Admin UI Only) — ❌ tidak dipakai
+
+Implementasi aktual **tidak memakai React island sama sekali** (0 file `.tsx`).
+`@astrojs/react` masih terpasang di `astro.config.mjs` tetapi tidak dipakai.
 
 ```
-src/components/ui/          # Shadcn/UI primitives (Button, Input, Dialog, Table, etc.)
-src/components/admin/       # Admin-specific islands
-  ├── PortfolioTable.tsx    # TanStack Table + row actions
-  ├── PortfolioForm.tsx     # React Hook Form + Zod + flat fields
-  ├── BlockEditor.tsx       # Fase 3: sortable blocks (dnd-kit)
-  ├── AssetPicker.tsx       # Cloudinary Media Library Widget wrapper
-  ├── CloudinaryUpload.tsx  # Signed upload component
-  └── PreviewToolbar.tsx    # Floating bar di preview mode
+src/components/            # Astro components
+  ├── ProjectCard.astro
+  ├── Navbar.astro / Footer.astro / FloatingNav.astro
+  ├── HeroGlobe.astro      # three.js, di-load sebagai <script> Astro
+  ├── StatBar.astro        # count-up inline <script>
+  ├── Timeline.astro / HowIBuild.astro / Badge.astro
+  └── admin/AssetPicker.astro
 ```
 
-### 4.4 Hydration Strategy
+Struktur React di bawah ini **rencana lama, dibatalkan**:
 
-| Component | Hydration | Reason |
+```
+src/components/ui/          # ❌ tidak ada
+  ├── PortfolioTable.tsx    # ❌ tidak ada (tabel = Astro + endpoint CRUD)
+  ├── PortfolioForm.tsx     # ❌ tidak ada (form = HTML + fetch JSON)
+  ├── BlockEditor.tsx       # ❌ belum (Fase 3)
+  ├── AssetPicker.tsx       # ⚠️ ada, tetapi versi .astro
+  └── CloudinaryUpload.tsx  # ❌ tidak ada
+```
+
+### 4.4 Hydration Strategy — aktual
+
+| Bagian | Strategi | Keterangan |
 |---|---|---|
-| Public pages | `client:visible` **tidak dipakai** | Zero JS, pure Astro HTML |
-| Admin Layout | `client:idle` | Sidebar, navigation, theme toggle |
-| PortfolioTable | `client:visible` | Sort, filter, paginate, row actions |
-| PortfolioForm | `client:load` | Complex form, validation, flat fields |
-| BlockEditor | `client:load` | Fase 3: drag-drop, dynamic forms |
-| AssetPicker | `client:visible` | Cloudinary widget lazy load |
-| PreviewToolbar | `client:load` | Persistent floating UI |
+| Public pages | Tanpa framework, tanpa island | `<script>` Astro inline untuk interaksi (reveal, carousel, lightbox, globe) |
+| Admin | Tanpa framework, tanpa island | HTML + `fetch` JSON ke `/admin/api/*` |
+| Hydration directive | **tidak dipakai sama sekali** | `client:*` tidak muncul di repo |
 
 ---
 
@@ -856,19 +871,19 @@ jobs:
 
 ## 7. Security Checklist
 
-| Area | Implementation |
+| Area | Status aktual |
 |---|---|
-| **Authentication** | Better Auth 1.7.20, scrypt (`@noble/hashes`), Secure/HttpOnly/SameSite=Lax cookies |
-| **Authorization** | Middleware guard `/admin/*`, RBAC (admin/editor), API route checks |
-| **Rate Limiting** | Cloudflare KV binding `RATE_LIMIT`: login 5/min/IP, API 100/min/user |
-| **CSRF** | Better Auth built-in + `CSRF_SECRET`; SameSite=Lax + Origin check |
-| **XSS** | Astro auto-escape; sanitize Markdown (DOMPurify) sebelum `dangerouslySetInnerHTML` |
-| **SQL Injection** | Drizzle ORM parameterized queries, no raw SQL |
-| **Secrets** | `wrangler secret put`, tidak di repo; `.dev.vars` untuk local |
-| **CSP** | `Content-Security-Policy` header via middleware |
-| **HTTPS** | Cloudflare forced HTTPS, HSTS header |
-| **Dependencies** | `pnpm audit`, Dependabot alerts, pin versions |
-| **Noindex** | `X-Robots-Tag: noindex` + meta robots untuk `/preview/*` dan `/admin/*` |
+| **Authentication** | ✅ Better Auth 1.7.20 + scrypt (`@noble/hashes`), cookie default Better Auth |
+| **Authorization** | ⚠️ Middleware guard `/admin/*` + `/preview/*`; **tidak ada RBAC** (hanya 1 user admin) |
+| **Rate Limiting** | ❌ **belum ada**. KV hanya binding `SESSION`, tidak ada `RATE_LIMIT` |
+| **CSRF** | ✅ Better Auth built-in + trusted origins (`AUTH_TRUSTED_ORIGINS`) |
+| **XSS** | ✅ Astro auto-escape. Tidak ada Markdown/`dangerouslySetInnerHTML` di public |
+| **SQL Injection** | ✅ Drizzle parameterized queries |
+| **Secrets** | ✅ `wrangler secret put`; `.env.local` (bukan `.dev.vars`) untuk local |
+| **CSP** | ❌ belum ada header |
+| **HTTPS / HSTS** | ⚠️ Cloudflare memaksa HTTPS lewat domain; **HSTS belum di-set eksplisit** |
+| **Dependencies** | ⚠️ `pnpm audit` manual; Dependabot belum diaktifkan |
+| **Noindex** | ✅ `/preview/*` & `/admin/*` noindex |
 
 ---
 

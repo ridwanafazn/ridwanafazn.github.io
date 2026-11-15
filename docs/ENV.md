@@ -3,6 +3,11 @@
 > **Stack**: Astro 7.4.5, Cloudflare Workers, Neon, Cloudinary, Better Auth
 > **Aturan**: `PUBLIC_*` = build-time (Astro inline). Secret = runtime (`wrangler secret put`). Non-sensitive = `wrangler.jsonc` `vars`.
 
+> **Reality check (2026-11-15):** hanya variabel yang terdaftar di `astro.config.mjs` → `env.schema` yang benar-benar dibaca lewat `astro:env`. Daftar aktual (14):
+> `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AUTH_TRUSTED_ORIGINS` (optional), `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_UPLOAD_PRESET`, `CLOUDINARY_FOLDER`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `PUBLIC_SITE_URL`, `PUBLIC_SITE_NAME`, `PUBLIC_CLOUDINARY_CLOUD_NAME`, `PUBLIC_CLOUDINARY_UPLOAD_PRESET`.
+>
+> Variabel lain di dokumen ini (Sentry, Resend, Turnstile, `PUBLIC_SITE_DESCRIPTION`, `PUBLIC_CONTACT_EMAIL`, `PUBLIC_LOCALE`, `RATE_LIMIT_*`, dll.) adalah **katalog rencana — belum ada di schema dan tidak dibaca kode**. Local dev memakai `.env.local`, bukan `.dev.vars`.
+
 ---
 
 ## 0. MINIMAL — yang benar-benar wajib
@@ -37,7 +42,7 @@
 | **Build-time secret** | `DATABASE_URL` | GitHub Actions `secrets` | Runtime (Neon pooled); CI masih menyuplai saat build untuk env schema |
 | **Runtime secret** | `BETTER_AUTH_SECRET`, `CLOUDINARY_API_SECRET` | `wrangler secret put` | Saat request |
 | **Runtime var** | `BETTER_AUTH_URL`, `CLOUDINARY_CLOUD_NAME` | `wrangler.jsonc` → `vars` | Saat request |
-| **Local dev** | Semua | `.dev.vars` (atau `.env.local`) | Saat `astro dev` |
+| **Local dev** | Semua | `.env.local` | Saat `astro dev` |
 
 ---
 
@@ -78,7 +83,7 @@
 | `BETTER_AUTH_SECRET` | ✅ | ❌ | ✅ | ✅ | `openssl rand -base64 32` |
 | `BETTER_AUTH_URL` | ✅ | ❌ | ✅ | ❌ | `https://portofx.ridwanafazn.dev` |
 | `AUTH_COOKIE_NAME` | ❌ | ❌ | ✅ | ❌ | `auth_session` |
-| `AUTH_COOKIE_DOMAIN` | ❌ | ❌ | ✅ | ❌ | `portofx.ridwanafazn.dev` |
+| `AUTH_COOKIE_DOMAIN` | ❌ | ❌ | ✅ | ❌ | `ridwanafazn.my.id` — ⚠️ tidak dibaca `src/lib/auth.ts` |
 | `AUTH_COOKIE_SECURE` | ❌ | ❌ | ✅ | ❌ | `true` |
 | `AUTH_TRUSTED_ORIGINS` | ✅ | ❌ | ✅ | ❌ | Domain production |
 | `ADMIN_EMAIL` | ✅ | ❌ | ✅ | ❌ | Bootstrap admin |
@@ -118,8 +123,8 @@
 | `TURNSTILE_SECRET_KEY` | ❌ | ❌ | ✅ | ✅ | Optional Turnstile |
 
 > **KV bindings** (bukan env var, di `wrangler.jsonc`):
-> - `SESSION` — dipakai `@astrojs/cloudflare` untuk session store. Buat: `wrangler kv namespace create SESSION`.
-> - `RATE_LIMIT` — untuk rate limit login. Buat: `wrangler kv namespace create RATE_LIMIT`.
+> - `SESSION` — **satu-satunya** binding yang ada (`0caf957ffab8428687ada2d8bef1e809`).
+> - `RATE_LIMIT` — ❌ **belum dibuat**; rate limit belum diimplementasikan.
 
 ### 2.6 Legacy Sanity (migration only)
 

@@ -1,10 +1,12 @@
 # PRD — Product Requirements Document
 ## Portofx v2: Personal Portfolio dengan Custom Admin Panel
 
+> **Reality check (2026-11-15):** dokumen ini **riwayat produk**, bukan status. MVP sudah live di `https://ridwanafazn.my.id`. Yang **belum** dari daftar P0 di bawah: OG/Twitter card, JSON-LD, `meta description`, halaman 404, rate limit login. 13 project di Neon, **0 cover**, 54 gambar galeri.
+
 > **Catatan implementasi (2026-11-11):** Public pages kini **SSR + edge cache 60s** (bukan prerendered) agar edit dari admin langsung tampil. Sanity sudah dihapus. State terbaru: **`docs/HANDOFF.md`**.
 
 > **Version**: 2.0 (Migration from Sanity/Astro Static)
-> **Status**: 🟡 In Progress — Phase 1 (Infra & Data Layer)
+> **Status**: ✅ **Shipped** (MVP live). Phase 3–4 (block editor, page builder) belum dikerjakan.
 > **Owner**: Ridwan Afazn
 > **Target Launch**: 3 hari dari kickoff migrasi (kompresi)
 > **Stack**: Astro 7.4.5 + Neon + Drizzle + Better Auth + Cloudinary + Cloudflare Workers
@@ -39,15 +41,15 @@
 
 ## 3. Core Features (MVP Scope)
 
-### 3.1 Public Website (Static / Prerendered)
+### 3.1 Public Website (SSR + edge cache 60s)
 | Feature | Description | Priority |
 |---|---|---|
 | **Home (/)** | Hero globe (Three.js), StatBar, Featured Projects, Skills, Current Focus, How I Build | P0 |
 | **About (/about)** | Timeline experience, Education, Certifications, Volunteering/Activities | P0 |
-| **Projects List (/projects)** | Carousel/grid all projects, filter by tech/status | P0 |
+| **Projects List (/projects)** | Carousel `scroll-snap` all projects (filter: belum ada) | P0 |
 | **Project Detail (/projects/[id])** | Full description, highlights, tech stack, links, gallery | P0 |
-| **SEO & Social** | Dynamic OG tags, sitemap.xml, robots.txt, JSON-LD schema | P0 |
-| **Performance** | LCP < 1.5s, CLS < 0.1, TBT < 100ms, 100/100 Lighthouse | P0 |
+| **SEO & Social** | ⚠️ sitemap.xml + robots.txt **ada**; OG/Twitter card + JSON-LD + meta description **belum** | P0 |
+| **Performance** | Target awal LCP < 1.5s, CLS < 0.1, 100/100 Lighthouse. Aktual: Lighthouse a11y 91 / SEO 80 / BP 100; globe 559 KB | P0 |
 
 ### 3.2 Admin Panel (SSR, Protected)
 | Feature | Description | Priority |
@@ -57,7 +59,7 @@
 | **Portfolio CRUD** | List (sort, filter, search), Create, Edit, Duplicate, Archive, Delete | P0 |
 | **Detail Editor (v1)** | Flat fields: title, role, description, longDescription, techStack, highlights, links, cover, gallery | P0 |
 | **Draft & Preview** | Edit dengan `status='draft'` → "Preview" buka tab baru `/preview/...` → "Publish" promote ke `published` | P0 |
-| **Asset Manager** | Cloudinary widget: upload, crop, transform, delete, search, folder | P0 |
+| **Asset Manager** | Custom: multi-upload + drag&drop (paralel 3), signed upload Cloudinary, pick cover/galeri (bukan Media Library Widget) | P0 |
 | **Profile Editor** | Singleton: name, role, tagline, bio, stats, current focus, experience, education, certs, howIBuild | P0 |
 | **Skills Editor** | Singleton: categories + items array | P0 |
 | **Activities CRUD** | Volunteer, Publication, Leadership — list + create/edit/delete | P1 |

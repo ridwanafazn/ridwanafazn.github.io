@@ -58,9 +58,9 @@ portofx-v2/
 ├── src/
 │   ├── lib/         # auth, db, cloudinary, validation
 │   ├── pages/       # /, /about, /projects/*, /admin/*, /preview/*
-│   ├── components/  # UI (Astro + React islands)
+│   ├── components/  # UI (Astro components; React integration terpasang, 0 file .tsx)
 │   └── layouts/
-├── scripts/         # (kosong — migrasi Sanity sudah selesai)
+├── .opencode/       # Agent skills (impeccable) + command
 ├── wrangler.jsonc   # Cloudflare Workers config
 ├── astro.config.mjs
 └── drizzle.config.ts
@@ -91,8 +91,22 @@ pnpm db:migrate     # apply to Neon
 pnpm db:studio      # Drizzle Studio
 pnpm db:seed        # seed dev data
 pnpm typecheck      # tsc --noEmit
-pnpm lint           # eslint + prettier
+pnpm lint           # ⚠️ belum jalan: eslint tidak terpasang (lihat docs/HANDOFF §9)
 ```
+
+---
+
+## 🤖 Agent skills
+
+Proyek ini memakai [skills.sh](https://skills.sh) lewat OpenCode:
+
+```bash
+npx impeccable install --providers=opencode --scope=project -y   # pasang / update
+npx impeccable detect src                                        # scan anti-pattern UI
+```
+
+Skill terpasang di `.opencode/skills/impeccable` (+ `.opencode/commands/impeccable.md`).
+Sesi baru akan otomatis melihat skill `impeccable`; jalankan `/impeccable init` sekali untuk menulis konteks desain.
 
 ---
 

@@ -1,6 +1,10 @@
 # TASKS — Actionable Task Breakdown
 ## Portofx v2 Migration: Sanity → Neon + Astro 7 Static + per-route SSR + Cloudflare Workers
 
+> **Reality check (2026-11-15):** checklist ini adalah **rencana migrasi yang sudah dieksekusi**. Banyak `[ ]` tidak dicentang padahal sudah selesai (Phase 0–5 berjalan). Untuk status nyata, lihat `docs/HANDOFF.md` — jangan pakai daftar ini sebagai TODO aktif.
+>
+> Koreksi: `@astrojs/sitemap` **tidak dipakai** (sitemap = route SSR custom); folder `scripts/` **tidak ada** (script migrasi Sanity sudah dihapus).
+
 > **Methodology**: Fase-based, checkbox-driven, commit-per-task
 > **Plan**: **3 hari** (kompresi) — Hari 1: Fase 0–1, Hari 2: Fase 2–3, Hari 3: Fase 4–5
 > **Branch**: `migrate/astro-ssr-neon`

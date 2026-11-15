@@ -39,3 +39,6 @@ backups/
 
 # neon cli local state
 .neon
+
+# impeccable: platform-specific engine binary (re-install with `npx impeccable install`)
+.opencode/skills/impeccable/scripts/bin/
