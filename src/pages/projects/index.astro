@@ -2,82 +2,33 @@
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
+import ProjectLedger from '../../components/ProjectLedger.astro';
 import { getAllProjects } from '../../lib/content';
 
 const allProjects = await getAllProjects();
 ---
 
-<Layout title="Project Vault · Ridwan Pages">
-  <header class="pt-0 mb-16 relative z-10">
-    <h1 class="text-5xl md:text-6xl font-bold text-on-background mb-6 tracking-tight">Portofolio Proyek</h1>
-    <p class="text-left md:text-justify text-lg text-on-surface-variant max-w-2xl leading-relaxed">
-      Kumpulan sistem, aplikasi, dan arsitektur yang sudah dibangun — mulai dari backend low-latency, fullstack monolitik, sampai sistem terdistribusi skala produksi.
+<Layout
+  title="Project Vault · Ridwan Pages"
+  description={`Arsip ${allProjects.length} proyek: sistem backend, aplikasi fullstack, dan platform produksi.`}
+  image="/og.png"
+>
+  <header class="mb-10 md:mb-14">
+    <h1 class="text-[clamp(2.5rem,7.5vw,4rem)] leading-[1.02] tracking-tight text-on-background">
+      Portofolio Proyek
+    </h1>
+    <p class="mt-5 max-w-[62ch] text-[15px] leading-relaxed text-on-surface-variant md:text-lg">
+      Kumpulan sistem, aplikasi, dan arsitektur yang sudah dibangun — mulai dari backend low-latency,
+      fullstack monolitik, sampai sistem terdistribusi skala produksi.
     </p>
   </header>
 
-  <div class="relative z-10 mb-16">
-    <div
-      id="projects-carousel"
-      class="projects-carousel"
-      tabindex="0"
-      role="region"
-      aria-label="Daftar proyek. Geser ke samping untuk melihat proyek lainnya."
-    >
-      {allProjects.map((project, i) => {
-        const delay = i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : '';
-        return (
-          <div class={`project-card-wrapper reveal ${delay}`}>
-            <ProjectCard project={project} />
-          </div>
-        );
-      })}
-    </div>
-
-    <button type="button" class="carousel-nav carousel-nav--prev" data-carousel-prev aria-label="Proyek sebelumnya">
-      <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-    </button>
-    <button type="button" class="carousel-nav carousel-nav--next" data-carousel-next aria-label="Proyek berikutnya">
-      <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-    </button>
+  <div class="flex items-baseline justify-between border-b border-outline-strong pb-3">
+    <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Arsip</span>
+    <span class="font-mono text-[12px] tabular-nums text-on-surface-variant">
+      {allProjects.length} proyek
+    </span>
   </div>
+
+  <ProjectLedger projects={allProjects} />
 </Layout>
-
-<script>
-  const carousel = document.getElementById('projects-carousel') as HTMLElement | null;
-
-  if (carousel) {
-    const prevBtn = document.querySelector('[data-carousel-prev]') as HTMLButtonElement | null;
-    const nextBtn = document.querySelector('[data-carousel-next]') as HTMLButtonElement | null;
-
-    const updateState = () => {
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-      const x = carousel.scrollLeft;
-      const atStart = x <= 1;
-      const atEnd = x >= maxScroll - 1;
-
-      carousel.dataset.atStart = String(atStart);
-      carousel.dataset.atEnd = String(atEnd);
-
-      if (prevBtn) prevBtn.disabled = atStart;
-      if (nextBtn) nextBtn.disabled = atEnd;
-    };
-
-    const step = (direction: number) => {
-      const card = carousel.querySelector<HTMLElement>('.project-card-wrapper');
-      const gap = parseFloat(getComputedStyle(carousel).columnGap) || 0;
-      const distance = card ? card.getBoundingClientRect().width + gap : carousel.clientWidth;
-      carousel.scrollBy({ left: direction * distance, behavior: 'smooth' });
-    };
-
-    prevBtn?.addEventListener('click', () => step(-1));
-    nextBtn?.addEventListener('click', () => step(1));
-
-    carousel.addEventListener('scroll', updateState, { passive: true });
-    window.addEventListener('resize', updateState);
-
-    // Keyboard: panah kiri/kanan sudah native saat fokus,
-    // tapi pastikan tombol juga bekerja saat fokus di tombol navigasi.
-    updateState();
-  }
-</script>

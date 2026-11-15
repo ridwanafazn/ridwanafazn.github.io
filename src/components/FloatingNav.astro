@@ -6,10 +6,10 @@ const navItems = [
 ];
 ---
 
-<div class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-4 items-end">
+<div class="fixed right-4 md:hidden top-1/2 -translate-y-1/2 z-50 flex flex-col gap-4 items-end">
   {navItems.map(item => (
     <a href={`#${item.id}`} class="nav-dot group flex items-center gap-3" data-target={item.id}>
-      <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block">
+      <span class="text-[12px] font-mono font-bold uppercase tracking-widest text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block">
         {item.label}
       </span>
       <div class="dot-indicator w-2.5 h-2.5 rounded-full border-2 border-outline-strong bg-transparent transition-all duration-300 group-hover:border-accent"></div>

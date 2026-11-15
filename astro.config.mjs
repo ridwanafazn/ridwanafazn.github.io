@@ -1,6 +1,5 @@
 import { defineConfig, envField } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
-import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
@@ -18,7 +17,7 @@ export default defineConfig({
       exclude: ['better-auth', '@neondatabase/serverless', 'drizzle-orm'],
     },
   },
-  integrations: [react()],
+  integrations: [],
   env: {
     schema: {
       // === Runtime secrets (server) ===

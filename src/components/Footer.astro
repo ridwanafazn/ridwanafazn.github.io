@@ -1,12 +1,14 @@
 ---
+import Icon from './Icon.astro';
+
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="mt-auto w-full relative z-20 border-t border-outline bg-background">
   <div class="max-w-7xl mx-auto px-6 md:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
     
-    <div class="font-mono text-[13px] font-medium text-on-surface-variant flex items-center gap-2 bg-surface px-4 py-2 rounded-md border border-outline">
-      <span class="material-symbols-outlined text-on-background text-sm">terminal</span> 
+    <div class="font-mono text-[12px] font-medium text-on-surface-variant flex items-center gap-2 bg-surface px-4 py-2 rounded-md border border-outline">
+      <Icon name="terminal" class="h-[15px] w-[15px] text-on-background" />
       <span>© {currentYear} Ridwan. All rights reserved. Built with Astro</span>
     </div>
     

@@ -1,4 +1,6 @@
 ---
+import Icon from './Icon.astro';
+
 interface Experience {
   role: string;
   organization: string;
@@ -16,9 +18,9 @@ const { experience } = Astro.props;
 <section class="mb-10 relative z-10">
   <div class="flex items-center gap-3 mb-10">
     <div class="bg-accent/10 p-3 rounded-lg border border-accent/20 flex items-center justify-center">
-      <span class="material-symbols-outlined text-accent">work_history</span>
+      <Icon name="briefcase" class="h-6 w-6 text-accent" />
     </div>
-    <h2 class="text-3xl font-bold text-on-background tracking-tight">Pengalaman</h2>
+    <h2 class="text-3xl text-on-background tracking-tight">Pengalaman</h2>
   </div>
 
   <div class="relative">
@@ -39,14 +41,14 @@ const { experience } = Astro.props;
           <div class="pb-10 flex-1">
             <div class="bg-surface border border-outline rounded-lg p-6 hover:border-accent/30 transition-all duration-300">
               <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-                <h3 class="font-bold text-[15px] text-on-background leading-snug group-hover:text-accent transition-colors">
+                <h3 class="font-sans font-semibold text-[15px] text-on-background leading-snug group-hover:text-accent transition-colors">
                   {exp.role}
                 </h3>
-                <span class="font-mono text-[9px] uppercase tracking-widest text-accent bg-accent/8 border border-accent/20 px-2.5 py-1 rounded-md whitespace-nowrap shrink-0">
+                <span class="font-mono text-[12px] uppercase tracking-widest text-accent bg-accent/8 border border-accent/20 px-2.5 py-1 rounded-md whitespace-nowrap shrink-0">
                   {exp.period}
                 </span>
               </div>
-              <div class="font-mono text-[11px] font-semibold text-on-surface-variant mb-3">
+              <div class="font-mono text-[12px] font-semibold text-on-surface-variant mb-3">
                 {exp.organization}
               </div>
               {exp.description && (

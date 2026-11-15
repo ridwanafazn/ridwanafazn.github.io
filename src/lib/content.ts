@@ -17,6 +17,20 @@ function cdn(publicId: string, w = 1600) {
   return `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_limit,w_${w},q_auto,f_auto/${publicId}`;
 }
 
+function ogImage(publicId: string) {
+  // 1200x630 untuk kartu share (OG/Twitter), crop pintar.
+  return `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,w_1200,h_630,g_auto,q_auto,f_auto/${publicId}`;
+}
+
+// Koma bisa dibaca sebagai pemisah kandidat di atribut `srcset`, sedangkan
+// transformasi Cloudinary memakai koma. Encode khusus untuk srcset agar aman
+// di semua parser; URL tunggal (`src`) tetap memakai koma asli.
+function srcSet(publicId: string, widths: number[]) {
+  return widths
+    .map((width) => `${cdn(publicId, width).replace(/,/g, '%2C')} ${width}w`)
+    .join(', ');
+}
+
 async function assetMap() {
   const rows = await db
     .select({ id: assets.id, publicId: assets.cloudinaryPublicId })
@@ -30,12 +44,22 @@ function toProject(
   byId: Map<string, string>,
 ): Project {
   const coverPublicId = row.coverImageId ? byId.get(row.coverImageId) : undefined;
-  const gallery: { url: string; caption?: string; alt?: string; name?: string }[] = [];
+  const gallery: { url: string; srcset?: string; caption?: string; alt?: string; name?: string }[] = [];
+  let firstGalleryPublicId: string | undefined;
   for (const g of row.gallery ?? []) {
     const publicId = byId.get(g.assetId);
     if (!publicId) continue;
-    gallery.push({ url: cdn(publicId, 1600), caption: g.caption, alt: g.alt, name: fileName(publicId) });
+    firstGalleryPublicId ??= publicId;
+    gallery.push({
+      url: cdn(publicId, 1600),
+      srcset: srcSet(publicId, [480, 800, 1600]),
+      caption: g.caption,
+      alt: g.alt,
+      name: fileName(publicId),
+    });
   }
+
+  const sharePublicId = coverPublicId ?? firstGalleryPublicId;
 
   return {
     id: row.slug,
@@ -47,6 +71,8 @@ function toProject(
     highlights: row.highlights ?? [],
     isTopProject: row.isTopProject,
     coverImage: coverPublicId ? cdn(coverPublicId, 1600) : undefined,
+    previewImage: sharePublicId ? cdn(sharePublicId, 480) : undefined,
+    ogImage: sharePublicId ? ogImage(sharePublicId) : undefined,
     gallery,
     links: row.links ?? [],
   };

@@ -1,0 +1,42 @@
+---
+export const prerender = false;
+
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+
+const base = import.meta.env.BASE_URL;
+const home = base.endsWith('/') ? base : base + '/';
+---
+
+<Layout title="Halaman tidak ditemukan · Ridwan Pages" noindex>
+  <div class="grid gap-8 py-10 md:grid-cols-12 md:py-20">
+    <p class="font-mono text-[12px] uppercase tracking-[0.12em] text-accent md:col-span-3">404</p>
+
+    <div class="md:col-span-8 md:col-start-5">
+      <h1 class="text-[clamp(2.5rem,7vw,4rem)] leading-[1.02] tracking-tight text-on-background">
+        Halaman ini tidak ada.
+      </h1>
+      <p class="mt-5 max-w-[52ch] text-[15px] leading-relaxed text-on-surface-variant">
+        Alamatnya mungkin salah ketik, atau halaman sudah dipindahkan. Arsip proyek dan halaman
+        tentang saya tetap ada di tempatnya.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+        <a
+          href={home}
+          class="group inline-flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-wider text-on-background underline decoration-outline-strong underline-offset-[6px] transition-colors hover:text-accent hover:decoration-accent"
+        >
+          <Icon name="arrow-left" class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Ke beranda
+        </a>
+        <a
+          href={`${home}projects`}
+          class="group inline-flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-wider text-on-background underline decoration-outline-strong underline-offset-[6px] transition-colors hover:text-accent hover:decoration-accent"
+        >
+          Arsip proyek
+          <Icon name="arrow-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>

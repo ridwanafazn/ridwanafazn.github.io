@@ -1,0 +1,141 @@
+---
+// src/components/ProjectLedger.astro
+import type { Project } from '../types';
+import Icon from './Icon.astro';
+
+interface Props {
+  projects: Project[];
+  /** Tampilkan nomor indeks arsip (01, 02, …). Matikan di homepage. */
+  showIndex?: boolean;
+  /** Tampilkan kolom stack. Homepage hanya menampilkan role. */
+  showStack?: boolean;
+}
+
+const { projects, showIndex = true, showStack = true } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const href = (id: string) => `${base.endsWith('/') ? base : base + '/'}projects/${id}`;
+const pad = (n: number) => String(n).padStart(2, '0');
+
+const rowGrid = showIndex
+  ? showStack
+    ? 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_minmax(0,13rem)_1.25rem]'
+    : 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_1.25rem]'
+  : showStack
+    ? 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_minmax(0,13rem)_1.25rem]'
+    : 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_1.25rem]';
+---
+
+<ul>
+  {
+    projects.map((project, index) => (
+      <li>
+        <a
+          href={href(project.id)}
+          data-preview={project.previewImage}
+          class:list={[
+            'group grid items-center gap-x-4 gap-y-1 border-b border-outline py-3.5 transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent md:gap-x-5',
+            rowGrid,
+          ]}
+        >
+          {showIndex && (
+            <span class="font-mono text-[12px] tabular-nums text-on-surface-variant" aria-hidden="true">
+              {pad(index + 1)}
+            </span>
+          )}
+
+          <span
+            class="hidden h-9 w-14 overflow-hidden border border-outline bg-surface-hover md:block"
+            aria-hidden="true"
+          >
+            {project.previewImage && (
+              <img
+                src={project.previewImage}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+              />
+            )}
+          </span>
+
+          <span class="min-w-0">
+            <span
+              class="block font-heading text-lg leading-snug tracking-tight text-on-background transition-colors group-hover:text-accent md:text-xl md:leading-tight"
+              transition:name={`project-${project.id}`}
+            >
+              {project.title}
+            </span>
+            <span class="mt-0.5 block text-[12px] leading-snug text-on-surface-variant md:hidden">
+              {project.role}
+            </span>
+          </span>
+
+          <span class="hidden truncate text-[13px] text-on-surface-variant md:block">
+            {project.role}
+          </span>
+
+          {showStack && (
+            <span class="hidden truncate font-mono text-[12px] text-on-surface-variant md:block">
+              {project.techStack.slice(0, 3).join(' · ')}
+              {project.techStack.length > 3 && ` +${project.techStack.length - 3}`}
+            </span>
+          )}
+
+          <Icon
+            name="arrow-right"
+            class="h-4 w-4 justify-self-end text-on-surface-variant transition-all duration-200 group-hover:translate-x-1 group-hover:text-accent"
+          />
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<div
+  id="ledger-preview"
+  aria-hidden="true"
+  class="pointer-events-none fixed left-0 top-0 z-40 hidden w-[18rem] overflow-hidden border border-outline-strong bg-surface shadow-[0_18px_40px_-24px_rgb(17_17_16/0.55)]"
+>
+  <img id="ledger-preview-img" alt="" decoding="async" class="aspect-[16/10] w-full object-cover" />
+</div>
+
+<script>
+  const preview = document.getElementById('ledger-preview');
+  const previewImg = document.getElementById('ledger-preview-img');
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  if (preview && previewImg && canHover) {
+    let shown = false;
+
+    const place = (x, y) => {
+      if (!shown) return;
+      const pad = 16;
+      const width = preview.offsetWidth;
+      const height = preview.offsetHeight;
+      let left = x + 24;
+      let top = y - height / 2;
+
+      if (left + width + pad > window.innerWidth) left = x - width - 24;
+      top = Math.min(Math.max(pad, top), window.innerHeight - height - pad);
+
+      preview.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+    };
+
+    document.querySelectorAll('[data-preview]').forEach((row) => {
+      const url = row.getAttribute('data-preview');
+      if (!url) return;
+
+      row.addEventListener('pointerenter', (event) => {
+        if (previewImg.getAttribute('src') !== url) previewImg.src = url;
+        shown = true;
+        preview.classList.remove('hidden');
+        place(event.clientX, event.clientY);
+      });
+      row.addEventListener('pointermove', (event) => place(event.clientX, event.clientY));
+      row.addEventListener('pointerleave', () => {
+        shown = false;
+        preview.classList.add('hidden');
+      });
+    });
+  }
+</script>

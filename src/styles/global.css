@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(20px); }
@@ -7,30 +8,31 @@
 
 @theme {
   /* Tipografi Inti */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Bricolage Grotesque", "Public Sans", ui-sans-serif, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Skema Warna — Editorial Minimal */
-  --color-background: #F5F4F1;
-  --color-on-background: #16151A;
-  --color-on-surface-variant: #6B6B76;
-  
-  /* Latar Belakang Kartu (Solid, tanpa transparansi) */
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #FAFAF8;
-  
-  /* Border Solid */
-  --color-outline: #DEDCD5;
-  --color-outline-strong: #C8C6BF;
+  /* Skema Warna — "Ledger": mineral cool, tinta, verdigris */
+  --color-background: #E4E6E1;
+  --color-on-background: #111110;
+  --color-on-surface-variant: #57554F;
 
-  /* Aksen Tunggal — Muted Slate Blue */
-  --color-accent: #64748B;
+  /* Latar Belakang Kartu (Solid, tanpa transparansi) */
+  --color-surface: #F5F6F2;
+  --color-surface-hover: #EFF1EB;
+
+  /* Border Solid */
+  --color-outline: #CFD2C9;
+  --color-outline-strong: #B4B8AC;
+
+  /* Aksen Tunggal — Verdigris (patina tinta, bukan terracotta) */
+  --color-accent: #2C6558;
+  --color-accent-hover: #234F45;
 
   /* Semantik */
-  --color-success: #15803D;
-  --color-warning: #B45309;
-  --color-error: #B91C1C;
+  --color-success: #1F6B43;
+  --color-warning: #8A5A14;
+  --color-error: #9B2C1F;
 }
 
 @layer base {
@@ -39,14 +41,65 @@
   }
   body {
     @apply bg-background text-on-background font-sans antialiased selection:bg-accent/20 selection:text-accent;
+    text-wrap: pretty;
   }
   h1, h2, h3 {
     font-family: var(--font-heading);
+    font-weight: 500;
+    font-synthesis: none;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
   }
-  
-  /* Standarisasi ikon agar lebih tebal (wght 500) */
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+
+  /* Admin & auth tetap sans — serif hanya untuk halaman publik */
+  .admin-shell :where(h1, h2, h3),
+  .auth-shell :where(h1, h2, h3) {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* Fokus keyboard konsisten di seluruh situs */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 200;
+    transform: translateY(-160%);
+    background: var(--color-on-background);
+    color: var(--color-background);
+    padding: 0.6rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: transform 150ms ease-out;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  /* Standarisasi ikon agar lebih tebal (wght 500) — admin */
+
+  /* Hormati preferensi gerak */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -75,29 +128,50 @@
      SCROLL ANIMATIONS
      ========================================= */
 
+  /* Reveal — default TERLIHAT. Hanya disembunyikan kalau JS aktif (html.js). */
   .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Jaminan eksplisit: tanpa JS, konten tidak boleh tersembunyi. */
+  html:not(.js) .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  html.js .reveal {
     opacity: 0;
     transform: translateY(24px);
     transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
                 transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .reveal.from-left {
+  html.js .reveal.from-left {
     transform: translateX(-28px);
   }
 
-  .reveal.from-right {
+  html.js .reveal.from-right {
     transform: translateX(28px);
   }
 
-  .reveal.from-behind {
+  html.js .reveal.from-behind {
     transform: translateY(12px) scale(0.97);
     opacity: 0;
   }
 
-  .reveal.visible {
+  html.js .reveal.visible {
     opacity: 1;
     transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* Stagger delays */
@@ -105,150 +179,6 @@
   .reveal-delay-2 { transition-delay: 160ms; }
   .reveal-delay-3 { transition-delay: 240ms; }
   .reveal-delay-4 { transition-delay: 320ms; }
-
-  /* =========================================
-     HORIZONTAL SCROLL CAROUSEL (Projects)
-     ========================================= */
-
-  .projects-carousel {
-    --carousel-gap: 1.5rem; /* sama dengan gap-6 */
-    display: flex;
-    gap: var(--carousel-gap);
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    padding-block: 0.25rem 0.5rem;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    /* Scrollbar disembunyikan; navigasi lewat swipe, keyboard, atau tombol panah */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .projects-carousel::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .projects-carousel {
-      --carousel-gap: 2rem; /* md:gap-8 */
-    }
-  }
-
-  .projects-carousel:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
-    border-radius: 0.5rem;
-  }
-
-  /* Fade hanya muncul di sisi yang masih punya konten */
-  .projects-carousel[data-at-start='false'] {
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 3rem);
-    mask-image: linear-gradient(to right, transparent 0, #000 3rem);
-  }
-
-  .projects-carousel[data-at-end='false'] {
-    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 3rem);
-    mask-image: linear-gradient(to left, transparent 0, #000 3rem);
-  }
-
-  .projects-carousel[data-at-start='false'][data-at-end='false'] {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 3rem,
-      #000 calc(100% - 3rem),
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0,
-      #000 3rem,
-      #000 calc(100% - 3rem),
-      transparent 100%
-    );
-  }
-
-  .project-card-wrapper {
-    flex: 0 0 100%;
-    min-width: 0;
-    scroll-snap-align: start;
-  }
-
-  @media (min-width: 768px) {
-    .project-card-wrapper {
-      /* 2 kartu per layar */
-      flex-basis: calc((100% - var(--carousel-gap)) / 2);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .project-card-wrapper {
-      /* 3 kartu per layar */
-      flex-basis: calc((100% - (2 * var(--carousel-gap))) / 3);
-    }
-  }
-
-  /* Tombol navigasi carousel (desktop) */
-  .carousel-nav {
-    position: absolute;
-    top: 50%;
-    z-index: 20;
-    display: none;
-    width: 2.5rem;
-    height: 2.5rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: 9999px;
-    border: 1px solid var(--color-outline-strong);
-    background: var(--color-surface);
-    color: var(--color-on-background);
-    transform: translateY(-50%);
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
-    cursor: pointer;
-    transition:
-      opacity 0.2s ease,
-      background-color 0.2s ease,
-      color 0.2s ease,
-      border-color 0.2s ease;
-  }
-
-  .carousel-nav:hover {
-    background: var(--color-on-background);
-    border-color: var(--color-on-background);
-    color: var(--color-surface);
-  }
-
-  .carousel-nav:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .carousel-nav[disabled] {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .carousel-nav--prev {
-    left: -1.25rem;
-  }
-
-  .carousel-nav--next {
-    right: -1.25rem;
-  }
-
-  @media (min-width: 768px) {
-    .carousel-nav {
-      display: flex;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .projects-carousel {
-      scroll-behavior: auto;
-    }
-  }
 }
 
 @layer utilities {
@@ -271,11 +201,18 @@
 
   .gallery-item {
     flex: 0 0 auto;
-    width: clamp(15rem, 38vw, 21rem);
+    width: clamp(16rem, 40vw, 22rem);
     scroll-snap-align: start;
+    /* Berhenti di setiap kartu walau di-fling kencang */
+    scroll-snap-stop: always;
   }
   @media (max-width: 640px) {
     .gallery-item { width: 82vw; }
+  }
+
+  /* Kartu terakhir menempel ke tepi kanan supaya tidak ada ruang kosong di ujung */
+  .gallery-item:last-child {
+    scroll-snap-align: end;
   }
 
   .gallery-nav:disabled {
@@ -289,8 +226,119 @@
   /* Admin: subtle grid backdrop */
   .admin-surface {
     background-image:
-      radial-gradient(circle at 1px 1px, rgb(0 0 0 / 0.035) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgb(0 0 0 / 0.08) 1px, transparent 0);
     background-size: 22px 22px;
   }
+}
+
+/* =========================================
+   NAVBAR — unlayered agar menang atas utility Tailwind
+   Transparan di atas, solid (tanpa blur) setelah scroll.
+   ========================================= */
+
+.nav-shell {
+  transition: box-shadow 220ms ease-out;
+}
+
+.nav-shell[data-scrolled='true'] {
+  background-color: var(--color-background);
+  border-color: var(--color-outline-strong);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 0 0 var(--color-outline);
+}
+
+/* =========================================
+   NAV PROGRESS — scroll-linked, tanpa JS
+   ========================================= */
+
+.nav-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.nav-progress > span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+  .nav-progress > span {
+    animation: nav-progress linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @keyframes nav-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* Spec strip: masuk bertahap, tetap terlihat tanpa JS */
+.spec-cell {
+  opacity: 0;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.spec-cell:nth-child(1) { animation-delay: 0.5s; }
+.spec-cell:nth-child(2) { animation-delay: 0.56s; }
+.spec-cell:nth-child(3) { animation-delay: 0.62s; }
+.spec-cell:nth-child(4) { animation-delay: 0.68s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .spec-cell {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* =========================================
+   BROWSER SURFACES — bagian yang tidak digambar
+   ========================================= */
+
+html {
+  caret-color: var(--color-accent);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  color: var(--color-on-background);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-strong);
+  border: 3px solid var(--color-background);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-on-surface-variant);
 }
 

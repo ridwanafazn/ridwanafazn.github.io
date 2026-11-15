@@ -69,7 +69,11 @@ export interface Project {
   isTopProject: boolean;
   status?: string;
   coverImage?: string;
-  gallery?: { url: string; caption?: string; alt?: string; name?: string }[];
+  /** Gambar kecil untuk hover preview di ledger (w_480). */
+  previewImage?: string;
+  /** Kartu share 1200×630 (cover atau gambar galeri pertama). */
+  ogImage?: string;
+  gallery?: { url: string; srcset?: string; caption?: string; alt?: string; name?: string }[];
   links?: {
     label: string;
     url: string;

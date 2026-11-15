@@ -2,12 +2,12 @@
 export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import Badge from '../components/Badge.astro';
 import FloatingNav from '../components/FloatingNav.astro';
-import StatBar from '../components/StatBar.astro';
 import HowIBuild from '../components/HowIBuild.astro';
 import HeroGlobe from '../components/HeroGlobe.astro';
+import ProjectLedger from '../components/ProjectLedger.astro';
+import Icon from '../components/Icon.astro';
 
 import { getProfile, getTopProjects, getSkills } from '../lib/content';
 
@@ -16,108 +16,153 @@ const topProjects = await getTopProjects();
 const skillsData = await getSkills();
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
+
+const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '';
+// Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
+const stackSummary = ['FE', 'BE', 'Cloud', 'Mobile', 'AI', 'ML'].join('·');
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profileData.name,
+  jobTitle: profileData.role,
+  description: profileData.bio,
+  url: (Astro.site ?? new URL('https://ridwanafazn.my.id')).href,
+  email: 'mailto:ridwanafzn@gmail.com',
+  sameAs: [
+    'https://www.linkedin.com/in/ridwanafazn/',
+    'https://github.com/ridwanafazn',
+    'https://www.instagram.com/ridwanafazn/',
+  ],
+};
 ---
 
-<Layout title="Ridwan Pages">
+<Layout
+  title="Ridwan Pages"
+  description={`${profileData.role} — ${profileData.tagline} Portofolio sistem produksi: LMS, ledger, dan platform event.`}
+  image="/og.png"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema).replace(/</g, '\\u003c')} />
   <FloatingNav />
 
-  <header id="hero" class="mb-6 md:mb-2 mt-0 max-w-7xl relative z-10 scroll-mt-32">
+  <header id="hero" class="relative mb-14 md:mb-20 scroll-mt-32">
     <HeroGlobe />
 
-    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:gap-10 items-center pointer-events-none">
-      <div class="contents lg:flex lg:flex-col lg:justify-center lg:col-span-7 pointer-events-auto">
-        <h1 class="text-[clamp(3rem,13.5vw,4.75rem)] md:text-[clamp(1.75rem,6.2vw,4.25rem)] font-bold text-on-background text-left mb-3 md:mb-6 tracking-tight leading-[1.03] opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.2s_forwards]">
+    <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
+      <div class="lg:col-span-7">
+        <h1 class="font-bold text-[clamp(2.75rem,9vw,4.75rem)] leading-[0.98] tracking-tight text-on-background opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.1s_forwards]">
           {profileData.role}.
         </h1>
 
-        <h2 class="text-lg md:text-2xl text-on-surface-variant mb-6 font-medium max-w-3xl opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.35s_forwards]">
+        <p class="mt-6 max-w-[34ch] text-xl leading-snug text-on-surface-variant md:text-2xl opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.25s_forwards]">
           {profileData.tagline}
-        </h2>
+        </p>
 
-        <p class="hidden md:block text-[15px] md:text-base text-on-surface-variant leading-relaxed max-w-2xl mb-8 text-left opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards]">
+        <p class="mt-6 hidden max-w-[56ch] text-[15px] leading-relaxed text-on-surface-variant md:block opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.35s_forwards]">
           {profileData.bio}
         </p>
 
-        <div class="order-2 lg:order-none flex flex-wrap items-center gap-4 opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.55s_forwards]">
-          <a href="mailto:ridwanafzn@gmail.com" class="inline-flex items-center justify-center bg-on-background text-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+        <div class="mt-9 flex items-stretch opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards]">
+          <a
+            href="mailto:ridwanafzn@gmail.com"
+            class="inline-flex items-center justify-center gap-2 border border-on-background bg-on-background px-4 py-3.5 font-mono text-[12px] font-bold uppercase tracking-wider text-background transition-colors duration-200 hover:border-accent hover:bg-accent md:px-7"
+          >
             Contact Me
+            <Icon name="arrow-right" class="h-4 w-4" />
           </a>
-          <a href={projectsLink} class="inline-flex items-center justify-center bg-surface border border-outline-strong text-on-background font-mono text-[11px] uppercase tracking-wider font-bold px-8 py-3.5 rounded-md hover:bg-surface-hover hover:border-accent hover:text-accent active:scale-95 transition-all duration-300">
+          <a
+            href={projectsLink}
+            class="group inline-flex items-center justify-center gap-2 border border-l-0 border-on-background px-4 py-3.5 font-mono text-[12px] font-bold uppercase tracking-wider text-on-background transition-colors duration-200 hover:bg-on-background hover:text-background md:px-7"
+          >
             Project List
+            <Icon name="arrow-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>
 
-      <!-- Spacer kolom kanan desktop; globe dirender absolut oleh HeroGlobe -->
+      <!-- Ruang globe di desktop; komponen HeroGlobe dirender absolut di sini -->
       <div class="hidden lg:block lg:col-span-5 lg:h-[440px]" aria-hidden="true"></div>
     </div>
   </header>
 
-  <StatBar stats={profileData.stats} />
+  <section aria-label="Ringkasan profil" class="mb-16 md:mb-20">
+    <dl class="grid grid-cols-2 gap-px bg-outline md:grid-cols-4">
+      <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Fokus</dt>
+        <dd class="mt-2 text-[15px] leading-snug text-on-background">{profileData.currentFocus.title}</dd>
+      </div>
+      <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Sejak</dt>
+        <dd class="mt-2 font-mono text-[15px] tabular-nums text-on-background">{since}</dd>
+      </div>
+      <div class="spec-cell col-span-2 min-w-0 bg-background p-5 md:col-span-1 md:p-6">
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Stack</dt>
+        <dd class="mt-2 font-mono text-[12px] uppercase tracking-normal text-on-background">{stackSummary}</dd>
+      </div>
+      <div class="spec-cell col-span-2 min-w-0 bg-background p-5 pr-12 md:col-span-1 md:p-6">
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Kontak</dt>
+        <dd class="mt-2 text-[13px] md:text-[15px]">
+          <a
+            href="mailto:ridwanafzn@gmail.com"
+            class="break-all text-on-background underline decoration-outline-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+          >
+            ridwanafzn@gmail.com
+          </a>
+        </dd>
+      </div>
+    </dl>
+  </section>
 
-  <section id="projects" class="mb-8 relative z-10 scroll-mt-32">
-    <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
-      <h2 class="text-3xl font-bold text-on-background tracking-tight">Featured Projects</h2>
-      
-      <a href={projectsLink} class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent hover:text-accent/80 flex items-center gap-1.5 transition-colors group">
-        Lihat Semua Proyek <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+  <section id="projects" class="mb-16 md:mb-20 relative z-10 scroll-mt-32">
+    <div class="mb-2 flex items-end justify-between gap-4 border-b border-outline-strong pb-4">
+      <h2 class="text-3xl text-on-background tracking-tight md:text-4xl">Featured Projects</h2>
+
+      <a
+        href={projectsLink}
+        class="group flex shrink-0 items-center gap-1.5 font-mono text-[12px] font-bold uppercase tracking-wider text-accent transition-colors hover:text-accent-hover"
+      >
+        Lihat Semua
+        <Icon name="arrow-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </a>
     </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-      {topProjects.map((project, i) => (
-        <div class={`h-full ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
-          <ProjectCard project={project} />
+
+    <ProjectLedger projects={topProjects} showIndex={false} showStack={false} />
+  </section>
+
+  <section id="skills" class="mb-16 md:mb-20 relative z-10 scroll-mt-32">
+    <div class="mb-2 flex items-end justify-between border-b border-outline-strong pb-4">
+      <h2 class="text-3xl text-on-background tracking-tight md:text-4xl">Tech Stack</h2>
+      <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">
+        {skillsData.length} kategori
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2">
+      {skillsData.map((skillGroup, i) => (
+        <div class={`border-b border-outline py-6 md:py-7 ${i % 2 === 0 ? 'md:pr-8' : 'md:border-l md:border-outline md:pl-8'}`}>
+          <h3 class="mb-4 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">
+            {skillGroup.category}
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            {skillGroup.items.map((item) => (
+              <Badge text={item} />
+            ))}
+          </div>
         </div>
       ))}
     </div>
   </section>
 
-  <section id="skills" class="mb-16 relative z-10 scroll-mt-32">
-    <div class="flex items-end justify-between border-b border-outline-strong pb-4 mb-10">
-      <h2 class="text-3xl font-bold text-on-background tracking-tight">Tech Stack</h2>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-      {skillsData.map((skillGroup, i) => {
-        const delayClass = i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : '';
-        const dirClass = i % 2 === 0 ? 'from-left' : 'from-right';
-        return (
-          <div class={`bento-card p-5 md:p-6 flex flex-col relative overflow-hidden group reveal ${dirClass} ${delayClass}`}>
-            <div class="relative z-10 flex flex-col h-full">
-              <h3 class="font-mono text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-6 border-b border-outline/30 pb-4">
-                {skillGroup.category}
-              </h3>
-              <div class="flex flex-wrap gap-2.5">
-                {skillGroup.items.map((item) => (
-                  <Badge text={item} />
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  </section>
-
-  <section class="mb-20 md:mb-24 relative z-10">
-    <div class="bento-card p-6 md:p-10 relative overflow-hidden reveal">
-      <div class="relative z-10 flex flex-col md:flex-row md:items-start gap-8">
-        <div class="shrink-0">
-          <span class="font-mono text-[10px] uppercase tracking-widest text-accent font-bold block mb-4">Fokus Sekarang</span>
-          <h2 class="text-2xl md:text-3xl font-bold text-on-background tracking-tight max-w-sm">
-            {profileData.currentFocus.title}
-          </h2>
-        </div>
-        <div class="flex-1 border-t md:border-t-0 md:border-l border-outline pt-6 md:pt-0 md:pl-8">
-          <p class="text-left md:text-justify text-[14px] text-on-surface-variant leading-relaxed font-medium max-w-xl">
-            {profileData.currentFocus.description}
-          </p>
-        </div>
-      </div>
+  <section class="mb-16 md:mb-20 relative z-10">
+    <div class="grid gap-6 border-y border-outline py-8 md:grid-cols-12 md:gap-10 md:py-10">
+      <h2 class="text-2xl tracking-tight text-on-background md:col-span-4 md:text-3xl">
+        {profileData.currentFocus.title}
+      </h2>
+      <p class="max-w-[62ch] text-[15px] leading-relaxed text-on-surface-variant md:col-span-8">
+        {profileData.currentFocus.description}
+      </p>
     </div>
   </section>
 
   <HowIBuild data={profileData.howIBuild} />
-
 </Layout>

@@ -1,39 +1,78 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
-    title: string;
+  title: string;
+  description?: string;
+  /** OG image absolut/path kalau nanti sudah ada (Fase D). */
+  image?: string;
+  noindex?: boolean;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = 'Portofolio Ridwan Afazn — software engineer yang membangun sistem produksi: LMS dengan pembayaran & sertifikat terverifikasi, ledger double-entry, dan platform event real-time.',
+  image,
+  noindex = false,
+} = Astro.props;
+
 const base = import.meta.env.BASE_URL;
 const faviconUrl = `${base.endsWith('/') ? base : base + '/'}favicon.svg`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin).href : undefined;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="id">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href={faviconUrl} />
         <meta name="generator" content={Astro.generator} />
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-        
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@100..700,0..1,-50..200,24&display=swap" rel="stylesheet" />
-        
+
         <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonical} />
+        <meta name="theme-color" content="#EDEBE4" />
+        {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+        <!-- Open Graph / Twitter -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Ridwan Afazn" />
+        <meta property="og:locale" content="id_ID" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonical} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
+        <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+        <!-- Font self-host: preload yang dipakai di atas lipatan -->
+        <link rel="preload" href="/fonts/bricolage-grotesque-normal-var.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/public-sans-normal-var.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/jetbrains-mono-normal-var.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+
+        <script is:inline>
+          // Hanya sembunyikan elemen .reveal kalau JS benar-benar jalan.
+          document.documentElement.classList.add('js');
+        </script>
+
+        <ClientRouter />
     </head>
     
     <body class="flex flex-col min-h-screen relative overflow-x-hidden">
 
+        <a href="#main" class="skip-link">Langsung ke konten</a>
+
         <Navbar />
         
-        <main class="flex-grow pt-24 md:pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10">
+        <main id="main" class="flex-grow pt-24 md:pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10">
             <slot />
         </main>
         
@@ -43,19 +82,23 @@ const faviconUrl = `${base.endsWith('/') ? base : base + '/'}favicon.svg`;
 
         <script>
           // Global scroll reveal observer
-          const observer = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  entry.target.classList.add('visible');
-                  observer.unobserve(entry.target);
-                }
-              });
-            },
-            { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
-          );
+          const revealEls = document.querySelectorAll('.reveal');
 
-          document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+          if (revealEls.length) {
+            const observer = new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                  }
+                });
+              },
+              { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
+            );
+
+            revealEls.forEach((el) => observer.observe(el));
+          }
         </script>
     </body>
 </html>

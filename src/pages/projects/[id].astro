@@ -2,8 +2,8 @@
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
-import Badge from '../../components/Badge.astro';
-import { getProjectById } from '../../lib/content';
+import Icon from '../../components/Icon.astro';
+import { getProjectById, getAllProjects } from '../../lib/content';
 
 const id = Astro.params.id!;
 let project: Awaited<ReturnType<typeof getProjectById>> | null = null;
@@ -18,238 +18,325 @@ try {
 
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
-const summary = project ? project.longDescription || project.description : '';
-const summaryParagraphs = summary
-  .split(/\n\s*\n/)
-  .map((paragraph) => paragraph.trim())
-  .filter(Boolean);
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+type NarrativeSection = { heading: string | null; paragraphs: string[] };
+
+function parseNarrative(text: string): NarrativeSection[] {
+  if (!text.trim()) return [];
+  return text
+    .split(/\n(?=##\s)/g)
+    .map((part) => {
+      const lines = part.split('\n');
+      let heading: string | null = null;
+      if (/^##\s/.test((lines[0] ?? '').trim())) {
+        heading = lines.shift()!.replace(/^##\s+/, '').trim();
+      }
+      const paragraphs = lines
+        .join('\n')
+        .split(/\n\s*\n/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean);
+      return { heading, paragraphs };
+    })
+    .filter((section) => section.heading || section.paragraphs.length);
+}
+
+const narrative = project
+  ? parseNarrative(project.longDescription?.trim() || project.description)
+  : [];
+
+const gallery = project?.gallery ?? [];
+const leadImage = project ? project.coverImage ?? gallery[0]?.url : undefined;
+const leadSrcset = project?.coverImage ? undefined : gallery[0]?.srcset;
+const gridOffset = project && !project.coverImage && gallery.length > 0 ? 1 : 0;
+const sliderImages = gallery
+  .slice(gridOffset)
+  .map((image, position) => ({ image, index: gridOffset + position }));
+const galleryJson = JSON.stringify(
+  gallery.map((image, index) => ({
+    src: image.url,
+    alt: image.alt ?? `${project!.title} — gambar ${index + 1}`,
+    caption: image.caption ?? '',
+  })),
+).replace(/</g, '\\u003c');
+
+const allProjects = project ? await getAllProjects() : [];
+const currentIndex = allProjects.findIndex((item) => item.id === project?.id);
+const nextProject =
+  currentIndex >= 0 && allProjects.length > 1
+    ? allProjects[(currentIndex + 1) % allProjects.length]
+    : null;
 ---
 
 {
   notFound || !project ? (
-    <Layout title="404 · Ridwan Pages">
-      <div class="mx-auto max-w-xl py-20 text-center">
-        <p class="font-mono text-[11px] font-bold uppercase tracking-widest text-accent">404</p>
-        <h1 class="mt-3 text-3xl font-bold text-on-background">Project tidak ditemukan</h1>
-        <a href={projectsLink} class="mt-6 inline-block text-sm font-semibold text-accent hover:underline">
-          ← Kembali ke daftar project
+    <Layout title="404 · Ridwan Pages" noindex>
+      <div class="mx-auto max-w-xl py-20">
+        <p class="font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-accent">404</p>
+        <h1 class="mt-4 text-4xl tracking-tight text-on-background">Project tidak ditemukan</h1>
+        <a
+          href={projectsLink}
+          class="group mt-8 inline-flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-wider text-on-background underline decoration-outline-strong underline-offset-[6px] transition-colors hover:text-accent"
+        >
+          <Icon name="arrow-left" class="h-4 w-4" />
+          Kembali ke arsip
         </a>
       </div>
     </Layout>
   ) : (
-    <Layout title={`${project.title} · Ridwan Pages`}>
-      <div class="mb-8 pt-8 relative z-10">
-        <a
-          href={projectsLink}
-          class="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:text-accent"
-        >
-          <span class="material-symbols-outlined text-[16px]">arrow_back</span>
-          Kembali ke Proyek
-        </a>
-      </div>
+    <Layout
+      title={`${project.title} · Ridwan Pages`}
+      description={project.description}
+      image={project.ogImage ?? project.coverImage}
+    >
+      <a
+        href={projectsLink}
+        class="group inline-flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-wider text-on-surface-variant transition-colors hover:text-accent"
+      >
+        <Icon name="arrow-left" class="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+        Arsip proyek
+      </a>
 
-      <article class="mx-auto max-w-5xl relative z-10">
-        <header class="mb-10 text-center flex flex-col items-center">
-          <span class="mb-4 font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-            {project.role}
-          </span>
-          <h1 class="mb-8 text-5xl font-bold tracking-tight text-on-background md:text-6xl">
-            {project.title}
-          </h1>
-
-          <div class="mb-8 flex w-full flex-wrap justify-center gap-2.5">
-            {project.techStack.map((tech) => <Badge text={tech} />)}
+      <article class="mt-8">
+        <header class="grid gap-8 border-b border-outline-strong pb-8 md:grid-cols-12 md:gap-10 md:pb-10">
+          <div class="md:col-span-7">
+            <h1
+              class="text-[clamp(2.5rem,6.5vw,4.25rem)] leading-[1.02] tracking-tight text-on-background"
+              transition:name={`project-${project.id}`}
+            >
+              {project.title}
+            </h1>
+            <p class="mt-5 max-w-[56ch] text-[15px] leading-relaxed text-on-surface-variant">
+              {project.description}
+            </p>
           </div>
 
-          {
-            project.links && project.links.length > 0 && (
-              <div class="flex w-full flex-wrap justify-center gap-4 pt-2">
-                {project.links.map((link) => (
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="group inline-flex items-center justify-center gap-2 rounded-md border border-outline-strong bg-surface px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition-all duration-300 hover:border-on-background hover:bg-on-background hover:text-surface"
-                  >
-                    <span class="material-symbols-outlined text-[16px] transition-colors group-hover:text-surface">
-                      {link.icon}
-                    </span>
-                    {link.label}
-                  </a>
-                ))}
+          <dl class="grid gap-5 md:col-span-5 md:border-l md:border-outline md:pl-10">
+            <div>
+              <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Peran</dt>
+              <dd class="mt-1 text-[15px] text-on-background">{project.role}</dd>
+            </div>
+            <div>
+              <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Stack</dt>
+              <dd class="mt-1 text-[15px] leading-relaxed text-on-background">
+                {project.techStack.join(' · ')}
+              </dd>
+            </div>
+            {project.links && project.links.length > 0 && (
+              <div>
+                <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Tautan</dt>
+                <dd class="mt-1 flex flex-col gap-1">
+                  {project.links.map((link) => (
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="group inline-flex w-fit items-center gap-1.5 text-[15px] text-on-background underline decoration-outline-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+                    >
+                      {link.label}
+                      <Icon name="external-link" class="h-3.5 w-3.5" />
+                    </a>
+                  ))}
+                </dd>
               </div>
-            )
-          }
+            )}
+          </dl>
         </header>
 
-        {
-          project.coverImage && (
-            <figure class="mb-12 flex justify-center">
-              <img
-                src={project.coverImage}
-                alt={`${project.title} cover`}
-                class="h-auto max-h-[250px] w-auto max-w-full rounded-lg border border-outline bg-surface object-contain shadow-sm md:max-h-[360px]"
-                loading="eager"
-                decoding="async"
-              />
-            </figure>
-          )
-        }
+        {leadImage && (
+          <figure class="mt-8">
+            <img
+              src={leadImage}
+              srcset={leadSrcset}
+              sizes="100vw"
+              alt={`${project.title} — tampilan utama`}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="aspect-[16/9] w-full border border-outline bg-surface object-cover"
+            />
+          </figure>
+        )}
 
-        {
-          project.gallery && project.gallery.length > 0 && (
-            <section class="mb-12 reveal from-behind">
-              <div class="mb-5 flex items-end justify-between gap-3 border-b border-outline-strong pb-4">
-                <div>
-                  <h2 class="text-xl font-bold text-on-background">Galeri</h2>
-                  <p class="mt-1 text-[11px] text-on-surface-variant">
-                    {project.gallery.length} foto · geser atau klik untuk memperbesar.
-                  </p>
-                </div>
-                <div class="flex shrink-0 gap-2">
+        {narrative.map((section) => (
+          <section class="grid gap-4 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
+            {section.heading ? (
+              <h2 class="text-xl tracking-tight text-on-background md:col-span-3 md:sticky md:top-28 md:self-start md:text-2xl">
+                {section.heading}
+              </h2>
+            ) : (
+              <h2 class="sr-only">Ringkasan</h2>
+            )}
+            <div class="max-w-[68ch] space-y-4 text-[15px] leading-relaxed text-on-surface-variant md:col-span-8 md:col-start-5">
+              {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+          </section>
+        ))}
+
+        {gallery.length > 0 && (
+          <section class="border-t border-outline py-8 md:py-10" aria-label="Galeri">
+            <div class="flex items-end justify-between gap-4">
+              <div>
+                <h2 class="text-xl tracking-tight text-on-background md:text-2xl">Galeri</h2>
+                <p class="mt-1 text-[12px] text-on-surface-variant">
+                  Geser, atau klik gambar untuk memperbesar.
+                </p>
+              </div>
+
+              <div class="flex shrink-0 items-center gap-2">
+                <span class="mr-1 font-mono text-[12px] tabular-nums text-on-surface-variant">
+                  {pad(gallery.length)} gambar
+                </span>
+                <button
+                  type="button"
+                  data-gallery-prev
+                  class="gallery-nav grid h-9 w-9 place-items-center border border-outline bg-surface text-on-surface-variant transition-colors hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  aria-label="Gambar sebelumnya"
+                >
+                  <Icon name="chevron-left" class="h-[18px] w-[18px]" />
+                </button>
+                <button
+                  type="button"
+                  data-gallery-next
+                  class="gallery-nav grid h-9 w-9 place-items-center border border-outline bg-surface text-on-surface-variant transition-colors hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  aria-label="Gambar berikutnya"
+                >
+                  <Icon name="chevron-right" class="h-[18px] w-[18px]" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="gallery-track mt-6"
+              data-gallery
+              tabindex="0"
+              role="region"
+              aria-label="Galeri proyek, geser ke samping"
+            >
+              {sliderImages.map(({ image, index }) => (
+                <figure class="gallery-item group">
                   <button
                     type="button"
-                    data-gallery-prev
-                    class="gallery-nav grid h-9 w-9 place-items-center rounded-full border border-outline bg-surface text-on-surface-variant transition-all duration-200 hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    aria-label="Gambar sebelumnya"
+                    data-lightbox={index}
+                    class="relative block w-full cursor-zoom-in overflow-hidden border border-outline bg-surface transition-colors hover:border-outline-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    aria-label={`Perbesar gambar ${index + 1}`}
                   >
-                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    <img
+                      src={image.url}
+                      srcset={image.srcset}
+                      sizes="(min-width: 768px) 24rem, 82vw"
+                      alt={image.alt ?? `${project.title} — gambar ${index + 1}`}
+                      loading="lazy"
+                      decoding="async"
+                      class="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    />
+                    <span class="pointer-events-none absolute right-2 top-2 grid h-7 w-7 place-items-center border border-white/25 bg-on-background/70 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                      <Icon name="zoom-in" class="h-3.5 w-3.5" />
+                    </span>
                   </button>
-                  <button
-                    type="button"
-                    data-gallery-next
-                    class="gallery-nav grid h-9 w-9 place-items-center rounded-full border border-outline bg-surface text-on-surface-variant transition-all duration-200 hover:border-on-background hover:bg-on-background hover:text-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                    aria-label="Gambar berikutnya"
-                  >
-                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                  </button>
-                </div>
-              </div>
+                  <figcaption class="mt-2 font-mono text-[12px] tabular-nums text-on-surface-variant">
+                    {pad(index + 1)}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
 
-              <div class="gallery-track" data-gallery tabindex="0" aria-label="Galeri proyek, geser ke samping">
-                {project.gallery.map((img, i) => {
-                  const alt = img.alt ?? `${project!.title} - gambar ${i + 1}`;
-                  const caption = img.caption || img.name || '';
-                  return (
-                    <figure class="gallery-item group">
-                      <button
-                        type="button"
-                        data-lightbox
-                        data-src={img.url}
-                        data-alt={alt}
-                        data-caption={caption}
-                        data-index={i}
-                        class="relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-outline bg-surface transition-all duration-300 hover:border-outline-strong hover:shadow-[0_14px_34px_-18px_rgb(22_21_26/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                        aria-label={`Perbesar ${caption || alt}`}
-                      >
-                        <img
-                          src={img.url}
-                          alt={alt}
-                          loading="lazy"
-                          decoding="async"
-                          class="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-                        />
-                        <span class="pointer-events-none absolute inset-0 bg-on-background/0 transition-colors duration-300 group-hover:bg-on-background/10" />
-                        <span class="pointer-events-none absolute right-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full border border-white/25 bg-black/35 text-white opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:opacity-100">
-                          <span class="material-symbols-outlined text-[17px]">zoom_in</span>
-                        </span>
-                      </button>
-                      {caption ? (
-                        <figcaption class="mt-2 truncate font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-on-surface-variant/90">
-                          {caption}
-                        </figcaption>
-                      ) : null}
-                    </figure>
-                  );
-                })}
-              </div>
+            <div class="mt-4 h-px w-full overflow-hidden bg-outline" aria-hidden="true">
+              <span data-gallery-progress class="block h-px bg-on-background/60 transition-[width,transform] duration-200" style="width: 30%"></span>
+            </div>
+          </section>
+        )}
 
-              <div class="mt-4 h-0.5 w-full overflow-hidden rounded-full bg-outline/70" aria-hidden="true">
-                <span data-gallery-progress class="block h-full rounded-full bg-on-background/50 transition-[width] duration-200" style="width: 30%"></span>
-              </div>
-            </section>
-          )
-        }
+        {project.highlights && project.highlights.length > 0 && (
+          <section class="grid gap-3 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
+            <h2 class="text-xl tracking-tight text-on-background md:col-span-3 md:sticky md:top-28 md:self-start md:text-2xl">
+              Hasil
+            </h2>
+            <ul class="md:col-span-8 md:col-start-5">
+              {project.highlights.map((highlight) => (
+                <li class="border-b border-outline py-2.5 text-[14px] leading-snug text-on-background first:pt-0 last:border-b-0">
+                  {highlight}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-        <div class="bento-card p-6 md:p-12 relative overflow-hidden focus-visible:ring-2 focus-visible:ring-accent reveal">
-          <div class="relative z-10">
-            <section class="mb-12 reveal from-behind">
-              <h2 class="mb-4 border-b border-outline/30 pb-4 text-2xl font-bold text-on-background">Ringkasan Proyek</h2>
-              <div class="space-y-4 text-left text-[15px] font-medium leading-relaxed text-on-surface-variant md:text-justify">
-                {summaryParagraphs.map((paragraph) => <p>{paragraph}</p>)}
-              </div>
-            </section>
-
-            {
-              project.highlights && project.highlights.length > 0 && (
-                <section class="mb-12 reveal from-behind reveal-delay-1">
-                  <h2 class="mb-4 border-b border-outline/30 pb-4 text-xl font-bold text-on-background">Highlights</h2>
-                  <ul class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-                    {project.highlights.map((feat) => (
-                      <li class="flex items-start gap-3">
-                        <span class="material-symbols-outlined mt-0.5 text-[18px] text-accent">check_circle</span>
-                        <span class="text-[14px] font-medium text-on-surface-variant">{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )
-            }
-          </div>
-        </div>
+        {nextProject && (
+          <nav class="border-t border-outline-strong py-8 md:py-10" aria-label="Proyek berikutnya">
+            <a href={`${projectsLink}/${nextProject.id}`} class="group flex flex-col gap-2">
+              <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">
+                Proyek berikutnya
+              </span>
+              <span class="flex items-baseline justify-between gap-6">
+                <span class="font-heading text-3xl leading-tight tracking-tight text-on-background transition-colors group-hover:text-accent md:text-4xl">
+                  {nextProject.title}
+                </span>
+                <Icon
+                  name="arrow-right"
+                  class="h-6 w-6 shrink-0 text-on-surface-variant transition-all duration-200 group-hover:translate-x-1 group-hover:text-accent"
+                />
+              </span>
+            </a>
+          </nav>
+        )}
       </article>
 
       <Fragment slot="overlay">
         <div
           id="lightbox"
-          class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/90 p-4 backdrop-blur-lg"
+          class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/95 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Gambar diperbesar"
         >
-          <div class="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 p-4 md:p-6">
+          <div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 p-4 md:p-6">
             <span
               id="lightbox-counter"
-              class="pointer-events-auto rounded-full border border-white/15 bg-white/10 px-3 py-1 font-mono text-[10px] font-semibold tracking-[0.14em] text-white backdrop-blur"
+              class="border border-white/20 px-3 py-1 font-mono text-[12px] tabular-nums tracking-[0.12em] text-white"
             >
               1 / 1
             </span>
             <button
               type="button"
               id="lightbox-close"
-              class="pointer-events-auto grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-black/30 text-white transition-colors duration-150 hover:bg-black/60"
+              class="grid h-10 w-10 place-items-center border border-white/25 text-white transition-colors duration-150 hover:bg-white hover:text-on-background"
               aria-label="Tutup gambar"
             >
-              <span class="material-symbols-outlined text-[20px]">close</span>
+              <Icon name="close" class="h-5 w-5" />
             </button>
           </div>
 
           <button
             type="button"
             data-lightbox-prev
-            class="absolute left-3 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition-colors duration-150 hover:bg-black/60 md:left-6"
+            class="absolute left-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center border border-white/25 bg-on-background/60 text-white transition-colors duration-150 hover:bg-white hover:text-on-background md:left-6"
             aria-label="Gambar sebelumnya"
           >
-            <span class="material-symbols-outlined text-[22px]">chevron_left</span>
+            <Icon name="chevron-left" class="h-5 w-5" />
           </button>
           <button
             type="button"
             data-lightbox-next
-            class="absolute right-3 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition-colors duration-150 hover:bg-black/60 md:right-6"
+            class="absolute right-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center border border-white/25 bg-on-background/60 text-white transition-colors duration-150 hover:bg-white hover:text-on-background md:right-6"
             aria-label="Gambar berikutnya"
           >
-            <span class="material-symbols-outlined text-[22px]">chevron_right</span>
+            <Icon name="chevron-right" class="h-5 w-5" />
           </button>
 
           <figure class="flex max-h-[88vh] w-full max-w-5xl flex-col items-center gap-3 px-1 md:px-10">
             <img
               id="lightbox-img"
+              src={gallery[0]?.url}
               alt=""
-              class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-2xl md:max-h-[76vh]"
+              loading="lazy"
+              class="max-h-[70vh] max-w-full object-contain md:max-h-[76vh]"
             />
             <figcaption
               id="lightbox-caption"
-              class="max-w-full truncate text-center font-mono text-[11px] uppercase tracking-[0.12em] text-white/60">
+              class="max-w-full truncate text-center font-mono text-[12px] uppercase tracking-[0.12em] text-white/70">
             </figcaption>
           </figure>
         </div>
@@ -258,67 +345,29 @@ const summaryParagraphs = summary
   )
 }
 
+<script type="application/json" id="gallery-data" set:html={galleryJson} />
+
 <script>
-  // Slider galeri: geser per kartu, state tombol, progress bar.
-  const track = document.querySelector<HTMLElement>('[data-gallery]');
-  const galleryPrev = document.querySelector<HTMLButtonElement>('[data-gallery-prev]');
-  const galleryNext = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
-  const galleryProgress = document.querySelector<HTMLElement>('[data-gallery-progress]');
+  const dataEl = document.getElementById('gallery-data');
+  const items: { src: string; alt: string; caption: string }[] = dataEl
+    ? JSON.parse(dataEl.textContent || '[]')
+    : [];
 
-  if (track) {
-    const step = (dir: number) => {
-      const item = track.querySelector<HTMLElement>('.gallery-item');
-      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
-      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
-      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
-    };
-
-    const sync = () => {
-      const max = track.scrollWidth - track.clientWidth;
-      if (galleryPrev) galleryPrev.disabled = track.scrollLeft <= 2;
-      if (galleryNext) galleryNext.disabled = track.scrollLeft >= max - 2;
-      if (galleryProgress) {
-        const ratio = track.scrollWidth > 0 ? track.clientWidth / track.scrollWidth : 1;
-        galleryProgress.style.width = `${Math.min(100, ratio * 100)}%`;
-        const travel = max > 0 && ratio < 1 ? (track.scrollLeft / max) * ((1 - ratio) / ratio) * 100 : 0;
-        galleryProgress.style.transform = `translateX(${travel}%)`;
-      }
-    };
-
-    galleryPrev?.addEventListener('click', () => step(-1));
-    galleryNext?.addEventListener('click', () => step(1));
-    track.addEventListener('scroll', sync, { passive: true });
-    window.addEventListener('resize', sync);
-    track.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        step(-1);
-      }
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        step(1);
-      }
-    });
-    sync();
-  }
-
-  // Lightbox galeri: navigasi prev/next, counter, keyboard.
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
   const lightboxCaption = document.getElementById('lightbox-caption');
   const lightboxCounter = document.getElementById('lightbox-counter');
   const lightboxClose = document.getElementById('lightbox-close');
-  const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lightbox]'));
   let current = 0;
 
   const render = (index: number) => {
-    const total = triggers.length;
+    const total = items.length;
     if (!lightboxImg || !total) return;
     current = (index + total) % total;
-    const btn = triggers[current];
-    lightboxImg.src = btn.dataset.src ?? '';
-    lightboxImg.alt = btn.dataset.alt ?? 'Gambar proyek';
-    if (lightboxCaption) lightboxCaption.textContent = btn.dataset.caption ?? '';
+    const item = items[current];
+    lightboxImg.src = item.src;
+    lightboxImg.alt = item.alt;
+    if (lightboxCaption) lightboxCaption.textContent = item.caption || `${current + 1} / ${total}`;
     if (lightboxCounter) lightboxCounter.textContent = `${current + 1} / ${total}`;
   };
 
@@ -328,6 +377,7 @@ const summaryParagraphs = summary
     lightbox.classList.remove('hidden');
     lightbox.classList.add('flex');
     document.body.style.overflow = 'hidden';
+    lightboxClose?.focus();
   };
 
   const closeLightbox = () => {
@@ -335,27 +385,70 @@ const summaryParagraphs = summary
     lightbox.classList.add('hidden');
     lightbox.classList.remove('flex');
     document.body.style.overflow = '';
-    if (lightboxImg) lightboxImg.removeAttribute('src');
   };
 
-  triggers.forEach((btn, index) => {
-    btn.addEventListener('click', () => openLightbox(index));
+  document.querySelectorAll<HTMLButtonElement>('[data-lightbox]').forEach((btn) => {
+    btn.addEventListener('click', () => openLightbox(Number(btn.dataset.lightbox ?? 0)));
   });
+
+  // Slider galeri: satu kartu per langkah, berhenti di ujung (Play Store style).
+  const track = document.querySelector<HTMLElement>('[data-gallery]');
+  const galleryPrev = document.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+  const galleryNext = document.querySelector<HTMLButtonElement>('[data-gallery-next]');
+  const galleryProgress = document.querySelector<HTMLElement>('[data-gallery-progress]');
+
+  if (track) {
+    const step = (direction: number) => {
+      const item = track.querySelector<HTMLElement>('.gallery-item');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
+      const distance = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+      track.scrollBy({ left: direction * distance, behavior: 'smooth' });
+    };
+
+    const sync = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      if (galleryPrev) galleryPrev.disabled = track.scrollLeft <= 2;
+      if (galleryNext) galleryNext.disabled = track.scrollLeft >= max - 2;
+      if (galleryProgress) {
+        const ratio = track.scrollWidth > 0 ? track.clientWidth / track.scrollWidth : 1;
+        galleryProgress.style.width = `${Math.min(100, ratio * 100)}%`;
+        const travel =
+          max > 0 && ratio < 1 ? (track.scrollLeft / max) * ((1 - ratio) / ratio) * 100 : 0;
+        galleryProgress.style.transform = `translateX(${travel}%)`;
+      }
+    };
+
+    galleryPrev?.addEventListener('click', () => step(-1));
+    galleryNext?.addEventListener('click', () => step(1));
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        step(-1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        step(1);
+      }
+    });
+    sync();
+  }
 
   document.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => render(current - 1));
   document.querySelector('[data-lightbox-next]')?.addEventListener('click', () => render(current + 1));
 
-  lightbox?.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    // Klik area luar gambar menutup lightbox; klik gambar/nav tidak.
+  lightbox?.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
     if (target === lightboxImg || target.closest('button')) return;
     closeLightbox();
   });
   lightboxClose?.addEventListener('click', closeLightbox);
-  document.addEventListener('keydown', (e) => {
+
+  document.addEventListener('keydown', (event) => {
     if (!lightbox || lightbox.classList.contains('hidden')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') render(current - 1);
-    if (e.key === 'ArrowRight') render(current + 1);
+    if (event.key === 'Escape') closeLightbox();
+    if (event.key === 'ArrowLeft') render(current - 1);
+    if (event.key === 'ArrowRight') render(current + 1);
   });
 </script>
