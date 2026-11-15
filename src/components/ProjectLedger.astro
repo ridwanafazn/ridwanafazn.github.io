@@ -35,6 +35,8 @@ const rowGrid = showIndex
           class:list={[
             'group grid items-center gap-x-4 gap-y-1 border-b border-outline py-3.5 transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent md:gap-x-5',
             rowGrid,
+            'reveal from-behind',
+            index % 4 === 1 ? 'reveal-delay-1' : index % 4 === 2 ? 'reveal-delay-2' : index % 4 === 3 ? 'reveal-delay-3' : '',
           ]}
         >
           {showIndex && (

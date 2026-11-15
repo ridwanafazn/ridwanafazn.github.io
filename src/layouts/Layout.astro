@@ -81,24 +81,74 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin).href : un
         <slot name="overlay" />
 
         <script>
-          // Global scroll reveal observer
-          const revealEls = document.querySelectorAll('.reveal');
+          let revealObserver: IntersectionObserver | null = null;
+          const pending = new Set<HTMLElement>();
+          let ioDelivered = false;
+          let fallbackTimer = 0;
 
-          if (revealEls.length) {
-            const observer = new IntersectionObserver(
-              (entries) => {
-                entries.forEach((entry) => {
-                  if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                  }
-                });
-              },
-              { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
-            );
+          const revealNow = (el: Element) => {
+            el.classList.add('visible');
+            pending.delete(el as HTMLElement);
+          };
 
-            revealEls.forEach((el) => observer.observe(el));
+          const initReveal = () => {
+            const elements = Array.from(document.querySelectorAll<HTMLElement>('.reveal:not(.visible)'));
+            if (!elements.length) return;
+
+            if (!revealObserver) {
+              revealObserver = new IntersectionObserver(
+                (entries) => {
+                  ioDelivered = true;
+                  entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                      revealNow(entry.target);
+                      revealObserver?.unobserve(entry.target);
+                    }
+                  });
+                },
+                { threshold: 0.05, rootMargin: '0px 0px -2% 0px' },
+              );
+            }
+
+            const viewport = window.innerHeight;
+            elements.forEach((el) => {
+              // Satu layar pertama (plus sedikit) langsung dianimasikan tanpa
+              // menunggu IntersectionObserver — konten tidak boleh tertahan.
+              if (el.getBoundingClientRect().top < viewport * 1.05) {
+                revealNow(el);
+              } else {
+                pending.add(el);
+                revealObserver!.observe(el);
+              }
+            });
+
+            // Jaring pengaman: kalau IO tidak pernah mengirim callback
+            // (mis. renderer tanpa frame), tampilkan semua.
+            window.clearTimeout(fallbackTimer);
+            fallbackTimer = window.setTimeout(() => {
+              if (ioDelivered) return;
+              pending.forEach((el) => el.classList.add('visible'));
+              pending.clear();
+            }, 2500);
+          };
+
+          document.addEventListener('astro:page-load', initReveal);
+          document.addEventListener('astro:before-swap', () => {
+            revealObserver?.disconnect();
+            revealObserver = null;
+            pending.clear();
+            ioDelivered = false;
+            window.clearTimeout(fallbackTimer);
+          });
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initReveal);
+          } else {
+            initReveal();
           }
+
+          // Fallback kalau ClientRouter tidak menyala.
+          window.setTimeout(initReveal, 400);
         </script>
     </body>
 </html>

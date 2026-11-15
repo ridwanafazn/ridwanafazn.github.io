@@ -4,8 +4,6 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const GLOBE_RADIUS = 5;
-// Close-up: hanya ~66% bola yang tampil, sisanya keluar frame (kanan/atas/bawah).
-const VISIBLE_FRACTION = 0.66;
 const FOV = 45;
 const INDONESIA_ROTATION = Math.PI * 0.8;
 
@@ -102,10 +100,20 @@ function buildAtmosphere() {
   return group;
 }
 
+type GlobeInstance = { canvas: HTMLCanvasElement; relayout: () => void; destroy: () => void };
+let active: GlobeInstance | null = null;
+
 export function initHeroGlobe() {
   const wrap = document.getElementById('hero-globe-wrap');
   const canvas = document.getElementById('hero-globe-canvas') as HTMLCanvasElement | null;
   if (!wrap || !canvas) return;
+
+  // Sudah jalan di canvas yang sama (resize / navigasi balik): cukup re-layout.
+  if (active && active.canvas === canvas) {
+    active.relayout();
+    return;
+  }
+  active?.destroy();
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -132,10 +140,10 @@ export function initHeroGlobe() {
     const h = wrap!.clientHeight;
     if (!w || !h) return;
 
-    // Bola utuh di dalam wrapper (tidak dipotong frame), lalu navbar & spec strip
-    // menutupi bagian atas/bawahnya karena stacking context.
-    const D = Math.min(h * 0.92, w * 0.98);
-    const cx = w - VISIBLE_FRACTION * D + D / 2;
+    // Zoom-in: bola jauh lebih besar dari wrapper → terpotong atas, kanan, bawah.
+    // Sisi kiri tetap terlihat sebagai lengkungan.
+    const D = Math.min(h * 1.45, w * 1.9);
+    const cx = D / 2 + 24;
     const cy = h / 2;
 
     const visibleHeight = (2 * GLOBE_RADIUS * h) / D;
@@ -177,7 +185,24 @@ export function initHeroGlobe() {
   // mematikan rotasi, hanya diperlambat ~3x.
   const ROTATION_SPEED = reducedMotion ? 0.012 : 0.035;
 
+  function destroy() {
+    cancelAnimationFrame(animId);
+    resizeObserver.disconnect();
+    visibilityObserver.disconnect();
+    controls.dispose();
+    renderer.dispose();
+    if (active?.canvas === canvas) active = null;
+  }
+
+  active = { canvas, relayout: layout, destroy };
+
   function animate(now: number) {
+    // DOM dibuang (ClientRouter pindah halaman) → hentikan dan lepas WebGL.
+    if (!wrap!.isConnected) {
+      destroy();
+      return;
+    }
+
     animId = requestAnimationFrame(animate);
     const delta = Math.min((now - lastFrame) / 1000, 0.1);
     lastFrame = now;
@@ -187,16 +212,4 @@ export function initHeroGlobe() {
     renderer.render(scene, camera);
   }
   animId = requestAnimationFrame(animate);
-
-  window.addEventListener(
-    'pagehide',
-    () => {
-      cancelAnimationFrame(animId);
-      resizeObserver.disconnect();
-      visibilityObserver.disconnect();
-      controls.dispose();
-      renderer.dispose();
-    },
-    { once: true },
-  );
 }

@@ -114,7 +114,7 @@ const personSchema = {
   </section>
 
   <section id="projects" class="mb-16 md:mb-20 relative z-10 scroll-mt-32">
-    <div class="mb-2 flex items-end justify-between gap-4 border-b border-outline-strong pb-4">
+    <div class="reveal mb-2 flex items-end justify-between gap-4 border-b border-outline-strong pb-4">
       <h2 class="text-3xl text-on-background tracking-tight md:text-4xl">Featured Projects</h2>
 
       <a
@@ -130,7 +130,7 @@ const personSchema = {
   </section>
 
   <section id="skills" class="mb-16 md:mb-20 relative z-10 scroll-mt-32">
-    <div class="mb-2 flex items-end justify-between border-b border-outline-strong pb-4">
+    <div class="reveal mb-2 flex items-end justify-between border-b border-outline-strong pb-4">
       <h2 class="text-3xl text-on-background tracking-tight md:text-4xl">Tech Stack</h2>
       <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">
         {skillsData.length} kategori
@@ -139,7 +139,7 @@ const personSchema = {
 
     <div class="grid grid-cols-1 md:grid-cols-2">
       {skillsData.map((skillGroup, i) => (
-        <div class={`border-b border-outline py-6 md:py-7 ${i % 2 === 0 ? 'md:pr-8' : 'md:border-l md:border-outline md:pl-8'}`}>
+        <div class={`reveal border-b border-outline py-6 md:py-7 ${i % 2 === 0 ? 'from-left md:pr-8' : 'from-right md:border-l md:border-outline md:pl-8'} ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
           <h3 class="mb-4 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">
             {skillGroup.category}
           </h3>
@@ -154,7 +154,7 @@ const personSchema = {
   </section>
 
   <section class="mb-16 md:mb-20 relative z-10">
-    <div class="grid gap-6 border-y border-outline py-8 md:grid-cols-12 md:gap-10 md:py-10">
+    <div class="reveal from-behind grid gap-6 border-y border-outline py-8 md:grid-cols-12 md:gap-10 md:py-10">
       <h2 class="text-2xl tracking-tight text-on-background md:col-span-4 md:text-3xl">
         {profileData.currentFocus.title}
       </h2>

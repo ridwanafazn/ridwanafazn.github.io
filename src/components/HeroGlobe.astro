@@ -1,7 +1,7 @@
 ---
 // src/components/HeroGlobe.astro
-// Particle globe (three.js). Hanya dimuat di >=1024px setelah browser idle,
-// supaya mobile tidak membayar 559 KB (texture 420 KB + three.js).
+// Particle globe (three.js). Hanya dimuat di >=1024px, setelah browser idle.
+// Tetap hidup saat resize / client-side navigation; di-reinit kalau DOM diganti.
 // Wajib diletakkan langsung di dalam elemen `relative` (header#hero).
 ---
 
@@ -50,20 +50,48 @@
 </style>
 
 <script>
-  const start = async () => {
+  const desktop = window.matchMedia('(min-width: 1024px)');
+  let loading = false;
+
+  const ensureGlobe = async () => {
+    if (!desktop.matches || loading) return;
+
     const wrap = document.getElementById('hero-globe-wrap');
     const canvas = document.getElementById('hero-globe-canvas');
     if (!wrap || !canvas) return;
-    if (!window.matchMedia('(min-width: 1024px)').matches) return;
 
-    const { initHeroGlobe } = await import('../scripts/hero-globe');
-    initHeroGlobe();
+    loading = true;
+    try {
+      const { initHeroGlobe } = await import('../scripts/hero-globe');
+      initHeroGlobe();
+    } finally {
+      loading = false;
+    }
   };
 
-  if ('requestIdleCallback' in window) {
-    (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void })
-      .requestIdleCallback(start, { timeout: 2500 });
+  const whenIdle = () => {
+    if ('requestIdleCallback' in window) {
+      (
+        window as Window & {
+          requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void;
+        }
+      ).requestIdleCallback(ensureGlobe, { timeout: 2500 });
+    } else {
+      window.setTimeout(ensureGlobe, 1200);
+    }
+  };
+
+  // ClientRouter: jalan lagi setiap halaman siap (termasuk kembali ke home).
+  document.addEventListener('astro:page-load', whenIdle);
+
+  // Desktop ↔ mobile: muat saat melewati breakpoint, re-layout saat kembali.
+  desktop.addEventListener('change', () => {
+    if (desktop.matches) whenIdle();
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', whenIdle);
   } else {
-    window.setTimeout(start, 1200);
+    whenIdle();
   }
 </script>

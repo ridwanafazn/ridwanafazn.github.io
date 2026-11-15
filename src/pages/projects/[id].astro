@@ -100,7 +100,7 @@ const nextProject =
       </a>
 
       <article class="mt-8">
-        <header class="grid gap-8 border-b border-outline-strong pb-8 md:grid-cols-12 md:gap-10 md:pb-10">
+        <header class="reveal from-behind grid gap-8 border-b border-outline-strong pb-8 md:grid-cols-12 md:gap-10 md:pb-10">
           <div class="md:col-span-7">
             <h1
               class="text-[clamp(2.5rem,6.5vw,4.25rem)] leading-[1.02] tracking-tight text-on-background"
@@ -146,7 +146,7 @@ const nextProject =
         </header>
 
         {leadImage && (
-          <figure class="mt-8">
+          <figure class="reveal mt-8">
             <img
               src={leadImage}
               srcset={leadSrcset}
@@ -161,7 +161,7 @@ const nextProject =
         )}
 
         {narrative.map((section) => (
-          <section class="grid gap-4 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
+          <section class="reveal grid gap-4 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
             {section.heading ? (
               <h2 class="text-xl tracking-tight text-on-background md:col-span-3 md:sticky md:top-28 md:self-start md:text-2xl">
                 {section.heading}
@@ -176,7 +176,7 @@ const nextProject =
         ))}
 
         {gallery.length > 0 && (
-          <section class="border-t border-outline py-8 md:py-10" aria-label="Galeri">
+          <section class="reveal from-behind border-t border-outline py-8 md:py-10" aria-label="Galeri">
             <div class="flex items-end justify-between gap-4">
               <div>
                 <h2 class="text-xl tracking-tight text-on-background md:text-2xl">Galeri</h2>
@@ -247,7 +247,7 @@ const nextProject =
         )}
 
         {project.highlights && project.highlights.length > 0 && (
-          <section class="grid gap-3 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
+          <section class="reveal grid gap-3 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
             <h2 class="text-xl tracking-tight text-on-background md:col-span-3 md:sticky md:top-28 md:self-start md:text-2xl">
               Hasil
             </h2>
@@ -262,7 +262,7 @@ const nextProject =
         )}
 
         {nextProject && (
-          <nav class="border-t border-outline-strong py-8 md:py-10" aria-label="Proyek berikutnya">
+          <nav class="reveal from-behind border-t border-outline-strong py-8 md:py-10" aria-label="Proyek berikutnya">
             <a href={`${projectsLink}/${nextProject.id}`} class="group flex flex-col gap-2">
               <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">
                 Proyek berikutnya
