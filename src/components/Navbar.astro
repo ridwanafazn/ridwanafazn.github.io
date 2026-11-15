@@ -30,7 +30,7 @@ const isCurrent = (targetPath: string) => {
 };
 ---
 
-<header transition:persist class="fixed top-0 w-full z-50 flex justify-center mt-0 md:mt-4 pointer-events-none">
+<header class="fixed top-0 w-full z-50 flex justify-center mt-0 md:mt-4 pointer-events-none">
   
   <div data-nav-shell data-scrolled="false" class="nav-shell relative z-50 pointer-events-auto bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 border-b md:border border-outline w-full md:w-auto md:rounded-md px-6 md:px-8 h-16 flex items-center justify-between gap-6 md:gap-16 transition-all duration-300">
     
@@ -127,24 +127,55 @@ const isCurrent = (targetPath: string) => {
       shell.setAttribute('data-scrolled', String(window.scrollY > 16));
     }
 
-    function setMenu(open) {
-      var menu = document.getElementById('mobile-menu');
-      var btn = document.getElementById('mobile-menu-btn');
-      if (!menu || !btn) return;
+    // Menu harus dicari dari header tombolnya sendiri, bukan getElementById global:
+    // saat ClientRouter menukar header, sempat ada dua pohon DOM.
+    function menuOf(element) {
+      var header = element && element.closest ? element.closest('header') : null;
+      return header ? header.querySelector('.mobile-menu') : null;
+    }
+
+    function setMenu(menu, open) {
+      if (!menu) return;
+      var header = menu.closest('header');
+      var btn = header ? header.querySelector('#mobile-menu-btn') : null;
+
+      // Tutup duplikat yang mungkin tersisa dari transisi halaman.
+      document.querySelectorAll('.mobile-menu').forEach(function (other) {
+        if (other !== menu) other.setAttribute('data-open', 'false');
+      });
 
       menu.setAttribute('data-open', String(open));
-      btn.setAttribute('aria-expanded', String(open));
-      btn.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
 
-      var iconOpen = document.getElementById('menu-icon-open');
-      var iconClose = document.getElementById('menu-icon-close');
+      if (btn) {
+        btn.setAttribute('aria-expanded', String(open));
+        btn.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+      }
+
+      var iconOpen = header ? header.querySelector('#menu-icon-open') : null;
+      var iconClose = header ? header.querySelector('#menu-icon-close') : null;
       if (iconOpen) iconOpen.classList.toggle('hidden', open);
       if (iconClose) iconClose.classList.toggle('hidden', !open);
 
       document.body.style.overflow = open ? 'hidden' : '';
     }
 
-    // Delegasi di document: tetap hidup walau <header> di-swap ClientRouter.
+    function closeAll() {
+      document.querySelectorAll('.mobile-menu').forEach(function (menu) {
+        menu.setAttribute('data-open', 'false');
+      });
+      document.querySelectorAll('#mobile-menu-btn').forEach(function (btn) {
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Buka menu navigasi');
+      });
+      document.querySelectorAll('#menu-icon-open').forEach(function (icon) {
+        icon.classList.remove('hidden');
+      });
+      document.querySelectorAll('#menu-icon-close').forEach(function (icon) {
+        icon.classList.add('hidden');
+      });
+      document.body.style.overflow = '';
+    }
+
     if (!window.__navBound) {
       window.__navBound = true;
 
@@ -157,33 +188,33 @@ const isCurrent = (targetPath: string) => {
           var target = event.target instanceof Element ? event.target : null;
           if (!target) return;
 
-          if (target.closest('#mobile-menu-btn')) {
+          var btn = target.closest('#mobile-menu-btn');
+          if (btn) {
             event.preventDefault();
-            var menu = document.getElementById('mobile-menu');
-            setMenu(!menu || menu.getAttribute('data-open') !== 'true');
+            var menu = menuOf(btn);
+            setMenu(menu, !menu || menu.getAttribute('data-open') !== 'true');
             return;
           }
 
-          if (target.closest('#mobile-menu a')) setMenu(false);
+          if (target.closest('.mobile-menu a')) closeAll();
         },
         true,
       );
 
       document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') setMenu(false);
+        if (event.key === 'Escape') closeAll();
       });
 
       window.addEventListener('resize', function () {
-        if (window.matchMedia('(min-width: 768px)').matches) setMenu(false);
+        if (window.matchMedia('(min-width: 768px)').matches) closeAll();
       });
 
-      // Setelah navigasi ClientRouter, tutup dan bersihkan scroll lock.
       document.addEventListener('astro:page-load', function () {
-        setMenu(false);
+        closeAll();
         syncNav();
       });
     }
 
-    setMenu(false);
+    closeAll();
   })();
 </script>
