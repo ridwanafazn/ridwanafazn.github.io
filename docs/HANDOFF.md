@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafazn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `d4855a69-b15a-405a-80b9-0c266829f9b2` (deploy 2026-11-11 06:05 UTC; cek ulang: `wrangler deployments list`) |
+| **Versi terakhir** | `de0fdf0c-1deb-4b35-b66f-78a057cce58a` (deploy 2026-11-16; cek ulang: `wrangler deployments list`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
