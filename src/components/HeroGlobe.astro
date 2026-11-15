@@ -31,6 +31,13 @@
       top: -7rem;
       bottom: -7rem;
       height: auto;
+      /* Tanpa tepi keras: memudar di kiri dan sebelum spec strip */
+      --globe-fade-x: linear-gradient(to right, transparent 0%, #000 30%);
+      --globe-fade-y: linear-gradient(to bottom, #000 0%, #000 45%, transparent 92%);
+      -webkit-mask-image: var(--globe-fade-x), var(--globe-fade-y);
+      -webkit-mask-composite: source-in;
+      mask-image: var(--globe-fade-x), var(--globe-fade-y);
+      mask-composite: intersect;
     }
 
     #hero-globe-wrap:active {

@@ -140,11 +140,9 @@ export function initHeroGlobe() {
     const h = wrap!.clientHeight;
     if (!w || !h) return;
 
-    // Close-up: bola jauh lebih besar dari wrapper.
-    // Sisi kiri diberi jarak (margin) supaya selalu berupa lengkung — bukan
-    // terpotong garis lurus oleh tepi kiri wrapper — lalu keluar layar di
-    // kanan, atas, dan bawah.
-    const D = h * 1.3;
+    // Lebih jauh dari sebelumnya, tetap keluar layar di kanan/atas/bawah.
+    // Tepi kiri & bawah dilunakkan oleh mask di HeroGlobe.astro.
+    const D = h * 1.1;
     const cx = D / 2 + w * 0.16;
     const cy = h / 2;
 
