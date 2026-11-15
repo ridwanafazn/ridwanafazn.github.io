@@ -140,10 +140,12 @@ export function initHeroGlobe() {
     const h = wrap!.clientHeight;
     if (!w || !h) return;
 
-    // Zoom-in: bola jauh lebih besar dari wrapper → terpotong atas, kanan, bawah.
-    // Sisi kiri tetap terlihat sebagai lengkungan.
-    const D = Math.min(h * 1.45, w * 1.9);
-    const cx = D / 2 + 24;
+    // Lingkaran utuh di sisi kiri (tidak pernah dipotong vertikal).
+    // Diameter dibatasi lebar wrapper supaya sisi kiri selalu berupa lengkung;
+    // tinggi wrapper (yang menjulur ke belakang navbar & spec strip) membuat
+    // bagian atas/bawah tertutup chrome halaman.
+    const D = Math.min(h * 1.05, w * 0.98);
+    const cx = w - D / 2;
     const cy = h / 2;
 
     const visibleHeight = (2 * GLOBE_RADIUS * h) / D;
