@@ -61,7 +61,7 @@ const isCurrent = (targetPath: string) => {
         Hire Me
       </a>
       
-      <button id="mobile-menu-btn" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden flex items-center justify-center p-2 rounded-md bg-surface hover:bg-surface-hover transition-colors text-on-background">
+      <button type="button" id="mobile-menu-btn" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden flex items-center justify-center p-2 rounded-md bg-surface hover:bg-surface-hover transition-colors text-on-background">
         <Icon id="menu-icon-open" name="menu" class="h-6 w-6" />
         <Icon id="menu-icon-close" name="close" class="hidden h-6 w-6" />
       </button>
@@ -70,7 +70,7 @@ const isCurrent = (targetPath: string) => {
     <div class="nav-progress" aria-hidden="true"><span></span></div>
   </div>
 
-  <div id="mobile-menu" class="fixed inset-0 z-40 bg-background hidden flex-col pointer-events-auto min-h-screen transition-opacity duration-300 opacity-0 overflow-y-auto">
+  <div id="mobile-menu" data-open="false" class="mobile-menu">
 
     <nav class="flex flex-col gap-8 w-full px-8 pt-32 pb-12">
       
@@ -118,68 +118,72 @@ const isCurrent = (targetPath: string) => {
 </header>
 
 <script is:inline>
-  // Navbar padat setelah scroll - tanpa backdrop-blur di atas konten
   (function () {
-    function initNav() {
-      var shell = document.querySelector('[data-nav-shell]');
-      if (!shell) return;
+    var shell = null;
 
-      function sync() {
-        shell.setAttribute('data-scrolled', String(window.scrollY > 16));
-      }
-      sync();
-      window.addEventListener('scroll', sync, { passive: true });
+    function syncNav() {
+      if (!shell || !shell.isConnected) shell = document.querySelector('[data-nav-shell]');
+      if (!shell) return;
+      shell.setAttribute('data-scrolled', String(window.scrollY > 16));
     }
 
-    function initMenu() {
-      var btn = document.getElementById('mobile-menu-btn');
+    function setMenu(open) {
       var menu = document.getElementById('mobile-menu');
+      var btn = document.getElementById('mobile-menu-btn');
+      if (!menu || !btn) return;
+
+      menu.setAttribute('data-open', String(open));
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+
       var iconOpen = document.getElementById('menu-icon-open');
       var iconClose = document.getElementById('menu-icon-close');
-      if (!btn || !menu) return;
+      if (iconOpen) iconOpen.classList.toggle('hidden', open);
+      if (iconClose) iconClose.classList.toggle('hidden', !open);
 
-      function setOpen(open) {
-        btn.setAttribute('aria-expanded', String(open));
-        btn.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
-        if (iconOpen) iconOpen.classList.toggle('hidden', open);
-        if (iconClose) iconClose.classList.toggle('hidden', !open);
-        document.body.style.overflow = open ? 'hidden' : '';
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
 
-        if (open) {
-          menu.classList.remove('hidden');
-          void menu.offsetWidth;
-          menu.classList.remove('opacity-0');
-        } else {
-          menu.classList.add('opacity-0');
-          window.setTimeout(function () { menu.classList.add('hidden'); }, 300);
-        }
-      }
+    // Delegasi di document: tetap hidup walau <header> di-swap ClientRouter.
+    if (!window.__navBound) {
+      window.__navBound = true;
 
-      btn.addEventListener('click', function () {
-        setOpen(menu.classList.contains('hidden'));
-      });
+      syncNav();
+      window.addEventListener('scroll', syncNav, { passive: true });
+
+      document.addEventListener(
+        'click',
+        function (event) {
+          var target = event.target instanceof Element ? event.target : null;
+          if (!target) return;
+
+          if (target.closest('#mobile-menu-btn')) {
+            event.preventDefault();
+            var menu = document.getElementById('mobile-menu');
+            setMenu(!menu || menu.getAttribute('data-open') !== 'true');
+            return;
+          }
+
+          if (target.closest('#mobile-menu a')) setMenu(false);
+        },
+        true,
+      );
 
       document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
-          setOpen(false);
-          btn.focus();
-        }
+        if (event.key === 'Escape') setMenu(false);
       });
 
-      menu.querySelectorAll('a').forEach(function (link) {
-        link.addEventListener('click', function () { setOpen(false); });
+      window.addEventListener('resize', function () {
+        if (window.matchMedia('(min-width: 768px)').matches) setMenu(false);
+      });
+
+      // Setelah navigasi ClientRouter, tutup dan bersihkan scroll lock.
+      document.addEventListener('astro:page-load', function () {
+        setMenu(false);
+        syncNav();
       });
     }
 
-    function boot() {
-      initNav();
-      initMenu();
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', boot);
-    } else {
-      boot();
-    }
+    setMenu(false);
   })();
 </script>

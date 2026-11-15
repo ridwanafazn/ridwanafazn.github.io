@@ -249,6 +249,46 @@
 }
 
 /* =========================================
+   MOBILE MENU — display-based, bukan transisi.
+   Saat tertutup: display:none (tidak mungkin menangkap tap).
+   Saat terbuka: langsung terlihat; animasi hanya hiasan.
+   ========================================= */
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-y: auto;
+  background: var(--color-background);
+  opacity: 1;
+}
+
+.mobile-menu[data-open='true'] {
+  display: flex;
+  animation: mobile-menu-in 160ms ease-out;
+}
+
+@keyframes mobile-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu[data-open='true'] {
+    animation: none;
+  }
+}
+
+/* =========================================
    NAV PROGRESS — scroll-linked, tanpa JS
    ========================================= */
 
