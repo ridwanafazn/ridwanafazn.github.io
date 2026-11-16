@@ -73,7 +73,7 @@
 | **Drizzle ORM** | Type-safe, migrasi versioned, seed script | P0 |
 | **Cloudflare Workers** | Static public + per-route SSR, edge, free tier | P0 |
 | **Cloudinary** | Signed upload, auto format/quality, transform URL, folder org | P0 |
-| **CI/CD** | GitHub Actions: lint, typecheck, test, build, deploy preview, deploy prod | P1 |
+| **CI/CD** | GitHub Actions: typecheck + build ✅; lint/test/preview/prod deploy ⚠️ belum aktif (token deploy kosong, deploy manual) | P1 |
 | **Monitoring** | Sentry (error), Logtail (logs), Neon query insights | P1 |
 
 ---

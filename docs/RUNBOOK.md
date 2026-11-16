@@ -90,10 +90,11 @@ pnpm exec wrangler secret list
 
 ### 3.2 CI/CD (GitHub Actions)
 
-Workflow: `.github/workflows/ci.yml`
+Workflow: `.github/workflows/deploy.yml`
 
-- `push` ke `main` → build + deploy production
-- `pull_request` → build + deploy preview (`wrangler deploy --env preview`)
+- `push` ke `main` / `pull_request` → install, `astro sync`, typecheck, build.
+- **Deploy produksi belum otomatis**: step `wrangler deploy` di-skip selama secret `CLOUDFLARE_API_TOKEN` belum diisi (terlihat `Deploy skipped` di Actions). Deploy aktual dilakukan manual: `pnpm build && pnpm exec wrangler deploy`.
+- Tidak ada step deploy preview di workflow saat ini.
 
 ### 3.3 Deploy Preview
 
