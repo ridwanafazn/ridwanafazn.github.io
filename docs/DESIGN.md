@@ -71,7 +71,7 @@
 | `/` | HeroGlobe, spec strip (Fokus/Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, Current Focus, HowIBuild, FloatingNav (mobile) | reveal + spec stagger (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024 |
 | `/about` | Timeline, pendidikan, sertifikasi, volunteering | reveal | tanpa kartu bersarang |
 | `/projects` | **ProjectLedger** 13 baris (indeks + thumbnail + role + stack) | reveal + hover preview | tanpa carousel; 13 proyek dalam satu layar |
-| `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), next-project | reveal + slider + lightbox | lead image otomatis walau cover kosong |
+| `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), lightbox (hanya jika ada gambar), next-project | reveal + slider + lightbox | project tanpa gambar tidak merender lightbox/dialog kosong; OG jatuh ke `/og.png` |
 | `/preview/*` | sama dengan detail + banner draft | login wajib | guard middleware |
 | `/sitemap.xml` | route SSR | — | cache 60s |
 | 404 | halaman khusus (`src/pages/404.astro`) | — | `noindex`, tautan ke beranda + arsip |
@@ -80,11 +80,11 @@
 
 Sudah diperbaiki:
 - ✅ `meta description`, OG/Twitter card, `canonical`, `theme-color` (`Layout.astro`).
-- ✅ OG image: `/og.png` (statis, 1200×630) untuk halaman utama; per-project `c_fill,w_1200,h_630,g_auto` dari cover → gambar galeri pertama.
+- ✅ OG image: `/og.png` (statis, 1200×630) sebagai **default semua halaman**; per-project `c_fill,w_1200,h_630,g_auto` dari cover → gambar galeri pertama. Project tanpa gambar tetap punya `og:image` + `og:image:alt`.
 - ✅ JSON-LD `Person` di homepage.
 - ✅ Halaman 404 khusus.
 - ✅ `lang="id"`.
-- ✅ `prefers-reduced-motion` untuk reveal, hero, spec-cell.
+- ✅ `prefers-reduced-motion` untuk reveal, hero, spec-cell; rotasi globe berhenti total saat reduce.
 - ✅ Reveal default terlihat tanpa JS (`html.js` gate + fallback `!important`).
 - ✅ Ikon dekoratif `aria-hidden`, skip-link, `:focus-visible` global.
 - ✅ Kontras teks (Lighthouse a11y 100 di 4 halaman publik).
@@ -139,6 +139,8 @@ Sudah ada:
 - **Focus trap + `inert`** untuk menu mobile dan lightbox (F2): fokus masuk saat buka, Tab terkunci, Esc mengembalikan fokus, konten belakang tidak bisa difokus/klik.
 - Kontras lolos (Lighthouse a11y 100 di seluruh halaman publik).
 - Tanpa JavaScript: konten tetap terlihat dan nav mobile diganti `<noscript>`.
+- **Globe aman tanpa WebGL**: semua jalur gagal (konteks tidak ada, renderer gagal, tekstur gagal, `webglcontextlost`) menyembunyikan globe (`data-failed`) tanpa error; konten hero tetap utuh.
+- **Lightbox tidak dirender** saat project tanpa gambar, jadi tidak ada dialog kosong di DOM.
 
 Sisa: tidak ada dari daftar ini; item baru harus mengikuti aturan yang sama.
 
@@ -149,7 +151,7 @@ Sisa: tidak ada dari daftar ini; item baru harus mengikuti aturan yang sama.
 Efek yang ada sekarang: hero `fadeSlideUp`, `.reveal` (kiri/kanan/belakang + stagger), `spec-cell` stagger, hover preview ledger, rotasi globe (desktop), slider galeri snap, lightbox, dan nav progress scroll-driven.
 
 **Aturan baru:** maksimal **dua gesture signature per halaman**. Sisanya statis. Semua animasi harus:
-- dihormati `prefers-reduced-motion`,
+- dihormati `prefers-reduced-motion` — globe **berhenti total** (bukan diperlambat) saat reduce aktif; render juga dijeda saat tab tidak terlihat,
 - tidak menyembunyikan konten default,
 - berjalan di compositor (transform/opacity), bukan layout.
 

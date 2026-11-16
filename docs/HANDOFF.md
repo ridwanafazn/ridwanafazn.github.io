@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `ba4be785-c6da-4e8a-af92-54bd3dc84402` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
+| **Versi terakhir** | `89d9b9eb-eff3-4338-a527-6d835583f1a1` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -177,7 +177,10 @@ src/
 26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Layout **slider Play Store style** (`.gallery-track` + `.gallery-item`, scroll-snap per kartu, lebar `clamp(15rem,38vw,21rem)`), tanpa scrollbar bawaan; tombol prev/next dengan state disabled + progress bar tipis. Tile `aspect-[16/10] object-cover` supaya ringkas. Caption = nama file tanpa ekstensi, teks polos tanpa background. Klik gambar membuka lightbox blur dengan counter + prev/next + keyboard (Escape/←/→); klik area luar gambar menutup. Dirender lewat slot `overlay` di `Layout` agar menutup navbar. Navbar publik memakai frosted glass (`backdrop-blur-md`). Urutan halaman: cover → galeri → ringkasan. Cover dibatasi `max-h-[250px]` (mobile) / `max-h-[360px]` (desktop).
 27. **Middleware cache juga jalan di dev.** HTML publik di-cache 60s oleh `caches.default` (kunci tanpa query string). Setelah edit komponen, request biasa masih mengembalikan HTML **lama**. Di dev buka dengan `?v=<timestamp>` (bypass); di produksi `?v=` diabaikan.
 28. **Navbar scroll-state** memakai atribut `[data-scrolled]` + aturan CSS unlayered di akhir `global.css`. Jangan pindahkan aturan itu ke dalam `@layer utilities` — utility Tailwind (`bg-background/70`) akan menang dan navbar tidak pernah solid.
-29. **Cloudflare menimpa `max-age` HTML jadi 4 jam** di response yang di-cache CF (`CF-Cache-Status: HIT`), meski Worker mengirim `max-age=60`. Browser bisa memegang HTML lama sampai 4 jam. Perbaikan yang benar ada di dashboard: **Caching → Configuration → Browser Cache TTL → "Respect Existing Headers"**. Jangan mencoba menimpanya lewat `Cache-Control` dari Worker (sudah diuji, tetap ditimpa).
+29. **Cloudflare menimpa `max-age` HTML jadi 4 jam** di response yang di-cache CF (`CF-Cache-Status: HIT`), meski Worker mengirim `max-age=60`. Browser bisa memegang HTML lama sampai 4 jam. Perbaikan yang benar ada di dashboard: **Caching → Configuration → Browser Cache TTL → "Respect Existing Headers"** (nilai API `browser_cache_ttl: 0`). Jangan mencoba menimpanya lewat `Cache-Control` dari Worker (sudah diuji, tetap ditimpa).
+30. **Globe tidak boleh melempar error.** Semua jalur gagal (WebGL tidak ada, renderer gagal, tekstur 404, `webglcontextlost`) harus berakhir di `data-failed`. Jangan hapus cek `webglAvailable()` / `try/catch` renderer; kalau dihapus, satu GPU bermasalah membuat unhandled rejection dan halaman terlihat setengah jadi.
+31. **`prefers-reduced-motion` mematikan rotasi globe**, bukan memperlambat. Kalau ingin mengubah perilaku, ubah `syncMotion()` di `src/scripts/hero-globe.ts` — jangan menambah `ROTATION_SPEED` baru yang selalu jalan.
+32. **OG image selalu dirender** oleh `Layout.astro` dengan default `/og.png`. Jangan kembalikan ke conditional `ogImage && ...`; project tanpa cover/galeri akan kehilangan kartu share.
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.
@@ -215,7 +218,15 @@ src/
 - **JSON-LD** `Person` di homepage (name, jobTitle, sameAs, email).
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
-- Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi.
+- Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
+
+### Hardening F3 — SELESAI (2026-11-16)
+- **Globe tanpa WebGL**: cek konteks dulu (`webgl2`/`webgl`); kalau tidak ada, renderer gagal dibuat, tekstur gagal dimuat, atau konteks hilang (`webglcontextlost`), wrap diberi `data-failed` (CSS `display:none`) dan loop render dihentikan. Tidak ada error/unhandled rejection di halaman.
+- **`prefers-reduced-motion`**: rotasi otomatis globe **berhenti total** (sebelumnya hanya diperlambat 3×). Globe tetap bisa diputar manual; perubahan pref OS ditangani lewat listener `change`.
+- **Render dijeda** saat tab tidak terlihat (`document.hidden`) atau globe di luar viewport.
+- **OG image selalu ada**: `Layout` memakai `/og.png` (1200×630) sebagai default. 7 project tanpa cover & galeri (`sela`, `arta`, `vessel`, `orchestrix`, `zenithxzn`, `maqdis-travel`, `nourishify`) kini tetap punya kartu share; `og:image:alt` diisi judul.
+- **Lightbox bersih**: overlay tidak dirender sama sekali jika project tidak punya gambar (`#lightbox` absen, tidak ada dialog kosong / `src` undefined). Project bergambar tetap memakai focus trap + `inert`.
+- **Catatan**: cover tetap 0/13, jadi 7 project tetap tanpa thumbnail ledger/lead image — hanya kartu share-nya yang kini jatuh ke `/og.png`.
 
 ### Hardening F1 + F2 — SELESAI (2026-11-16)
 - **Trailing slash** → 301 ke URL tanpa slash (middleware), supaya canonical & cache konsisten.

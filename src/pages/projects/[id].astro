@@ -279,62 +279,65 @@ const nextProject =
       </article>
 
       <Fragment slot="overlay">
-        <div
-          id="lightbox"
-          class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/95 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Gambar diperbesar"
-          tabindex="-1"
-        >
-          <div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 p-4 md:p-6">
-            <span
-              id="lightbox-counter"
-              class="border border-white/20 px-3 py-1 font-mono text-[12px] tabular-nums tracking-[0.12em] text-white"
-            >
-              1 / 1
-            </span>
+        {gallery.length > 0 && (
+          <div
+            id="lightbox"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-on-background/95 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Gambar diperbesar"
+            tabindex="-1"
+          >
+            <div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 p-4 md:p-6">
+              <span
+                id="lightbox-counter"
+                class="border border-white/20 px-3 py-1 font-mono text-[12px] tabular-nums tracking-[0.12em] text-white"
+              >
+                1 / 1
+              </span>
+              <button
+                type="button"
+                id="lightbox-close"
+                class="grid h-10 w-10 place-items-center border border-white/25 text-white transition-colors duration-150 hover:bg-white hover:text-on-background"
+                aria-label="Tutup gambar"
+              >
+                <Icon name="close" class="h-5 w-5" />
+              </button>
+            </div>
+
             <button
               type="button"
-              id="lightbox-close"
-              class="grid h-10 w-10 place-items-center border border-white/25 text-white transition-colors duration-150 hover:bg-white hover:text-on-background"
-              aria-label="Tutup gambar"
+              data-lightbox-prev
+              class="absolute left-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center border border-white/25 bg-on-background/60 text-white transition-colors duration-150 hover:bg-white hover:text-on-background md:left-6"
+              aria-label="Gambar sebelumnya"
             >
-              <Icon name="close" class="h-5 w-5" />
+              <Icon name="chevron-left" class="h-5 w-5" />
             </button>
+            <button
+              type="button"
+              data-lightbox-next
+              class="absolute right-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center border border-white/25 bg-on-background/60 text-white transition-colors duration-150 hover:bg-white hover:text-on-background md:right-6"
+              aria-label="Gambar berikutnya"
+            >
+              <Icon name="chevron-right" class="h-5 w-5" />
+            </button>
+
+            <figure class="flex max-h-[88vh] w-full max-w-5xl flex-col items-center gap-3 px-1 md:px-10">
+              <img
+                id="lightbox-img"
+                src={gallery[0]?.url}
+                alt=""
+                loading="lazy"
+                class="max-h-[70vh] max-w-full object-contain md:max-h-[76vh]"
+              />
+              <figcaption
+                id="lightbox-caption"
+                class="max-w-full truncate text-center font-mono text-[12px] uppercase tracking-[0.12em] text-white/70"
+              >
+              </figcaption>
+            </figure>
           </div>
-
-          <button
-            type="button"
-            data-lightbox-prev
-            class="absolute left-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center border border-white/25 bg-on-background/60 text-white transition-colors duration-150 hover:bg-white hover:text-on-background md:left-6"
-            aria-label="Gambar sebelumnya"
-          >
-            <Icon name="chevron-left" class="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            data-lightbox-next
-            class="absolute right-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center border border-white/25 bg-on-background/60 text-white transition-colors duration-150 hover:bg-white hover:text-on-background md:right-6"
-            aria-label="Gambar berikutnya"
-          >
-            <Icon name="chevron-right" class="h-5 w-5" />
-          </button>
-
-          <figure class="flex max-h-[88vh] w-full max-w-5xl flex-col items-center gap-3 px-1 md:px-10">
-            <img
-              id="lightbox-img"
-              src={gallery[0]?.url}
-              alt=""
-              loading="lazy"
-              class="max-h-[70vh] max-w-full object-contain md:max-h-[76vh]"
-            />
-            <figcaption
-              id="lightbox-caption"
-              class="max-w-full truncate text-center font-mono text-[12px] uppercase tracking-[0.12em] text-white/70">
-            </figcaption>
-          </figure>
-        </div>
+        )}
       </Fragment>
     </Layout>
   )

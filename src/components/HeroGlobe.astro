@@ -48,6 +48,11 @@
       opacity: 1;
     }
 
+    /* WebGL/tekstur gagal: jangan sisakan kotak kosong atau error di console. */
+    #hero-globe-wrap[data-failed] {
+      display: none;
+    }
+
     #hero-globe-canvas {
       display: block;
       width: 100%;
@@ -71,6 +76,10 @@
     try {
       const { initHeroGlobe } = await import('../scripts/hero-globe');
       initHeroGlobe();
+    } catch {
+      // Bundle three.js gagal dimuat / inisialisasi melempar: halaman harus
+      // tetap utuh tanpa globe, bukan unhandled rejection.
+      wrap.setAttribute('data-failed', '');
     } finally {
       loading = false;
     }

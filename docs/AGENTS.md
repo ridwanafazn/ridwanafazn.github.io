@@ -144,6 +144,8 @@ neon status | branches list | connection-string --pooled
 14. **Cloudflare menimpa `max-age` HTML jadi 4 jam** pada response `CF-Cache-Status: HIT`, meski Worker mengirim `max-age=60`. Perbaikan ada di dashboard (Caching → Browser Cache TTL → “Respect Existing Headers”), bukan di kode.
 15. **Menu mobile & lightbox memakai `inert`** pada konten di belakang overlay + focus trap. Jangan hapus `inert`/trap saat mengubah markup, atau keyboard user bisa masuk ke halaman belakang.
 16. **Tanpa JavaScript** menu mobile tidak bisa dibuka; penggantinya `<noscript>` di `Layout.astro` (`.no-js-nav`). Jangan hapus blok itu.
+17. **Globe punya jalur gagal.** WebGL tidak tersedia, renderer gagal, tekstur gagal, atau `webglcontextlost` → wrap diberi `data-failed` (CSS `display:none`) tanpa error. `prefers-reduced-motion` mematikan rotasi total. Jangan hapus guard di `src/scripts/hero-globe.ts`.
+18. **OG/Twitter selalu dirender** oleh `Layout.astro` dengan default `/og.png` (1200×630). Project tanpa cover/galeri tetap punya kartu share. Lightbox di `/projects/[id]` hanya dirender jika galeri tidak kosong — jangan kembalikan dialog kosong.
 
 ---
 

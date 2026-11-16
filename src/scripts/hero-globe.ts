@@ -6,6 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 const GLOBE_RADIUS = 5;
 const FOV = 45;
 const INDONESIA_ROTATION = Math.PI * 0.8;
+const ROTATION_SPEED = 0.035;
 
 function latLonToVector3(lat: number, lon: number, radius: number) {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -21,7 +22,10 @@ function buildParticleEarth(img: HTMLImageElement, density: number) {
   const canvas = document.createElement('canvas');
   canvas.width = 1024;
   canvas.height = 512;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  // Canvas 2D bisa ditolak (memori habis / mode privasi ketat). Globe tetap
+  // tampil sebagai atmosphere saja, bukan error.
+  if (!ctx) return null;
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
@@ -43,7 +47,8 @@ function buildParticleEarth(img: HTMLImageElement, density: number) {
 
   const dot = document.createElement('canvas');
   dot.width = dot.height = 32;
-  const dctx = dot.getContext('2d')!;
+  const dctx = dot.getContext('2d');
+  if (!dctx) return null;
   dctx.beginPath();
   dctx.arc(16, 16, 14, 0, Math.PI * 2);
   dctx.fillStyle = '#ffffff';
@@ -103,10 +108,26 @@ function buildAtmosphere() {
 type GlobeInstance = { canvas: HTMLCanvasElement; relayout: () => void; destroy: () => void };
 let active: GlobeInstance | null = null;
 
+// WebGL bisa tidak tersedia: GPU blocklist, driver rusak, mode hemat daya,
+// atau konteks browser habis. Cek dulu supaya `new WebGLRenderer` tidak
+// melempar error ke halaman.
+function webglAvailable() {
+  try {
+    const probe = document.createElement('canvas');
+    return Boolean(probe.getContext('webgl2') ?? probe.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
 export function initHeroGlobe() {
   const wrap = document.getElementById('hero-globe-wrap');
   const canvas = document.getElementById('hero-globe-canvas') as HTMLCanvasElement | null;
   if (!wrap || !canvas) return;
+
+  // `const` lokal: TS tidak membawa narrowing ke dalam closure yang dipanggil belakangan.
+  const host = wrap;
+  const surface = canvas;
 
   // Sudah jalan di canvas yang sama (resize / navigasi balik): cukup re-layout.
   if (active && active.canvas === canvas) {
@@ -115,11 +136,21 @@ export function initHeroGlobe() {
   }
   active?.destroy();
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!webglAvailable()) {
+    wrap.setAttribute('data-failed', '');
+    return;
+  }
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+
+  let renderer: THREE.WebGLRenderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas: surface, antialias: true, alpha: true });
+  } catch {
+    wrap.setAttribute('data-failed', '');
+    return;
+  }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const earthGroup = new THREE.Group();
@@ -127,7 +158,7 @@ export function initHeroGlobe() {
   earthGroup.add(buildAtmosphere());
   scene.add(earthGroup);
 
-  const controls = new OrbitControls(camera, canvas);
+  const controls = new OrbitControls(camera, surface);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
   controls.enablePan = false;
@@ -136,8 +167,8 @@ export function initHeroGlobe() {
   controls.maxPolarAngle = Math.PI * 0.75;
 
   function layout() {
-    const w = wrap!.clientWidth;
-    const h = wrap!.clientHeight;
+    const w = host.clientWidth;
+    const h = host.clientHeight;
     if (!w || !h) return;
 
     // Lebih jauh dari sebelumnya, tetap keluar layar di kanan/atas/bawah.
@@ -160,45 +191,69 @@ export function initHeroGlobe() {
   layout();
 
   const resizeObserver = new ResizeObserver(() => layout());
-  resizeObserver.observe(wrap);
+  resizeObserver.observe(host);
 
   let isVisible = true;
   const visibilityObserver = new IntersectionObserver(
     (entries) => (isVisible = entries[0].isIntersecting),
     { threshold: 0 },
   );
-  visibilityObserver.observe(wrap);
+  visibilityObserver.observe(host);
+
+  // `prefers-reduced-motion`: rotasi otomatis berhenti total (bukan sekadar
+  // diperlambat). Globe tetap bisa diputar manual, itu aksi pengguna.
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let spin = 0;
+
+  const syncMotion = () => {
+    spin = motionQuery.matches ? 0 : ROTATION_SPEED;
+    host.setAttribute('data-motion', motionQuery.matches ? 'reduced' : 'full');
+  };
+  syncMotion();
+  motionQuery.addEventListener('change', syncMotion);
 
   const base = import.meta.env.BASE_URL;
   const img = new Image();
   img.onload = () => {
+    if (!host.isConnected) return;
     earthGroup.rotation.y = INDONESIA_ROTATION;
-    earthGroup.add(buildParticleEarth(img, 2));
-    wrap.setAttribute('data-ready', '');
+    const particles = buildParticleEarth(img, 2);
+    if (particles) earthGroup.add(particles);
+    host.setAttribute('data-ready', '');
   };
-  img.onerror = () => wrap.setAttribute('data-ready', '');
+  // Tanpa tekstur globe hanya jadi bola kosong: lebih baik disembunyikan.
+  img.onerror = () => host.setAttribute('data-failed', '');
   img.src = `${base.endsWith('/') ? base : base + '/'}textures/earth-water.png`;
 
   let animId = 0;
-  let lastFrame = performance.now();
-  // Searah jarum jam (dilihat dari depan). `prefers-reduced-motion` tidak
-  // mematikan rotasi, hanya diperlambat ~3x.
-  const ROTATION_SPEED = reducedMotion ? 0.012 : 0.035;
+
+  // Konteks WebGL hilang (GPU reset / tab lama di background). Jangan render
+  // dengan state rusak — sembunyikan globe sampai halaman dimuat ulang.
+  const onContextLost = (event: Event) => {
+    event.preventDefault();
+    cancelAnimationFrame(animId);
+    wrap.setAttribute('data-failed', '');
+  };
+  surface.addEventListener('webglcontextlost', onContextLost);
 
   function destroy() {
     cancelAnimationFrame(animId);
     resizeObserver.disconnect();
     visibilityObserver.disconnect();
+    motionQuery.removeEventListener('change', syncMotion);
+    surface.removeEventListener('webglcontextlost', onContextLost);
     controls.dispose();
     renderer.dispose();
-    if (active?.canvas === canvas) active = null;
+    if (active?.canvas === surface) active = null;
   }
 
-  active = { canvas, relayout: layout, destroy };
+  active = { canvas: surface, relayout: layout, destroy };
+
+  let lastFrame = performance.now();
 
   function animate(now: number) {
-    // DOM dibuang (ClientRouter pindah halaman) → hentikan dan lepas WebGL.
-    if (!wrap!.isConnected) {
+    // DOM dibuang (navigasi) → hentikan dan lepas WebGL.
+    if (!host.isConnected) {
       destroy();
       return;
     }
@@ -206,8 +261,12 @@ export function initHeroGlobe() {
     animId = requestAnimationFrame(animate);
     const delta = Math.min((now - lastFrame) / 1000, 0.1);
     lastFrame = now;
-    if (!isVisible) return;
-    earthGroup.rotation.y -= delta * ROTATION_SPEED;
+
+    // Tab tidak terlihat / globe di luar viewport: tidak perlu render.
+    if (!isVisible || document.hidden) return;
+
+    // Searah jarum jam (dilihat dari depan). Nol saat reduced-motion.
+    if (spin) earthGroup.rotation.y -= delta * spin;
     controls.update();
     renderer.render(scene, camera);
   }
