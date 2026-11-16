@@ -89,6 +89,8 @@ Sudah diperbaiki:
 - ✅ Ikon dekoratif `aria-hidden`, skip-link, `:focus-visible` global.
 - ✅ Kontras teks (Lighthouse a11y 100 di 4 halaman publik).
 - ✅ Hover preview di ledger (desktop, `hover: hover`, `previewImage` w_480).
+- ✅ Navigasi tanpa JS (`<noscript>`), focus trap menu & lightbox, `inert` background, bfcache reset.
+- ✅ URL trailing slash → 301; `?v=` bypass hanya di dev.
 
 Belum:
 - Cover image project (0/13) — OG per-project memakai gambar galeri pertama sampai cover diisi.

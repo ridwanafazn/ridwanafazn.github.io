@@ -288,6 +288,7 @@ const nextProject =
           role="dialog"
           aria-modal="true"
           aria-label="Gambar diperbesar"
+          tabindex="-1"
         >
           <div class="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-3 p-4 md:p-6">
             <span
@@ -356,6 +357,24 @@ const nextProject =
   const lightboxCounter = document.getElementById('lightbox-counter');
   const lightboxClose = document.getElementById('lightbox-close');
   let current = 0;
+  let lastTrigger: HTMLElement | null = null;
+
+  // Konten di belakang dialog tidak boleh menerima fokus/klik.
+  const setPageInert = (on: boolean) => {
+    ['header', 'main', 'footer'].forEach((selector) => {
+      const el = document.querySelector(selector);
+      if (!el) return;
+      if (on) el.setAttribute('inert', '');
+      else el.removeAttribute('inert');
+    });
+  };
+
+  const lightboxFocusables = (): HTMLElement[] => {
+    if (!lightbox) return [];
+    return Array.from(
+      lightbox.querySelectorAll<HTMLElement>('button:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+    ).filter((el) => el.offsetParent !== null);
+  };
 
   const render = (index: number) => {
     const total = items.length;
@@ -370,10 +389,12 @@ const nextProject =
 
   const openLightbox = (index: number) => {
     if (!lightbox) return;
+    lastTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     render(index);
     lightbox.classList.remove('hidden');
     lightbox.classList.add('flex');
     document.body.style.overflow = 'hidden';
+    setPageInert(true);
     lightboxClose?.focus();
   };
 
@@ -382,6 +403,9 @@ const nextProject =
     lightbox.classList.add('hidden');
     lightbox.classList.remove('flex');
     document.body.style.overflow = '';
+    setPageInert(false);
+    if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus();
+    lastTrigger = null;
   };
 
   document.querySelectorAll<HTMLButtonElement>('[data-lightbox]').forEach((btn) => {
@@ -444,8 +468,34 @@ const nextProject =
 
   document.addEventListener('keydown', (event) => {
     if (!lightbox || lightbox.classList.contains('hidden')) return;
-    if (event.key === 'Escape') closeLightbox();
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeLightbox();
+      return;
+    }
     if (event.key === 'ArrowLeft') render(current - 1);
     if (event.key === 'ArrowRight') render(current + 1);
+
+    if (event.key === 'Tab') {
+      const focusables = lightboxFocusables();
+      if (!focusables.length) {
+        event.preventDefault();
+        lightbox.focus();
+        return;
+      }
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && (active === first || active === lightbox)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
   });
 </script>

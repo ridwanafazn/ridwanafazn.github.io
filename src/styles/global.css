@@ -291,6 +291,41 @@
   }
 }
 
+/* Tanpa JavaScript: hamburger tidak berguna → sembunyikan, tampilkan nav teks. */
+html:not(.js) #mobile-menu-btn {
+  display: none;
+}
+
+.no-js-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-outline);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.no-js-nav a {
+  color: var(--color-on-background);
+  text-decoration: none;
+}
+
+.no-js-nav a:hover {
+  color: var(--color-accent);
+}
+
+@media (min-width: 768px) {
+  .no-js-nav {
+    display: none;
+  }
+}
+
 /* =========================================
    NAV PROGRESS — scroll-linked, tanpa JS
    ========================================= */

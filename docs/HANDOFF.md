@@ -107,7 +107,7 @@ Cloudflare Workers (portofx-v2)
         └── Cloudinary (gambar)
 ```
 
-- **Cache publik:** `/`, `/about`, `/projects*`, `/sitemap.xml` → `s-maxage=60, stale-while-revalidate=300` + `x-cache: HIT|MISS|BYPASS`. Edit admin tampil ≤60 dtk, atau pakai `?v=timestamp` (bypass total, tanpa baca/tulis cache). Kunci cache tanpa query string agar `?utm_*` tidak memecah cache.
+- **Cache publik:** `/`, `/about`, `/projects*`, `/sitemap.xml` → `max-age=60, s-maxage=60, stale-while-revalidate=300` + `x-cache: HIT|MISS|BYPASS`. Kunci cache tanpa query string agar `?utm_*` tidak memecah cache. **`?v=` hanya bypass saat dev**; di produksi diabaikan (cegah cache-busting/DoS).
 - **Preview:** `/preview/*` wajib login (guard middleware yang sama dengan admin).
 - `build.format: 'file'` masih aktif; **tidak ada route prerender** — semua halaman/endpoint SSR (kecuali aset statis).
 - Middleware admin hanya jalan untuk `/admin/*`; public GET di-cache.
@@ -154,7 +154,7 @@ src/
 5. **Script Node** (`db/seed.ts`, dll.) membaca `.env.local` via `dotenv.config({ path: ['.env.local','.env'] })` — jangan ganti ke `import 'dotenv/config'` (hanya `.env`).
 6. **better-auth di workerd:** `optimizeDeps.exclude: ['better-auth', '@neondatabase/serverless', 'drizzle-orm']` di `astro.config.mjs` — jangan dihapus.
 7. **Cloudinary:** preset `ml_default` (Signed). Upload lewat `/auto/upload`; signed params dari `/admin/api/assets/sign-upload`. Hapus asset dari admin = **soft delete DB saja** (objek Cloudinary belum dihapus) → TODO.
-8. **Cache publik 60s:** perubahan DB tidak langsung jika URL sama. Gunakan `?v=timestamp` untuk melihat instan (response `x-cache: BYPASS`).
+8. **Cache publik 60s:** perubahan DB tidak langsung jika URL sama. Di dev gunakan `?v=timestamp` (response `x-cache: BYPASS`); di produksi `?v=` **diabaikan**, tunggu ≤60 dtk atau hard refresh.
 9. **Deploy:** `pnpm build` → `pnpm exec wrangler deploy`. `wrangler deploy` **tidak** build. Sitemap sekarang SSR, jadi build tidak lagi merender halaman yang query DB (CI tetap menyuplai `DATABASE_URL` untuk env schema).
 10. **Domain kanonik** `ridwanafazn.my.id` (cookie host-only). Login admin di domain ini; `www` di-redirect 301 di middleware sebelum auth. workers.dev tetap di trusted origins sebagai fallback.
 11. **Sanity** sudah dihapus dari kode/deps. Project Sanity (`exvebwem`) masih ada di cloud tapi tidak dipakai; token tidak disimpan.
@@ -173,8 +173,9 @@ src/
 24. **Admin styling sharp**: tidak ada `rounded-*`, tanpa backdrop blur, transisi 150ms (color/opacity), tanpa hover translate. Jangan tambahkan kembali komponen rounded di area admin.
 25. **Multi-upload asset**: `/admin/assets` menerima banyak file sekaligus (input `multiple` + drag & drop), upload paralel maks 3, signature Cloudinary diminta sekali per batch, progress bar + daftar error per file.
 26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Layout **slider Play Store style** (`.gallery-track` + `.gallery-item`, scroll-snap per kartu, lebar `clamp(15rem,38vw,21rem)`), tanpa scrollbar bawaan; tombol prev/next dengan state disabled + progress bar tipis. Tile `aspect-[16/10] object-cover` supaya ringkas. Caption = nama file tanpa ekstensi, teks polos tanpa background. Klik gambar membuka lightbox blur dengan counter + prev/next + keyboard (Escape/←/→); klik area luar gambar menutup. Dirender lewat slot `overlay` di `Layout` agar menutup navbar. Navbar publik memakai frosted glass (`backdrop-blur-md`). Urutan halaman: cover → galeri → ringkasan. Cover dibatasi `max-h-[250px]` (mobile) / `max-h-[360px]` (desktop).
-27. **Middleware cache juga jalan di dev.** HTML publik di-cache 60s oleh `caches.default` (kunci tanpa query string). Setelah edit komponen, request biasa masih mengembalikan HTML **lama**. Selalu buka dengan `?v=<timestamp>` saat verifikasi dev (atau tunggu 60 dtk). Ini bukan bug produksi — `?v=` memang bypass.
+27. **Middleware cache juga jalan di dev.** HTML publik di-cache 60s oleh `caches.default` (kunci tanpa query string). Setelah edit komponen, request biasa masih mengembalikan HTML **lama**. Di dev buka dengan `?v=<timestamp>` (bypass); di produksi `?v=` diabaikan.
 28. **Navbar scroll-state** memakai atribut `[data-scrolled]` + aturan CSS unlayered di akhir `global.css`. Jangan pindahkan aturan itu ke dalam `@layer utilities` — utility Tailwind (`bg-background/70`) akan menang dan navbar tidak pernah solid.
+29. **Cloudflare menimpa `max-age` HTML jadi 4 jam** di response yang di-cache CF (`CF-Cache-Status: HIT`), meski Worker mengirim `max-age=60`. Browser bisa memegang HTML lama sampai 4 jam. Perbaikan yang benar ada di dashboard: **Caching → Configuration → Browser Cache TTL → "Respect Existing Headers"**. Jangan mencoba menimpanya lewat `Cache-Control` dari Worker (sudah diuji, tetap ditimpa).
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.
@@ -213,6 +214,14 @@ src/
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi.
+
+### Hardening F1 + F2 — SELESAI (2026-11-16)
+- **Trailing slash** → 301 ke URL tanpa slash (middleware), supaya canonical & cache konsisten.
+- **`?v=` bypass hanya di dev** (`import.meta.env.DEV`); produksi tidak bisa dipaksa origin render.
+- **Nav tanpa JavaScript**: `<noscript>` berisi link Home/About/Projects/Email (mobile), dan hamburger disembunyikan saat `html:not(.js)`.
+- **Focus management**: menu & lightbox memindahkan fokus saat dibuka, mengunci Tab, mengembalikan fokus saat ditutup, dan memakai `inert` pada konten di belakang overlay.
+- **bfcache**: `pageshow` (persisted) menutup menu dan melepas scroll lock.
+- **Cache-Control** kini menyertakan `max-age=60`; Cloudflare zone masih menimpanya jadi 4 jam (lihat gotcha 29).
 
 ### Polish pass — material visual (2026-11-16)
 Memakai aset yang sudah ada (54 gambar galeri), tanpa isian baru:

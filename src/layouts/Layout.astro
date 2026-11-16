@@ -70,6 +70,14 @@ const ogImage = image ? new URL(image, Astro.site ?? Astro.url.origin).href : un
         <Navbar />
         
         <main id="main" class="flex-grow pt-24 md:pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10">
+            <noscript>
+                <nav class="no-js-nav" aria-label="Navigasi">
+                    <a href={base}>Home</a>
+                    <a href={`${base}about`}>About</a>
+                    <a href={`${base}projects`}>Projects</a>
+                    <a href="mailto:ridwanafzn@gmail.com">Email</a>
+                </nav>
+            </noscript>
             <slot />
         </main>
         

@@ -36,6 +36,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return redirect(`https://ridwanafazn.my.id${path}${url.search}`, 301);
   }
 
+  // Trailing slash → 301 ke tanpa slash. Menghindari URL duplikat dan
+  // memastikan URL itu masuk allowlist cache (yang memakai path tanpa slash).
+  if (path.length > 1 && path.endsWith('/')) {
+    return redirect(`${url.origin}${path.replace(/\/+$/, '')}${url.search}`, 301);
+  }
+
   // Admin & preview selalu SSR + wajib login.
   const isProtectedArea = path.startsWith('/admin') || path.startsWith('/preview');
 
@@ -44,8 +50,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const canCache = request.method === 'GET' && isCacheablePublicPath(path);
     if (!canCache || !cache) return next();
 
-    // ?v=timestamp = bypass total (tidak baca & tidak tulis cache) untuk cek instan.
-    const bypass = url.searchParams.has('v');
+    // ?v=timestamp = bypass instan, HANYA saat dev. Di produksi, siapa pun
+    // tidak boleh memaksa origin render (vektor cache-busting/DoS).
+    const bypass = import.meta.env.DEV && url.searchParams.has('v');
     // Kunci cache tanpa query string supaya ?utm_*/?fbclid tidak memecah cache.
     const key = new Request(`${url.origin}${path}`, { method: 'GET' });
 
@@ -64,7 +71,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const headers = new Headers(res.headers);
     headers.set(
       'Cache-Control',
-      bypass ? 'no-store' : 'public, s-maxage=60, stale-while-revalidate=300',
+      bypass
+        ? 'no-store'
+        : 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
     );
     headers.set('x-cache', bypass ? 'BYPASS' : 'MISS');
 

@@ -70,7 +70,15 @@ const isCurrent = (targetPath: string) => {
     <div class="nav-progress" aria-hidden="true"><span></span></div>
   </div>
 
-  <div id="mobile-menu" data-open="false" class="mobile-menu">
+  <div
+    id="mobile-menu"
+    data-open="false"
+    class="mobile-menu"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Menu navigasi"
+    tabindex="-1"
+  >
 
     <nav class="flex flex-col gap-8 w-full px-8 pt-32 pb-12">
       
@@ -120,6 +128,7 @@ const isCurrent = (targetPath: string) => {
 <script is:inline>
   (function () {
     var shell = null;
+    var opener = null;
 
     function syncNav() {
       if (!shell || !shell.isConnected) shell = document.querySelector('[data-nav-shell]');
@@ -127,19 +136,39 @@ const isCurrent = (targetPath: string) => {
       shell.setAttribute('data-scrolled', String(window.scrollY > 16));
     }
 
-    // Menu harus dicari dari header tombolnya sendiri, bukan getElementById global:
-    // saat ClientRouter menukar header, sempat ada dua pohon DOM.
     function menuOf(element) {
       var header = element && element.closest ? element.closest('header') : null;
       return header ? header.querySelector('.mobile-menu') : null;
     }
 
-    function setMenu(menu, open) {
+    function focusables(root) {
+      return Array.prototype.slice
+        .call(
+          root.querySelectorAll(
+            'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          ),
+        )
+        .filter(function (el) {
+          return el.offsetParent !== null;
+        });
+    }
+
+    // Konten di belakang overlay tidak boleh menerima fokus/klik.
+    function setPageInert(on) {
+      ['main', 'footer'].forEach(function (selector) {
+        var el = document.querySelector(selector);
+        if (!el) return;
+        if (on) el.setAttribute('inert', '');
+        else el.removeAttribute('inert');
+      });
+    }
+
+    function setMenu(menu, open, trigger) {
       if (!menu) return;
+
       var header = menu.closest('header');
       var btn = header ? header.querySelector('#mobile-menu-btn') : null;
 
-      // Tutup duplikat yang mungkin tersisa dari transisi halaman.
       document.querySelectorAll('.mobile-menu').forEach(function (other) {
         if (other !== menu) other.setAttribute('data-open', 'false');
       });
@@ -157,8 +186,20 @@ const isCurrent = (targetPath: string) => {
       if (iconClose) iconClose.classList.toggle('hidden', !open);
 
       document.body.style.overflow = open ? 'hidden' : '';
+      setPageInert(open);
+
+      if (open) {
+        opener = trigger || btn || document.activeElement;
+        var items = focusables(menu);
+        (items[0] || menu).focus();
+      } else {
+        var back = opener;
+        opener = null;
+        if (back && back.isConnected) back.focus();
+      }
     }
 
+    // Tanpa memindahkan fokus — dipakai saat load, resize, klik link, pageshow.
     function closeAll() {
       document.querySelectorAll('.mobile-menu').forEach(function (menu) {
         menu.setAttribute('data-open', 'false');
@@ -174,6 +215,8 @@ const isCurrent = (targetPath: string) => {
         icon.classList.add('hidden');
       });
       document.body.style.overflow = '';
+      setPageInert(false);
+      opener = null;
     }
 
     if (!window.__navBound) {
@@ -192,7 +235,7 @@ const isCurrent = (targetPath: string) => {
           if (btn) {
             event.preventDefault();
             var menu = menuOf(btn);
-            setMenu(menu, !menu || menu.getAttribute('data-open') !== 'true');
+            setMenu(menu, !menu || menu.getAttribute('data-open') !== 'true', btn);
             return;
           }
 
@@ -202,16 +245,47 @@ const isCurrent = (targetPath: string) => {
       );
 
       document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') closeAll();
+        var menu = document.querySelector('.mobile-menu[data-open="true"]');
+        if (!menu) return;
+
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          setMenu(menu, false);
+          return;
+        }
+
+        if (event.key !== 'Tab') return;
+
+        var items = focusables(menu);
+        if (!items.length) {
+          event.preventDefault();
+          menu.focus();
+          return;
+        }
+
+        var first = items[0];
+        var last = items[items.length - 1];
+        var active = document.activeElement;
+
+        if (event.shiftKey && (active === first || active === menu)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        }
       });
 
       window.addEventListener('resize', function () {
         if (window.matchMedia('(min-width: 768px)').matches) closeAll();
       });
 
-      document.addEventListener('astro:page-load', function () {
-        closeAll();
-        syncNav();
+      // Kembali dari bfcache: jangan biarkan menu/scroll-lock nyangkut.
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+          closeAll();
+          syncNav();
+        }
       });
     }
 
