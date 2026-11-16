@@ -177,7 +177,7 @@ src/
 26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Layout **slider Play Store style** (`.gallery-track` + `.gallery-item`, scroll-snap per kartu, lebar `clamp(15rem,38vw,21rem)`), tanpa scrollbar bawaan; tombol prev/next dengan state disabled + progress bar tipis. Tile `aspect-[16/10] object-cover` supaya ringkas. Caption = nama file tanpa ekstensi, teks polos tanpa background. Klik gambar membuka lightbox blur dengan counter + prev/next + keyboard (Escape/←/→); klik area luar gambar menutup. Dirender lewat slot `overlay` di `Layout` agar menutup navbar. Navbar publik memakai frosted glass (`backdrop-blur-md`). Urutan halaman: cover → galeri → ringkasan. Cover dibatasi `max-h-[250px]` (mobile) / `max-h-[360px]` (desktop).
 27. **Middleware cache juga jalan di dev.** HTML publik di-cache 60s oleh `caches.default` (kunci tanpa query string). Setelah edit komponen, request biasa masih mengembalikan HTML **lama**. Di dev buka dengan `?v=<timestamp>` (bypass); di produksi `?v=` diabaikan.
 28. **Navbar scroll-state** memakai atribut `[data-scrolled]` + aturan CSS unlayered di akhir `global.css`. Jangan pindahkan aturan itu ke dalam `@layer utilities` — utility Tailwind (`bg-background/70`) akan menang dan navbar tidak pernah solid.
-29. **Cloudflare menimpa `max-age` HTML jadi 4 jam** di response yang di-cache CF (`CF-Cache-Status: HIT`), meski Worker mengirim `max-age=60`. Browser bisa memegang HTML lama sampai 4 jam. Perbaikan yang benar ada di dashboard: **Caching → Configuration → Browser Cache TTL → "Respect Existing Headers"** (nilai API `browser_cache_ttl: 0`). Jangan mencoba menimpanya lewat `Cache-Control` dari Worker (sudah diuji, tetap ditimpa).
+29. **Browser Cache TTL Cloudflare = `0` sejak 2026-11-16.** Sebelumnya `14400`, sehingga setiap response `CF-Cache-Status: HIT` membawa `max-age=14400` (4 jam): browser pengunjung menahan HTML lama sampai 4 jam, dan HTML lama itu bisa menunjuk aset ber-hash yang sudah tidak ada setelah deploy. Dengan `0` (“Respect Existing Headers”), HTML memakai `max-age=60` dari `src/middleware.ts`; aset ber-hash tetap `max-age=31536000, immutable`. Pengunjung yang sudah terlanjur menyimpan salinan 4 jam tidak bisa dipaksa update (purge Cloudflare tidak menyentuh browser) — hard refresh atau tunggu kedaluwarsa.
 30. **Globe tidak boleh melempar error.** Semua jalur gagal (WebGL tidak ada, renderer gagal, tekstur 404, `webglcontextlost`) harus berakhir di `data-failed`. Jangan hapus cek `webglAvailable()` / `try/catch` renderer; kalau dihapus, satu GPU bermasalah membuat unhandled rejection dan halaman terlihat setengah jadi.
 31. **`prefers-reduced-motion` mematikan rotasi globe**, bukan memperlambat. Kalau ingin mengubah perilaku, ubah `syncMotion()` di `src/scripts/hero-globe.ts` — jangan menambah `ROTATION_SPEED` baru yang selalu jalan.
 32. **OG image selalu dirender** oleh `Layout.astro` dengan default `/og.png`. Jangan kembalikan ke conditional `ogImage && ...`; project tanpa cover/galeri akan kehilangan kartu share.
@@ -220,6 +220,12 @@ src/
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
 
+### Perbaikan Browser Cache TTL — SELESAI (2026-11-16)
+- Zona Cloudflare `ridwanafazn.my.id`: `browser_cache_ttl` `14400` → **`0`** (“Respect Existing Headers”), diubah via API (bukan dashboard). Ini satu-satunya perubahan yang tidak lewat deploy Worker.
+- Efek: response HTML `CF-Cache-Status: HIT` kini `Cache-Control: public, max-age=60, s-maxage=60, stale-while-revalidate=300` (sebelumnya `max-age=14400`). Edge tetap 60 dtk; aset `/_astro/*` tetap `max-age=31536000, immutable`; font tetap `max-age=0, must-revalidate` (tidak berubah).
+- Cache HTML di-purge sekali (17 URL) agar header baru langsung terpakai.
+- Batasan: browser yang sudah menyimpan HTML 4 jam sebelum perubahan tidak bisa dipaksa update — purge Cloudflare tidak menyentuh cache browser. Kunjungan baru/hard refresh langsung mendapat 60 dtk.
+
 ### Hardening F3 — SELESAI (2026-11-16)
 - **Globe tanpa WebGL**: cek konteks dulu (`webgl2`/`webgl`); kalau tidak ada, renderer gagal dibuat, tekstur gagal dimuat, atau konteks hilang (`webglcontextlost`), wrap diberi `data-failed` (CSS `display:none`) dan loop render dihentikan. Tidak ada error/unhandled rejection di halaman.
 - **`prefers-reduced-motion`**: rotasi otomatis globe **berhenti total** (sebelumnya hanya diperlambat 3×). Globe tetap bisa diputar manual; perubahan pref OS ditangani lewat listener `change`.
@@ -234,7 +240,7 @@ src/
 - **Nav tanpa JavaScript**: `<noscript>` berisi link Home/About/Projects/Email (mobile), dan hamburger disembunyikan saat `html:not(.js)`.
 - **Focus management**: menu & lightbox memindahkan fokus saat dibuka, mengunci Tab, mengembalikan fokus saat ditutup, dan memakai `inert` pada konten di belakang overlay.
 - **bfcache**: `pageshow` (persisted) menutup menu dan melepas scroll lock.
-- **Cache-Control** kini menyertakan `max-age=60`; Cloudflare zone masih menimpanya jadi 4 jam (lihat gotcha 29).
+- **Cache-Control** kini menyertakan `max-age=60`. Cloudflare zone dulu menimpanya jadi 4 jam; **sudah diperbaiki** dengan `browser_cache_ttl: 0` (lihat gotcha 29).
 - **Bersih-bersih sisa ClientRouter**: atribut `transition:name` di ledger/detail dihapus, style `view-transition` tidak lagi dirender. `theme-color` diperbaiki ke `#E4E6E1`.
 
 ### Polish pass — material visual (2026-11-16)
