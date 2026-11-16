@@ -22,6 +22,7 @@
 > **Koreksi v1.2 (state aktual, 2026-11-11):**
 > - **Public pages sekarang SSR + edge cache 60s** (`s-maxage=60`), bukan prerendered — agar edit admin langsung tampil.
 > - Cache HTML diimplementasikan di `src/middleware.ts` via `caches.default`.
+> - Middleware juga memasang security headers (CSP, HSTS, nosniff, referrer/permissions policy), `no-store` untuk admin/preview/API, dan rate limit login (`LOGIN_RATE_LIMIT`).
 > - Sitemap: **`/sitemap.xml`** (SSR + cache 60s, bukan `sitemap-index.xml`).
 > - `/preview/*` wajib login (guard middleware yang sama dengan admin).
 > - Sanity **sudah dihapus**; data di Neon. Admin panel & galeri sudah jalan.
@@ -875,15 +876,17 @@ jobs:
 |---|---|
 | **Authentication** | ✅ Better Auth 1.7.20 + scrypt (`@noble/hashes`), cookie default Better Auth |
 | **Authorization** | ⚠️ Middleware guard `/admin/*` + `/preview/*`; **tidak ada RBAC** (hanya 1 user admin) |
-| **Rate Limiting** | ❌ **belum ada**. KV hanya binding `SESSION`, tidak ada `RATE_LIMIT` |
+| **Rate Limiting** | ✅ Workers Rate Limiting `LOGIN_RATE_LIMIT` (10/60 dtk per IP) untuk sign-in & sign-up + rate limit internal Better Auth memakai `cf-connecting-ip` |
 | **CSRF** | ✅ Better Auth built-in + trusted origins (`AUTH_TRUSTED_ORIGINS`) |
-| **XSS** | ✅ Astro auto-escape. Tidak ada Markdown/`dangerouslySetInnerHTML` di public |
+| **XSS** | ✅ Astro auto-escape; CSP membatasi script ke same-origin (+ inline Astro), walau `script-src` masih `'unsafe-inline'` |
 | **SQL Injection** | ✅ Drizzle parameterized queries |
 | **Secrets** | ✅ `wrangler secret put`; `.env.local` (bukan `.dev.vars`) untuk local |
-| **CSP** | ❌ belum ada header |
-| **HTTPS / HSTS** | ⚠️ Cloudflare memaksa HTTPS lewat domain; **HSTS belum di-set eksplisit** |
+| **CSP** | ✅ `default-src 'self'`, `object-src 'none'`, `frame-ancestors 'none'`, `base-uri/form-action 'self'`, `img-src` Cloudinary, `connect-src` Cloudinary + `cloudflareinsights.com`, script analytics CF diizinkan |
+| **HTTPS / HSTS** | ✅ Cloudflare HTTPS + `Strict-Transport-Security: max-age=15552000` (tanpa `includeSubDomains`/`preload`) |
+| **Security headers** | ✅ `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options: DENY` |
+| **Admin cache** | ✅ `Cache-Control: no-store` + `Pragma: no-cache` untuk `/admin`, `/preview`, `/api` |
 | **Dependencies** | ⚠️ `pnpm audit` manual; Dependabot belum diaktifkan |
-| **Noindex** | ✅ `/preview/*` & `/admin/*` noindex |
+| **Noindex** | ✅ `/preview/*`, `/admin/*`, 404, 500; canonical hanya halaman indexable |
 
 ---
 

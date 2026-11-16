@@ -205,6 +205,21 @@ pnpm exec astro check
 git revert <commit-sha>
 ```
 
+### 5.6 Login 429 / Security Header Regression
+
+```bash
+# Cek header keamanan produksi
+curl -sI https://ridwanafazn.my.id/ | grep -Ei 'content-security-policy|strict-transport|x-content-type|referrer-policy|permissions-policy|x-frame'
+
+# Cek cache admin (harus no-store)
+curl -sI https://ridwanafazn.my.id/admin/login | grep -Ei 'cache-control|pragma'
+```
+
+- **429 saat login**: middleware membatasi 10 permintaan / 60 dtk per IP (`LOGIN_RATE_LIMIT`). Better Auth punya rate limit internal sendiri (pesan `Too many requests`). Tunggu 60 dtk, cek `cf-connecting-ip`, lalu sesuaikan `ratelimits` di `wrangler.jsonc` bila perlu (deploy ulang).
+- **Fitur baru diblokir browser**: lihat console → `Refused to ... because it violates CSP`. Tambahkan host ke `contentSecurityPolicy()` di `src/middleware.ts`; jangan melemahkan ke `default-src *`.
+- **Admin/preview ter-cache**: pastikan path masuk `PRIVATE_PREFIXES`; header harus `Cache-Control: no-store`.
+- **HSTS**: hanya dikirim di HTTPS, `max-age=15552000`, tanpa `includeSubDomains`. Jangan menambah `preload` sebelum semua subdomain dipastikan HTTPS.
+
 ---
 
 ## 6. Monitoring

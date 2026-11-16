@@ -28,6 +28,14 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  advanced: {
+    // Better Auth butuh IP asli untuk rate limit internal. Di Cloudflare,
+    // `cf-connecting-ip` diisi edge (tidak bisa dipalsukan klien). Tanpa ini
+    // Better Auth memakai satu bucket global yang bisa mengunci semua user.
+    ipAddress: {
+      ipAddressHeaders: ['cf-connecting-ip', 'x-forwarded-for'],
+    },
+  },
 });
 
 export type SessionUser = typeof auth.$Infer.Session.user;

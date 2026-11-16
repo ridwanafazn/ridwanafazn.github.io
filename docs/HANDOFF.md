@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `26c58e5b-0992-4d04-9610-6fb137b2178c` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
+| **Versi terakhir** | `ce265db5-c54d-42e6-afe8-088f23f52d13` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -184,6 +184,9 @@ src/
 33. **Canonical hanya untuk halaman indexable.** `Layout` melewatkan `<link rel="canonical">` bila `noindex` (404/500/preview). Jangan menambahkan canonical manual di halaman error — itu menyuruh Google mengindeks halaman yang justru dilarang.
 34. **`getProjectById` mengembalikan `null` untuk slug tidak ada**, bukan throw. Throw hanya untuk kegagalan DB supaya tampil 500. Jangan kembalikan `throw` untuk not-found: nanti semua error database berubah jadi 404 palsu.
 35. **Data publik kosong bukan error.** `getAllProjects`/`getSkills`/`getActivities` boleh `[]`; `getTopProjects` fallback ke 3 project teratas. Halaman wajib punya empty state, bukan asumsi minimal 1 baris.
+36. **CSP punya allowlist** di `contentSecurityPolicy()` (`src/middleware.ts`). Script/style eksternal, font, atau iframe baru harus ditambahkan ke situ. `'unsafe-inline'` disengaja untuk inline script Astro; jangan hapus tanpa memberi nonce/hash.
+37. **Rate limit login** = binding `LOGIN_RATE_LIMIT` (10/60 dtk per IP, `wrangler.jsonc`). Middleware fail-open; Better Auth memakai `cf-connecting-ip` lewat `advanced.ipAddress`. Jangan hapus binding saat mengubah Worker.
+38. **`import.meta.env.DEV` salah di dev Cloudflare** (`false` karena `NODE_ENV=production`). Untuk percabangan dev pakai `import.meta.env.MODE === 'development'`. Kalau memakai `DEV`, bypass `?v=` mati dan CSP dev memakai aturan produksi.
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.
@@ -222,6 +225,19 @@ src/
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
+
+### Hardening F5 — SELESAI (2026-11-16)
+- **Security headers** di semua response (middleware): `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geolocation/payment/usb off), `X-Frame-Options: DENY`.
+- **CSP moderat**: `default-src 'self'`, `object-src 'none'`, `frame-ancestors 'none'`, `base-uri/form-action 'self'`, `script-src 'self' 'unsafe-inline'` + `static.cloudflareinsights.com` (Web Analytics zona aktif), `img-src` Cloudinary, `connect-src` Cloudinary upload + `cloudflareinsights.com`, `upgrade-insecure-requests` hanya di HTTPS. Tidak ada iframe/object.
+- **HSTS**: `Strict-Transport-Security: max-age=15552000` (180 hari), tanpa `includeSubDomains`/`preload`, hanya dikirim lewat HTTPS.
+- **Cache privat**: `/admin`, `/preview`, `/api` → `Cache-Control: no-store` + `Pragma: no-cache`.
+- **Rate limit login**: binding Workers `LOGIN_RATE_LIMIT` (10 permintaan / 60 dtk per IP) untuk `POST /api/auth/sign-in/email` dan `/sign-up/email`; respons 429 JSON + `Retry-After: 60`. Fail-open bila binding error agar admin tidak terkunci.
+- **Better Auth IP**: `advanced.ipAddress.ipAddressHeaders = ['cf-connecting-ip','x-forwarded-for']` — sebelumnya rate limit internal memakai satu bucket global (bisa mengunci semua user).
+- **Dev detection diperbaiki**: `import.meta.env.DEV` ternyata `false` di dev Cloudflare (karena `NODE_ENV=production` dari `wrangler.jsonc`), sehingga bypass `?v=` tidak pernah aktif. Sekarang memakai `MODE === 'development'`; `?v=` kembali `x-cache: BYPASS`.
+- **workers.dev** tetap dipertahankan sebagai fallback (tidak di-disable).
+- Verifikasi lokal: CSP tanpa pelanggaran di `/`, `/projects/zledger`, `/admin/login`; login ke-11 dalam 60 dtk → 429 pesan Indonesia; header HSTS tidak muncul di HTTP dev.
+- Verifikasi produksi: semua header tampil di `/` dan 404 (`Strict-Transport-Security`, `Content-Security-Policy`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`); `/admin/login` → `Cache-Control: no-store` + `Pragma: no-cache`; beacon `static.cloudflareinsights.com` dimuat tanpa error console; `?v=` di produksi tetap diabaikan (`x-cache: HIT`); Lighthouse 100/100/100 di `/`, `/projects`, `/projects/zledger`.
+- Binding `LOGIN_RATE_LIMIT` terkonfirmasi saat deploy (`env.LOGIN_RATE_LIMIT (10 requests/60s)`). Rate limit **tidak** diuji dengan 11 request di produksi agar IP admin tidak terkunci 60 dtk; perilaku identik sudah diuji di dev dengan binding yang sama.
 
 ### Hardening F4 — SELESAI (2026-11-16)
 - **Canonical hanya untuk halaman indexable.** `Layout` tidak lagi merender `<link rel="canonical">` saat `noindex` (404, 404 project, 500, preview). `og:url` tetap memakai URL halaman.

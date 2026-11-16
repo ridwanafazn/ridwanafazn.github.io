@@ -85,7 +85,7 @@ db/client.ts        # dipakai script; load .env.local
 db/seed.ts          # admin + credential (hashPassword)
 src/lib/{db,auth,content,queries,cloudinary}.ts
 src/lib/validation/*
-src/middleware.ts   # admin guard + public cache
+src/middleware.ts   # admin guard + public cache + security headers + rate limit
 src/layouts/{Layout,AuthLayout,AdminLayout}.astro
 src/components/ProjectLedger.astro   # daftar proyek + thumbnail + hover preview
 src/components/Icon.astro            # inline SVG
@@ -148,6 +148,9 @@ neon status | branches list | connection-string --pooled
 18. **OG/Twitter selalu dirender** oleh `Layout.astro` dengan default `/og.png` (1200×630). Project tanpa cover/galeri tetap punya kartu share. Lightbox di `/projects/[id]` hanya dirender jika galeri tidak kosong — jangan kembalikan dialog kosong.
 19. **Canonical hanya untuk halaman indexable.** Saat `noindex` (404/500/preview), `Layout` tidak merender `<link rel="canonical">`. Jangan menambah canonical manual di halaman error.
 20. **Data publik kosong bukan error.** `getAllProjects`/`getSkills`/`getActivities` → `[]`, `getTopProjects` fallback 3 project teratas, `getProjectById` → `null` untuk slug tidak ada (404); error DB tetap 500. Halaman wajib punya empty state, dan `sitemap.xml` tetap mengirim URL statis walau DB gagal.
+21. **CSP ada allowlist.** Script/style hanya `'self'` + `'unsafe-inline'` (inline Astro) + `static.cloudflareinsights.com` (Web Analytics zona), gambar `res.cloudinary.com`, koneksi `api.cloudinary.com` + `cloudflareinsights.com`. Menambah script/font/iframe eksternal **wajib** memperbarui `contentSecurityPolicy()` di `src/middleware.ts`, atau fitur itu akan diblokir browser. Jangan menaikkan CSP ke `default-src *`.
+22. **Rate limit login** memakai binding `LOGIN_RATE_LIMIT` (10/60 dtk per IP) di `wrangler.jsonc`. Middleware fail-open kalau binding error; Better Auth diberi `cf-connecting-ip` lewat `advanced.ipAddress.ipAddressHeaders` agar tidak memakai bucket global. Jangan hapus `ratelimits` saat mengubah konfigurasi Worker.
+23. **`import.meta.env.DEV` bisa `false` di dev Cloudflare** karena `NODE_ENV=production` dari `wrangler.jsonc`; gunakan `import.meta.env.MODE === 'development'` untuk percabangan dev (dipakai bypass `?v=`). `PROD` juga bisa menyesatkan di dev.
 
 ---
 

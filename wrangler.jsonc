@@ -41,6 +41,15 @@
   // KV binding SESSION (untuk Astro sessions di Workers)
   "kv_namespaces": [
     { "binding": "SESSION", "id": "0caf957ffab8428687ada2d8bef1e809" }
+  ],
+
+  // Rate limit login (Workers Rate Limiting API): 10 percobaan / 60 detik per IP.
+  "ratelimits": [
+    {
+      "name": "LOGIN_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": { "limit": 10, "period": 60 }
+    }
   ]
 
   // Secrets: gunakan `wrangler secret put <KEY>` (jangan taruh di sini).

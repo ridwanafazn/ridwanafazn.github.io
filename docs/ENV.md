@@ -122,9 +122,9 @@
 | `PUBLIC_TURNSTILE_SITE_KEY` | ❌ | ✅ | ❌ | ❌ | Optional Turnstile |
 | `TURNSTILE_SECRET_KEY` | ❌ | ❌ | ✅ | ✅ | Optional Turnstile |
 
-> **KV bindings** (bukan env var, di `wrangler.jsonc`):
-> - `SESSION` — **satu-satunya** binding yang ada (`0caf957ffab8428687ada2d8bef1e809`).
-> - `RATE_LIMIT` — ❌ **belum dibuat**; rate limit belum diimplementasikan.
+> **Bindings** (bukan env var, di `wrangler.jsonc`):
+> - `SESSION` — KV namespace untuk Astro sessions (`0caf957ffab8428687ada2d8bef1e809`).
+> - `LOGIN_RATE_LIMIT` — Workers Rate Limiting binding (`namespace_id: 1001`, 10 permintaan / 60 detik per IP). Dipakai middleware untuk `POST /api/auth/sign-in/email` dan `/sign-up/email`. Tidak perlu secret.
 
 ### 2.6 Legacy Sanity (migration only)
 
