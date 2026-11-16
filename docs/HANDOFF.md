@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `c295ba0b-63c1-46a2-8d00-9e2ceea1bb32` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
+| **Versi terakhir** | `ba4be785-c6da-4e8a-af92-54bd3dc84402` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -224,6 +224,7 @@ src/
 - **Focus management**: menu & lightbox memindahkan fokus saat dibuka, mengunci Tab, mengembalikan fokus saat ditutup, dan memakai `inert` pada konten di belakang overlay.
 - **bfcache**: `pageshow` (persisted) menutup menu dan melepas scroll lock.
 - **Cache-Control** kini menyertakan `max-age=60`; Cloudflare zone masih menimpanya jadi 4 jam (lihat gotcha 29).
+- **Bersih-bersih sisa ClientRouter**: atribut `transition:name` di ledger/detail dihapus, style `view-transition` tidak lagi dirender. `theme-color` diperbaiki ke `#E4E6E1`.
 
 ### Polish pass — material visual (2026-11-16)
 Memakai aset yang sudah ada (54 gambar galeri), tanpa isian baru:
