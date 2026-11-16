@@ -1,6 +1,6 @@
 # DESIGN — UI/UX Public + Admin
 
-> **Terakhir diverifikasi: 2026-11-15.** Sumber kebenaran visual = `src/styles/global.css` + kelas Tailwind di komponen. Dokumen ini menjelaskan **apa yang benar-benar ada**, bukan rencana lama.
+> **Terakhir diverifikasi: 2026-11-16.** Sumber kebenaran visual = `src/styles/global.css` + kelas Tailwind di komponen. Dokumen ini menjelaskan **apa yang benar-benar ada**, bukan rencana lama.
 >
 > Riwayat: dokumen versi Shadcn/glassmorphism (2024) sudah **tidak berlaku**. Revamp editorial (2026-11-11, lihat `.kilo/plans/`) menghasilkan tampilan yang sekarang.
 
@@ -10,7 +10,7 @@
 
 | Klaim di dokumen lama | Aktual (2026-11-15) |
 |---|---|
-| "Public site **zero-JS**" | **Salah.** Public memuat three.js (globe ±139 KB), IntersectionObserver reveal, carousel, lightbox, count-up, menu mobile. |
+| "Public site **zero-JS**" | **Salah.** Public memuat three.js (globe, hanya ≥1024px), IntersectionObserver reveal, slider galeri, lightbox, dan menu mobile. |
 | Palette blue-800 + orange accent + dark mode otomatis | **Salah.** Sekarang kertas hangat + satu aksen slate; **tidak ada dark mode** (tidak ada `prefers-color-scheme` maupun toggle). |
 | Admin pakai **Shadcn/UI + Radix + TanStack Table** | **Salah.** Tidak ada file `.tsx` (0). Admin = Astro components + Tailwind. |
 | **Cloudinary Media Library Widget** untuk upload/pick | **Salah.** Upload custom: `multiple` + drag&drop, paralel maks 3, signature sekali per batch, progress + error per file. |
@@ -68,7 +68,7 @@
 
 | Route | Komponen | JS yang dimuat | Catatan |
 |---|---|---|---|
-| `/` | HeroGlobe, spec strip (Fokus/Sejak/Stack/Kontak), ProjectLedger (3), **evidence band 3 screenshot**, Tech Stack, Current Focus, HowIBuild, FloatingNav | ClientRouter + reveal (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024 |
+| `/` | HeroGlobe, spec strip (Fokus/Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, Current Focus, HowIBuild, FloatingNav (mobile) | reveal + spec stagger (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024 |
 | `/about` | Timeline, pendidikan, sertifikasi, volunteering | reveal | tanpa kartu bersarang |
 | `/projects` | **ProjectLedger** 13 baris (indeks + thumbnail + role + stack) | reveal + hover preview | tanpa carousel; 13 proyek dalam satu layar |
 | `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), next-project | reveal + slider + lightbox | lead image otomatis walau cover kosong |
@@ -84,7 +84,7 @@ Sudah diperbaiki:
 - ✅ JSON-LD `Person` di homepage.
 - ✅ Halaman 404 khusus.
 - ✅ `lang="id"`.
-- ✅ `prefers-reduced-motion` untuk reveal, hero, count-up.
+- ✅ `prefers-reduced-motion` untuk reveal, hero, spec-cell.
 - ✅ Reveal default terlihat tanpa JS (`html.js` gate + fallback `!important`).
 - ✅ Ikon dekoratif `aria-hidden`, skip-link, `:focus-visible` global.
 - ✅ Kontras teks (Lighthouse a11y 100 di 4 halaman publik).
@@ -135,21 +135,18 @@ Angka atau perubahan yang bisa diverifikasi.
 Sudah ada:
 - `main` landmark, heading hierarkis, `alt` pada gambar galeri.
 - `aria-label` pada tombol ikon (galeri, menu, lightbox).
-- Fokus terlihat pada kartu project dan tombol carousel.
+- `lang="id"`, skip-link, `:focus-visible` global, semua ikon dekoratif `aria-hidden`.
+- **Focus trap + `inert`** untuk menu mobile dan lightbox (F2): fokus masuk saat buka, Tab terkunci, Esc mengembalikan fokus, konten belakang tidak bisa difokus/klik.
+- Kontras lolos (Lighthouse a11y 100 di seluruh halaman publik).
+- Tanpa JavaScript: konten tetap terlihat dan nav mobile diganti `<noscript>`.
 
-Wajib sebelum revamp dinyatakan selesai:
-1. `lang="id"`.
-2. Semua ikon dekoratif `aria-hidden="true"`.
-3. `prefers-reduced-motion` untuk semua animasi.
-4. `:focus-visible` global + skip-link.
-5. Kontras ≥ 4.5:1 untuk teks < 18px (label mono 8–10px jelas gagal).
-6. Konten tetap terlihat tanpa JS (reveal tidak boleh default `opacity:0`).
+Sisa: tidak ada dari daftar ini; item baru harus mengikuti aturan yang sama.
 
 ---
 
 ## 5. Motion — aturan
 
-Efek yang ada sekarang: hero `fadeSlideUp`, `.reveal` (translate/scale + stagger), count-up StatBar, hover lift kartu, arrow reveal on hover, globe rotasi, lightbox blur, nav-dot.
+Efek yang ada sekarang: hero `fadeSlideUp`, `.reveal` (kiri/kanan/belakang + stagger), `spec-cell` stagger, hover preview ledger, rotasi globe (desktop), slider galeri snap, lightbox, dan nav progress scroll-driven.
 
 **Aturan baru:** maksimal **dua gesture signature per halaman**. Sisanya statis. Semua animasi harus:
 - dihormati `prefers-reduced-motion`,
@@ -180,7 +177,7 @@ Berikutnya (Fase B–D):
 Sudah dikerjakan di Fase B:
 5. ✅ Ledger 13 baris di `/projects` + 3 baris di homepage (ProjectLedger).
 6. ✅ Hero asimetris (7/5) + spec strip; globe hanya ≥1024px, di-load saat idle.
-8. ✅ `ClientRouter` + `view-transition-name` pada judul proyek (ledger → detail).
+8. ⚠️ `ClientRouter` + `view-transition-name` sempat dipasang, lalu **dilepas** karena `InvalidStateError` saat viewport mobile berubah; navigasi sekarang MPA biasa.
    - Browser surfaces: scrollbar, caret, selection, tabular numerals.
 
 ---

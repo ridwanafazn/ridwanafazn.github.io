@@ -32,9 +32,10 @@ Cloudflare Workers (portofx-v2)
 ```
 
 - Public **SSR** (bukan static) supaya edit admin langsung tampil (cache ≤60 dtk).
-- Cache pakai `caches.default` di `src/middleware.ts`, header `s-maxage=60, stale-while-revalidate=300`.
+- Cache pakai `caches.default` di `src/middleware.ts`, header `max-age=60, s-maxage=60, stale-while-revalidate=300`.
 - Admin/preview selalu SSR (`export const prerender = false`) dan wajib login (guard `src/middleware.ts`).
-- Cache: `x-cache: HIT|MISS|BYPASS`; `?v=timestamp` = bypass total.
+- Cache: `x-cache: HIT|MISS|BYPASS`; **`?v=` bypass hanya di dev** (`import.meta.env.DEV`). Produksi mengabaikannya.
+- URL dengan trailing slash di-301-kan ke tanpa slash (menjaga canonical & cache key tetap satu).
 
 ---
 
@@ -58,6 +59,22 @@ Cloudflare Workers (portofx-v2)
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `migrate:`)
 - Branch aktif `main`; kerja fitur pakai branch baru + PR sebelum merge
 
+### Dokumentasi (wajib, bukan opsional)
+Setiap perubahan kode **harus** memperbarui `.md` terkait **di commit yang sama**. Jangan menunda ke commit `docs:` terpisah kecuali darurat.
+
+| Perubahan | Dokumen yang wajib diperbarui |
+|---|---|
+| Schema / migrasi DB | `docs/ERD.md`, `docs/TRD.md`, `docs/HANDOFF.md` |
+| API / admin flow | `docs/TRD.md`, `docs/AGENTS.md` (gotchas) |
+| UI, token, komponen, motion | `docs/DESIGN.md` |
+| Routing / middleware / cache | `docs/AGENTS.md` (§2), `docs/HANDOFF.md`, `docs/RUNBOOK.md` |
+| Env / secret / deploy | `docs/ENV.md`, `docs/RUNBOOK.md`, `docs/HANDOFF.md` |
+| Versi deploy | `docs/HANDOFF.md` (§2, Version ID) |
+| Keputusan arsitektur | `docs/ADR/` |
+| Riwayat migrasi | `docs/MIGRATION_LOG.md` |
+
+Checklist sebelum commit: `grep` istilah yang berubah di `docs/` + `AGENTS.md` + `README.md`, pastikan tidak ada klaim lama yang tertinggal.
+
 ---
 
 ## 4. Struktur file (ringkas)
@@ -70,7 +87,9 @@ src/lib/{db,auth,content,queries,cloudinary}.ts
 src/lib/validation/*
 src/middleware.ts   # admin guard + public cache
 src/layouts/{Layout,AuthLayout,AdminLayout}.astro
-src/components/ProjectCard.astro
+src/components/ProjectLedger.astro   # daftar proyek + thumbnail + hover preview
+src/components/Icon.astro            # inline SVG
+src/components/HeroGlobe.astro       # globe (≥1024px, dynamic import)
 src/components/admin/AssetPicker.astro
 src/pages/{index,about,sitemap.xml}.astro|ts
 src/pages/projects/{index,[id]}.astro
@@ -112,16 +131,19 @@ neon status | branches list | connection-string --pooled
 1. Setelah menambah env schema baru, `pnpm typecheck` bisa gagal sampai `pnpm build` sekali (types `.astro/env.d.ts` digenerate saat build).
 2. `Zod .partial()` mewarisi `.default()` → **PATCH parsial harus filter key yang dikirim** (sudah diterapkan di `src/pages/admin/api/portfolio/[id].ts`). Jangan hapus.
 3. Script Node pakai `dotenv.config({ path: ['.env.local','.env'] })`.
-4. Cache publik 60 dtk; `?v=timestamp` bypass total (`x-cache: BYPASS`), kunci cache tanpa query string.
+4. Cache publik 60 dtk; **`?v=timestamp` hanya bypass di dev** (`x-cache: BYPASS`). Di produksi `?v=` diabaikan; tunggu ≤60 dtk atau hard refresh. Kunci cache tanpa query string.
 5. Cloudinary: preset `ml_default` (Signed), upload `/auto/upload`; hapus asset = soft delete DB (objek Cloudinary belum dihapus → TODO).
 6. Deploy: build dulu baru `wrangler deploy`.
 7. Login admin: `login.astro` submit via `fetch` JSON ke `/api/auth/sign-in/email` lalu `location.assign(redirect)`; jangan pakai native form POST. Halaman login pakai `AuthLayout` (tanpa sidebar).
 8. Profile PUT di-merge dengan row existing (form admin hanya mengirim sebagian field). `profile.cv_url` = satu sumber tombol Resume desktop + mobile.
 9. Activities bisa diedit (PATCH). Filter key yang dikirim agar default Zod tidak mereset `order`/`highlights`.
 10. Sidebar admin collapse/expand: state `localStorage['admin-sidebar']`, kelas `sidebar-collapsed` di `<html>`. Judul dokumen `Ridwan Pages`, brand `ridwanafazn`.
-11. **Public site BUKAN zero-JS.** Halaman publik memuat three.js (globe, ±139 KB), IntersectionObserver reveal, carousel, lightbox, count-up, dan menu mobile. Jangan menuliskan/mengarahkan "zero-JS" untuk public.
+11. **Public site BUKAN zero-JS.** Halaman publik memuat three.js (globe, ±139 KB), IntersectionObserver reveal, slider, lightbox, dan menu mobile. Jangan menuliskan/mengarahkan "zero-JS" untuk public.
 12. **`AUTH_COOKIE_NAME` / `AUTH_COOKIE_DOMAIN` / `AUTH_COOKIE_SECURE` di `wrangler.jsonc` tidak dibaca kode.** `src/lib/auth.ts` hanya memakai `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AUTH_TRUSTED_ORIGINS`; nama cookie memakai default Better Auth. Jangan menganggapnya sebagai konfigurasi aktif.
 13. **`pnpm lint` belum bisa jalan** — `eslint` tidak ada di `devDependencies` dan tidak ada config. Pakai `pnpm typecheck` dulu sampai lint di-setup.
+14. **Cloudflare menimpa `max-age` HTML jadi 4 jam** pada response `CF-Cache-Status: HIT`, meski Worker mengirim `max-age=60`. Perbaikan ada di dashboard (Caching → Browser Cache TTL → “Respect Existing Headers”), bukan di kode.
+15. **Menu mobile & lightbox memakai `inert`** pada konten di belakang overlay + focus trap. Jangan hapus `inert`/trap saat mengubah markup, atau keyboard user bisa masuk ke halaman belakang.
+16. **Tanpa JavaScript** menu mobile tidak bisa dibuka; penggantinya `<noscript>` di `Layout.astro` (`.no-js-nav`). Jangan hapus blok itu.
 
 ---
 

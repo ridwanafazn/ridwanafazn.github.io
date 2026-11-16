@@ -44,12 +44,12 @@
 ### 3.1 Public Website (SSR + edge cache 60s)
 | Feature | Description | Priority |
 |---|---|---|
-| **Home (/)** | Hero globe (Three.js), StatBar, Featured Projects, Skills, Current Focus, How I Build | P0 |
+| **Home (/)** | Hero globe (Three.js, desktop ≥1024), spec strip, Featured Projects (ledger 3 baris), Tech Stack, Current Focus, How I Build | P0 |
 | **About (/about)** | Timeline experience, Education, Certifications, Volunteering/Activities | P0 |
-| **Projects List (/projects)** | Carousel `scroll-snap` all projects (filter: belum ada) | P0 |
-| **Project Detail (/projects/[id])** | Full description, highlights, tech stack, links, gallery | P0 |
-| **SEO & Social** | ⚠️ sitemap.xml + robots.txt **ada**; OG/Twitter card + JSON-LD + meta description **belum** | P0 |
-| **Performance** | Target awal LCP < 1.5s, CLS < 0.1, 100/100 Lighthouse. Aktual: Lighthouse a11y 91 / SEO 80 / BP 100; globe 559 KB | P0 |
+| **Projects List (/projects)** | ProjectLedger 13 baris (indeks + thumbnail + role + stack); filter belum ada | P0 |
+| **Project Detail (/projects/[id])** | Meta plate, lead image, narasi `##`, Hasil, galeri slider, next project | P0 |
+| **SEO & Social** | ✅ sitemap, robots, meta description, OG/Twitter, JSON-LD Person (home), 404 | P0 |
+| **Performance** | Lighthouse a11y/BP/SEO **100** di seluruh halaman publik. LCP/CLS belum diukur formal; globe lazy desktop-only | P0 |
 
 ### 3.2 Admin Panel (SSR, Protected)
 | Feature | Description | Priority |

@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-15
+> **Terakhir diperbarui:** 2026-11-16
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -16,9 +16,9 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | Item | Nilai |
 |---|---|
 | **Live (canonical)** | https://ridwanafazn.my.id |
-| **Fallback** | https://portofx-v2.ridwanafazn.workers.dev |
+| **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `de0fdf0c-1deb-4b35-b66f-78a057cce58a` (deploy 2026-11-16; cek ulang: `wrangler deployments list`) |
+| **Versi terakhir** | `c295ba0b-63c1-46a2-8d00-9e2ceea1bb32` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -133,7 +133,9 @@ src/
   layouts/AdminLayout.astro   # sidebar/drawer/toast admin
   layouts/AuthLayout.astro    # shell login (tanpa sidebar/navbar)
   layouts/Layout.astro        # layout publik
-  components/ProjectCard.astro        # cover di card
+  components/ProjectLedger.astro      # daftar proyek + thumbnail + hover preview
+  components/Icon.astro               # inline SVG (tanpa icon font)
+  components/HeroGlobe.astro          # globe three.js (dynamic import, ≥1024px)
   components/admin/AssetPicker.astro  # pilih cover + galeri
   pages/index.astro|about.astro|projects/index.astro|projects/[id].astro  # SSR
   pages/preview/portfolio/[slug].astro
@@ -181,17 +183,17 @@ src/
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.
 - Palet baru: mineral `#E4E6E1`, tinta `#111110`, aksen verdigris `#2C6558`.
 - Material Symbols dihapus dari public → `src/components/Icon.astro` (inline SVG, `aria-hidden`).
-- Reveal progressive (tanpa JS tetap terlihat), `prefers-reduced-motion` untuk reveal/hero/count-up.
+- Reveal progressive (tanpa JS tetap terlihat), `prefers-reduced-motion` untuk reveal/hero/spec-cell.
 - `lang="id"`, skip-link, `:focus-visible` global, meta description + OG/Twitter + canonical.
 - Mono 8–10px → 12px, `text-justify` dihapus, kicker di atas heading dihapus.
 - Hasil: Lighthouse **100 a11y / 100 BP / 100 SEO** di `/`, `/about`, `/projects`, `/projects/[slug]`, `/admin/login`; `impeccable detect` homepage = **0 anti-pattern**.
 
 ### Fase B revamp — SELESAI (2026-11-16)
 - Hero asimetris 7/5 + strip spesifikasi (Fokus / Sejak / Stack / Kontak); StatBar count-up dihapus.
-- `/projects` carousel → **ProjectLedger**: 13 baris berindeks (01–13), role + 3 stack, tanpa gambar.
+- `/projects` carousel → **ProjectLedger**: 13 baris berindeks (01–13). Thumbnail ditambahkan pada polish pass.
 - Homepage featured → 3 baris ledger (tanpa indeks).
 - Globe: `three` dipindah ke `src/scripts/hero-globe.ts`, **dynamic import** hanya ≥1024px setelah idle. Di <1024 canvas `display:none`; texture 420 KB + 139 KB JS tidak lagi diunduh mobile.
-- `ClientRouter` + `view-transition-name` `project-<slug>` di judul (ledger → detail); navbar `transition:persist`.
+- `ClientRouter` + `view-transition-name` `project-<slug>` di judul (ledger → detail); navbar `transition:persist`. **Kemudian dilepas** (lihat F1/MPA) karena view transition abort di mobile.
 - Browser surfaces: scrollbar, caret, selection, tabular numerals.
 - Komponen dihapus: `ProjectCard.astro`, `StatBar.astro`; CSS carousel dihapus dari `global.css`.
 - `impeccable detect`: homepage 0, `/about` 0, `/projects` 0 (sisa 3 advisory nomor proses di HowIBuild).

@@ -612,14 +612,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 ### 4.3 React Islands (Admin UI Only) — ❌ tidak dipakai
 
 Implementasi aktual **tidak memakai React island sama sekali** (0 file `.tsx`).
-`@astrojs/react` masih terpasang di `astro.config.mjs` tetapi tidak dipakai.
+`@astrojs/react` sudah **dilepas** dari `astro.config.mjs` dan dependencies.
 
 ```
 src/components/            # Astro components
-  ├── ProjectCard.astro
+  ├── ProjectLedger.astro  # daftar proyek berindeks + thumbnail
+  ├── Icon.astro           # inline SVG (tanpa icon font)
   ├── Navbar.astro / Footer.astro / FloatingNav.astro
-  ├── HeroGlobe.astro      # three.js, di-load sebagai <script> Astro
-  ├── StatBar.astro        # count-up inline <script>
+  ├── HeroGlobe.astro      # three.js, dynamic import (≥1024px)
   ├── Timeline.astro / HowIBuild.astro / Badge.astro
   └── admin/AssetPicker.astro
 ```
@@ -639,7 +639,7 @@ src/components/ui/          # ❌ tidak ada
 
 | Bagian | Strategi | Keterangan |
 |---|---|---|
-| Public pages | Tanpa framework, tanpa island | `<script>` Astro inline untuk interaksi (reveal, carousel, lightbox, globe) |
+| Public pages | Tanpa framework, tanpa island | `<script>` Astro inline untuk reveal, menu mobile, slider galeri, lightbox, dan globe (dynamic import). Tanpa ClientRouter. |
 | Admin | Tanpa framework, tanpa island | HTML + `fetch` JSON ke `/admin/api/*` |
 | Hydration directive | **tidak dipakai sama sekali** | `client:*` tidak muncul di repo |
 

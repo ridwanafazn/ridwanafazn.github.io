@@ -19,6 +19,7 @@
 5. **Jangan** hapus `optimizeDeps.exclude` better-auth.
 6. **PATCH parsial** harus filter key yang dikirim (Zod default leak).
 7. **Jangan** commit `.env.local`.
+8. **Setiap perubahan wajib update `.md` terkait di commit yang sama** (peta dokumen: `docs/AGENTS.md` §3). Jangan menunda ke commit `docs:` terpisah.
 
 ## Status
 
@@ -45,4 +46,4 @@
 
 ## Konteks untuk agent baru
 
-> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan (54 foto); live di https://ridwanafazn.my.id (www → 301 apex). Sisa: **cover image 0/13**. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`. Public site **bukan** zero-JS (three.js + reveal + carousel)."
+> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan (54 foto); live di https://ridwanafazn.my.id (www → 301 apex). Sisa: **cover image 0/13**. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`. Public site **bukan** zero-JS (three.js + reveal + ledger + slider galeri)."

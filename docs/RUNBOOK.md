@@ -86,7 +86,7 @@ pnpm exec wrangler secret bulk .secrets.json
 pnpm exec wrangler secret list
 ```
 
-**Catatan cache:** public pages + `/sitemap.xml` SSR dengan cache 60 dtk (`s-maxage=60`). Setelah edit admin, tunggu ≤60 dtk atau buka `?v=timestamp` (bypass total; response `x-cache: BYPASS`).
+**Catatan cache:** public pages + `/sitemap.xml` SSR dengan cache 60 dtk (`max-age=60, s-maxage=60`). Setelah edit admin, tunggu ≤60 dtk. `?v=timestamp` **hanya bypass di dev**; di produksi parameter itu diabaikan. Cloudflare juga menimpa `max-age` HTML jadi 4 jam pada response CF HIT — ubah Browser Cache TTL ke “Respect Existing Headers” bila perlu.
 
 ### 3.2 CI/CD (GitHub Actions)
 

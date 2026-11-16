@@ -72,3 +72,4 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 3. Lighthouse: a11y 100, SEO 100 di `/`, `/projects`, `/projects/[slug]`.
 4. Cek 390px dan 1280px: tidak ada overflow horizontal, tidak ada teks terpotong.
 5. Konten terlihat dengan JavaScript dimatikan (reveal tidak boleh menyembunyikan).
+6. **Update `.md` terkait di commit yang sama** — peta dokumen ada di `docs/AGENTS.md` §3 “Dokumentasi”. Minimal: `docs/HANDOFF.md` untuk state/versi, `docs/DESIGN.md` untuk UI/token.
