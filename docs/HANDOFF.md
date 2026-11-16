@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | manual terakhir `7d0397b3-fac0-41e8-a2d6-112eaf057f54`; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | manual terakhir `772338ff-feb9-45f7-bfc6-450711964be4`; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -226,6 +226,10 @@ src/
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
+
+### Polish ledger — SELESAI (2026-11-16)
+- Kolom stack di `/projects` dibatasi **2 item pertama + `+N`** (sebelumnya 3 item lalu terpotong “…”). Lebar kolom stack 13rem → 14rem; `+N` tidak ikut terpotong (`shrink-0`), nama item di-truncate hanya bila benar-benar panjang.
+- `title` berisi daftar stack lengkap untuk hover; halaman detail tetap menampilkan seluruh stack.
 
 ### Perbaikan login “Invalid origin” — SELESAI (2026-11-16)
 - **Gejala**: login admin gagal dengan `Invalid origin` meski URL `https://ridwanafazn.my.id`. Request **tanpa cookie** lolos (origin check dilewati), request **dengan cookie** (sesi lama) ditolak.

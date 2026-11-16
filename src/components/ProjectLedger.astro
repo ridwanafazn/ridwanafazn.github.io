@@ -18,10 +18,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 const rowGrid = showIndex
   ? showStack
-    ? 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_minmax(0,13rem)_1.25rem]'
+    ? 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_minmax(0,14rem)_1.25rem]'
     : 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_1.25rem]'
   : showStack
-    ? 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_minmax(0,13rem)_1.25rem]'
+    ? 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_minmax(0,14rem)_1.25rem]'
     : 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_1.25rem]';
 ---
 
@@ -76,9 +76,15 @@ const rowGrid = showIndex
           </span>
 
           {showStack && (
-            <span class="hidden truncate font-mono text-[12px] text-on-surface-variant md:block">
-              {project.techStack.slice(0, 3).join(' · ')}
-              {project.techStack.length > 3 && ` +${project.techStack.length - 3}`}
+            <span
+              class="hidden min-w-0 items-baseline gap-1 font-mono text-[12px] text-on-surface-variant md:flex"
+              title={project.techStack.join(' · ')}
+            >
+              {/* Ringkas: 2 item pertama + jumlah sisanya. Detail lengkap ada di halaman project. */}
+              <span class="min-w-0 truncate">{project.techStack.slice(0, 2).join(' · ')}</span>
+              {project.techStack.length > 2 && (
+                <span class="shrink-0 tabular-nums">+{project.techStack.length - 2}</span>
+              )}
             </span>
           )}
 
