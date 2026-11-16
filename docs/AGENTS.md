@@ -151,6 +151,7 @@ neon status | branches list | connection-string --pooled
 21. **CSP ada allowlist.** Script/style hanya `'self'` + `'unsafe-inline'` (inline Astro) + `static.cloudflareinsights.com` (Web Analytics zona), gambar `res.cloudinary.com`, koneksi `api.cloudinary.com` + `cloudflareinsights.com`. Menambah script/font/iframe eksternal **wajib** memperbarui `contentSecurityPolicy()` di `src/middleware.ts`, atau fitur itu akan diblokir browser. Jangan menaikkan CSP ke `default-src *`.
 22. **Rate limit login** memakai binding `LOGIN_RATE_LIMIT` (10/60 dtk per IP) di `wrangler.jsonc`. Middleware fail-open kalau binding error; Better Auth diberi `cf-connecting-ip` lewat `advanced.ipAddress.ipAddressHeaders` agar tidak memakai bucket global. Jangan hapus `ratelimits` saat mengubah konfigurasi Worker.
 23. **`import.meta.env.DEV` bisa `false` di dev Cloudflare** karena `NODE_ENV=production` dari `wrangler.jsonc`; gunakan `import.meta.env.MODE === 'development'` untuk percabangan dev (dipakai bypass `?v=`). `PROD` juga bisa menyesatkan di dev.
+24. **`astro:env` server `access: 'public'` = nilai build-time.** `.env.local` ikut ter-inline ke Worker produksi (pernah membuat `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` berisi `localhost`). Untuk nilai yang berbeda dev/produksi pakai `access: 'secret'` agar dibaca runtime. Jangan mengembalikan `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` ke `public`.
 
 ---
 

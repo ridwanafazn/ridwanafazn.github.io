@@ -41,8 +41,10 @@
 | **Build-time public** | `PUBLIC_SITE_URL`, `PUBLIC_CLOUDINARY_CLOUD_NAME` | GitHub Actions `env` / `.env.local` | Saat `astro build` (di-inline) |
 | **Build-time secret** | `DATABASE_URL` | GitHub Actions `secrets` | Runtime (Neon pooled); CI masih menyuplai saat build untuk env schema |
 | **Runtime secret** | `BETTER_AUTH_SECRET`, `CLOUDINARY_API_SECRET` | `wrangler secret put` | Saat request |
-| **Runtime var** | `BETTER_AUTH_URL`, `CLOUDINARY_CLOUD_NAME` | `wrangler.jsonc` → `vars` | Saat request |
+| **Runtime var** | `BETTER_AUTH_URL`, `AUTH_TRUSTED_ORIGINS`, `CLOUDINARY_CLOUD_NAME` | `wrangler.jsonc` → `vars` | Saat request |
 | **Local dev** | Semua | `.env.local` | Saat `astro dev` |
+
+> ⚠️ `BETTER_AUTH_URL` dan `AUTH_TRUSTED_ORIGINS` sengaja `access: 'secret'` di `astro.config.mjs`: itu **memaksa runtime**, bukan karena rahasia. Kalau diubah ke `'public'`, Astro meng-inline nilai `.env.local` (`localhost`) ke bundle produksi dan login admin gagal `Invalid origin`.
 
 ---
 

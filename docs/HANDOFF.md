@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `ce265db5-c54d-42e6-afe8-088f23f52d13` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
+| **Versi produksi** | cek `wrangler deployments status` (CI men-deploy tiap push `main`; manual terakhir: `7d0397b3-fac0-41e8-a2d6-112eaf057f54`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -187,6 +187,7 @@ src/
 36. **CSP punya allowlist** di `contentSecurityPolicy()` (`src/middleware.ts`). Script/style eksternal, font, atau iframe baru harus ditambahkan ke situ. `'unsafe-inline'` disengaja untuk inline script Astro; jangan hapus tanpa memberi nonce/hash.
 37. **Rate limit login** = binding `LOGIN_RATE_LIMIT` (10/60 dtk per IP, `wrangler.jsonc`). Middleware fail-open; Better Auth memakai `cf-connecting-ip` lewat `advanced.ipAddress`. Jangan hapus binding saat mengubah Worker.
 38. **`import.meta.env.DEV` salah di dev Cloudflare** (`false` karena `NODE_ENV=production`). Untuk percabangan dev pakai `import.meta.env.MODE === 'development'`. Kalau memakai `DEV`, bypass `?v=` mati dan CSP dev memakai aturan produksi.
+39. **`astro:env` server `access: 'public'` di-inline saat build.** Nilai dari `.env.local` ikut masuk ke bundle produksi, jadi jangan dipakai untuk konfigurasi yang berbeda per environment (URL, trusted origins). Gunakan `access: 'secret'` agar dibaca dari Worker env saat runtime. Ini penyebab bug “Invalid origin” 2026-11-16.
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.
@@ -225,6 +226,12 @@ src/
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
+
+### Perbaikan login “Invalid origin” — SELESAI (2026-11-16)
+- **Gejala**: login admin gagal dengan `Invalid origin` meski URL `https://ridwanafazn.my.id`. Request **tanpa cookie** lolos (origin check dilewati), request **dengan cookie** (sesi lama) ditolak.
+- **Akar masalah**: `BETTER_AUTH_URL` dan `AUTH_TRUSTED_ORIGINS` dideklarasikan `astro:env` server dengan `access: 'public'`. Astro **meng-inline nilai build-time**; karena build memakai `.env.local`, Worker produksi berisi `http://localhost:4321` dan `http://192.168.100.12:4321`, bukan domain apex.
+- **Perbaikan**: kedua variabel diubah ke `access: 'secret'` (dibaca runtime dari Worker env). Chunk `auth_*.mjs` tidak lagi memuat `localhost`; produksi memakai `wrangler.jsonc` vars.
+- **Verifikasi**: dengan cookie + `Origin: https://ridwanafazn.my.id` → `401 Invalid email or password` (bukan 403 origin); `Origin: https://evil.example` → `403 Invalid origin`. Cookie lama pengguna tidak perlu dihapus; login ulang berhasil.
 
 ### Hardening F5 — SELESAI (2026-11-16)
 - **Security headers** di semua response (middleware): `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (camera/mic/geolocation/payment/usb off), `X-Frame-Options: DENY`.

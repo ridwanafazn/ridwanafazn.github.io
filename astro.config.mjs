@@ -27,8 +27,11 @@ export default defineConfig({
       CLOUDINARY_API_KEY: envField.string({ context: 'server', access: 'secret' }),
       CLOUDINARY_API_SECRET: envField.string({ context: 'server', access: 'secret' }),
       // === Runtime non-sensitive (server) ===
-      BETTER_AUTH_URL: envField.string({ context: 'server', access: 'public' }),
-      AUTH_TRUSTED_ORIGINS: envField.string({ context: 'server', access: 'public', optional: true }),
+      // `access: 'secret'` = dibaca saat runtime dari Worker env, BUKAN
+      // di-inline saat build. Kalau 'public', nilai `.env.local` (localhost)
+      // ikut ter-bundle ke produksi dan membuat cek origin Better Auth gagal.
+      BETTER_AUTH_URL: envField.string({ context: 'server', access: 'secret' }),
+      AUTH_TRUSTED_ORIGINS: envField.string({ context: 'server', access: 'secret', optional: true }),
       CLOUDINARY_CLOUD_NAME: envField.string({ context: 'server', access: 'public' }),
       CLOUDINARY_UPLOAD_PRESET: envField.string({ context: 'server', access: 'public' }),
       CLOUDINARY_FOLDER: envField.string({ context: 'server', access: 'public', default: 'portfolio' }),

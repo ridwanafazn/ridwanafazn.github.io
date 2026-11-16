@@ -220,6 +220,21 @@ curl -sI https://ridwanafazn.my.id/admin/login | grep -Ei 'cache-control|pragma'
 - **Admin/preview ter-cache**: pastikan path masuk `PRIVATE_PREFIXES`; header harus `Cache-Control: no-store`.
 - **HSTS**: hanya dikirim di HTTPS, `max-age=15552000`, tanpa `includeSubDomains`. Jangan menambah `preload` sebelum semua subdomain dipastikan HTTPS.
 
+### 5.7 Login Admin “Invalid origin”
+
+```bash
+# Reproduksi: origin check hanya jalan kalau request membawa cookie.
+curl -s -X POST https://ridwanafazn.my.id/api/auth/sign-in/email \
+  -H 'content-type: application/json' -H 'origin: https://ridwanafazn.my.id' \
+  -H 'cookie: better-auth.session_token=fake' \
+  -d '{"email":"x@y.z","password":"wrong"}'
+# Harus 401/400 kredensial, BUKAN 403 {"message":"Invalid origin"}
+```
+
+- Kalau muncul `Invalid origin`: cek `dist/server/chunks/auth_*.mjs` — **tidak boleh** ada `localhost:4321`.
+- Penyebab: `astro:env` server `access: 'public'` meng-inline `.env.local` saat build. `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` wajib `access: 'secret'` (runtime) dan nilainya ada di `wrangler.jsonc` vars.
+- Setelah fix: build ulang → deploy → uji ulang dengan cookie. Cookie lama pengguna tidak perlu dihapus.
+
 ---
 
 ## 6. Monitoring
