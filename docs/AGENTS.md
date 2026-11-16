@@ -146,6 +146,8 @@ neon status | branches list | connection-string --pooled
 16. **Tanpa JavaScript** menu mobile tidak bisa dibuka; penggantinya `<noscript>` di `Layout.astro` (`.no-js-nav`). Jangan hapus blok itu.
 17. **Globe punya jalur gagal.** WebGL tidak tersedia, renderer gagal, tekstur gagal, atau `webglcontextlost` → wrap diberi `data-failed` (CSS `display:none`) tanpa error. `prefers-reduced-motion` mematikan rotasi total. Jangan hapus guard di `src/scripts/hero-globe.ts`.
 18. **OG/Twitter selalu dirender** oleh `Layout.astro` dengan default `/og.png` (1200×630). Project tanpa cover/galeri tetap punya kartu share. Lightbox di `/projects/[id]` hanya dirender jika galeri tidak kosong — jangan kembalikan dialog kosong.
+19. **Canonical hanya untuk halaman indexable.** Saat `noindex` (404/500/preview), `Layout` tidak merender `<link rel="canonical">`. Jangan menambah canonical manual di halaman error.
+20. **Data publik kosong bukan error.** `getAllProjects`/`getSkills`/`getActivities` → `[]`, `getTopProjects` fallback 3 project teratas, `getProjectById` → `null` untuk slug tidak ada (404); error DB tetap 500. Halaman wajib punya empty state, dan `sitemap.xml` tetap mengirim URL statis walau DB gagal.
 
 ---
 

@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi terakhir** | `89d9b9eb-eff3-4338-a527-6d835583f1a1` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
+| **Versi terakhir** | `26c58e5b-0992-4d04-9610-6fb137b2178c` (deploy 2026-11-16; cek ulang: `wrangler deployments status`) |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -181,6 +181,9 @@ src/
 30. **Globe tidak boleh melempar error.** Semua jalur gagal (WebGL tidak ada, renderer gagal, tekstur 404, `webglcontextlost`) harus berakhir di `data-failed`. Jangan hapus cek `webglAvailable()` / `try/catch` renderer; kalau dihapus, satu GPU bermasalah membuat unhandled rejection dan halaman terlihat setengah jadi.
 31. **`prefers-reduced-motion` mematikan rotasi globe**, bukan memperlambat. Kalau ingin mengubah perilaku, ubah `syncMotion()` di `src/scripts/hero-globe.ts` — jangan menambah `ROTATION_SPEED` baru yang selalu jalan.
 32. **OG image selalu dirender** oleh `Layout.astro` dengan default `/og.png`. Jangan kembalikan ke conditional `ogImage && ...`; project tanpa cover/galeri akan kehilangan kartu share.
+33. **Canonical hanya untuk halaman indexable.** `Layout` melewatkan `<link rel="canonical">` bila `noindex` (404/500/preview). Jangan menambahkan canonical manual di halaman error — itu menyuruh Google mengindeks halaman yang justru dilarang.
+34. **`getProjectById` mengembalikan `null` untuk slug tidak ada**, bukan throw. Throw hanya untuk kegagalan DB supaya tampil 500. Jangan kembalikan `throw` untuk not-found: nanti semua error database berubah jadi 404 palsu.
+35. **Data publik kosong bukan error.** `getAllProjects`/`getSkills`/`getActivities` boleh `[]`; `getTopProjects` fallback ke 3 project teratas. Halaman wajib punya empty state, bukan asumsi minimal 1 baris.
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.
@@ -219,6 +222,15 @@ src/
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
+
+### Hardening F4 — SELESAI (2026-11-16)
+- **Canonical hanya untuk halaman indexable.** `Layout` tidak lagi merender `<link rel="canonical">` saat `noindex` (404, 404 project, 500, preview). `og:url` tetap memakai URL halaman.
+- **Halaman 500 khusus** (`src/pages/500.astro`, `noindex`): error SSR/DB menampilkan pesan yang bisa dibaca, bukan halaman default Astro.
+- **Data kosong tidak 500**: `getAllProjects`/`getSkills`/`getActivities` mengembalikan `[]`; `getTopProjects` jatuh ke 3 project teratas bila belum ada yang featured.
+- **404 vs 500 dipisah**: `getProjectById` mengembalikan `null` untuk slug tidak ada (→ 404); error DB tetap dilempar (→ 500), tidak lagi disamarkan menjadi 404.
+- **Empty state** di `/projects`, featured homepage, Tech Stack, dan Volunteering.
+- **Sitemap tahan gangguan**: bila DB gagal, sitemap tetap mengirim 3 URL statis (bukan 500) dan nilai `<loc>` di-escape XML.
+- **Stack hero tetap editorial** (`FE·BE·Cloud·Mobile·AI·ML`) sesuai keputusan desain; yang data-driven adalah section Tech Stack dan stack per project.
 
 ### Perbaikan Browser Cache TTL — SELESAI (2026-11-16)
 - Zona Cloudflare `ridwanafazn.my.id`: `browser_cache_ttl` `14400` → **`0`** (“Respect Existing Headers”), diubah via API (bukan dashboard). Ini satu-satunya perubahan yang tidak lewat deploy Worker.

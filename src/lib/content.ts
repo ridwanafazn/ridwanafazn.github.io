@@ -87,9 +87,7 @@ export async function getAllProjects(): Promise<Project[]> {
       .orderBy(asc(portfolios.order), asc(portfolios.createdAt)),
     assetMap(),
   ]);
-  if (!rows.length) {
-    throw new Error('[content] Tidak ada portfolio published di Neon. Jalankan migrasi/seed dulu.');
-  }
+  // Data kosong bukan error server: halaman menampilkan empty state.
   return rows.map((r) => toProject(r, byId));
 }
 
@@ -98,17 +96,18 @@ export async function getTopProjects(): Promise<Project[]> {
     db
       .select()
       .from(portfolios)
-      .where(and(publishedOnly, eq(portfolios.isTopProject, true)))
+      .where(publishedOnly)
       .orderBy(asc(portfolios.order), asc(portfolios.createdAt)),
     assetMap(),
   ]);
-  if (!rows.length) {
-    throw new Error('[content] Tidak ada project featured (isTopProject=true) di Neon.');
-  }
-  return rows.map((r) => toProject(r, byId));
+  // Kalau belum ada yang ditandai featured, pakai 3 project teratas supaya
+  // homepage tidak 500 hanya karena flag `is_top_project` belum diisi.
+  const featured = rows.filter((row) => row.isTopProject);
+  const chosen = featured.length > 0 ? featured : rows.slice(0, 3);
+  return chosen.map((r) => toProject(r, byId));
 }
 
-export async function getProjectById(id: string): Promise<Project> {
+export async function getProjectById(id: string): Promise<Project | null> {
   const [row, byId] = await Promise.all([
     db
       .select()
@@ -117,7 +116,9 @@ export async function getProjectById(id: string): Promise<Project> {
       .limit(1),
     assetMap(),
   ]);
-  if (!row[0]) throw new Error(`[content] Project "${id}" tidak ditemukan di Neon.`);
+  // `null` = memang tidak ada (halaman 404). Error DB tetap dilempar supaya
+  // tampil sebagai 500, bukan disamarkan jadi "tidak ditemukan".
+  if (!row[0]) return null;
   return toProject(row[0], byId);
 }
 
@@ -142,8 +143,8 @@ export async function getProfile(): Promise<Profile> {
 
 export async function getSkills(): Promise<SkillCategory[]> {
   const row = (await db.select().from(skills).limit(1))[0];
-  if (!row?.categories?.length) throw new Error('[content] Skills kosong di Neon.');
-  return row.categories;
+  // Array kosong = tampilan Tech Stack memberi empty state, bukan 500.
+  return row?.categories ?? [];
 }
 
 export async function getActivities(): Promise<Activity[]> {
@@ -152,7 +153,6 @@ export async function getActivities(): Promise<Activity[]> {
     .from(activities)
     .where(isNull(activities.deletedAt))
     .orderBy(asc(activities.order), asc(activities.createdAt));
-  if (!rows.length) throw new Error('[content] Activities kosong di Neon.');
   return rows.map((a) => ({
     id: a.slug,
     type: a.type,

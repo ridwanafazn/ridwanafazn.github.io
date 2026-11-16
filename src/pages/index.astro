@@ -17,7 +17,7 @@ const skillsData = await getSkills();
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
-const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '';
+const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
 const stackSummary = ['FE', 'BE', 'Cloud', 'Mobile', 'AI', 'ML'].join('·');
 
@@ -127,6 +127,11 @@ const personSchema = {
     </div>
 
     <ProjectLedger projects={topProjects} showIndex={false} showStack={false} />
+    {topProjects.length === 0 && (
+      <p class="border-b border-outline py-6 text-[14px] text-on-surface-variant">
+        Belum ada proyek yang dipublikasikan.
+      </p>
+    )}
   </section>
 
   <section id="skills" class="mb-16 md:mb-20 relative z-10 scroll-mt-32">
@@ -138,6 +143,11 @@ const personSchema = {
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2">
+      {skillsData.length === 0 && (
+        <p class="border-b border-outline py-6 text-[14px] text-on-surface-variant md:col-span-2">
+          Belum ada data keahlian.
+        </p>
+      )}
       {skillsData.map((skillGroup, i) => (
         <div class={`reveal border-b border-outline py-6 md:py-7 ${i % 2 === 0 ? 'from-left md:pr-8' : 'from-right md:border-l md:border-outline md:pl-8'} ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
           <h3 class="mb-4 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">

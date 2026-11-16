@@ -31,4 +31,9 @@ const allProjects = await getAllProjects();
   </div>
 
   <ProjectLedger projects={allProjects} />
+  {allProjects.length === 0 && (
+    <p class="border-b border-outline py-10 text-[14px] text-on-surface-variant">
+      Belum ada proyek yang dipublikasikan. Kembali lagi nanti.
+    </p>
+  )}
 </Layout>

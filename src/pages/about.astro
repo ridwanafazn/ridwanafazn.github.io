@@ -125,6 +125,9 @@ const activitiesData = await getActivities();
             
           </div>
         ))}
+        {activitiesData.length === 0 && (
+          <p class="text-[13px] text-on-surface-variant">Belum ada kegiatan yang dipublikasikan.</p>
+        )}
       </div>
     </section>
     

@@ -48,7 +48,7 @@
 | **About (/about)** | Timeline experience, Education, Certifications, Volunteering/Activities | P0 |
 | **Projects List (/projects)** | ProjectLedger 13 baris (indeks + thumbnail + role + stack); filter belum ada | P0 |
 | **Project Detail (/projects/[id])** | Meta plate, lead image, narasi `##`, Hasil, galeri slider, next project | P0 |
-| **SEO & Social** | ✅ sitemap, robots, meta description, OG/Twitter (default `/og.png` bila project tanpa gambar), JSON-LD Person (home), 404 | P0 |
+| **SEO & Social** | ✅ sitemap (tahan DB kosong), robots, meta description, OG/Twitter (default `/og.png`), canonical hanya halaman indexable, JSON-LD Person (home), 404 + 500 khusus | P0 |
 | **Performance** | Lighthouse a11y/BP/SEO **100** di seluruh halaman publik. LCP/CLS belum diukur formal; globe lazy desktop-only | P0 |
 
 ### 3.2 Admin Panel (SSR, Protected)

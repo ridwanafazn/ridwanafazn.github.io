@@ -75,11 +75,14 @@
 | `/preview/*` | sama dengan detail + banner draft | login wajib | guard middleware |
 | `/sitemap.xml` | route SSR | — | cache 60s |
 | 404 | halaman khusus (`src/pages/404.astro`) | — | `noindex`, tautan ke beranda + arsip |
+| 500 | halaman khusus (`src/pages/500.astro`) | — | `noindex`, dipakai saat SSR/DB gagal |
 
 ### 2.1 Status gap (diperbarui setelah Fase A)
 
 Sudah diperbaiki:
 - ✅ `meta description`, OG/Twitter card, `canonical`, `theme-color` (`Layout.astro`).
+- ✅ Canonical hanya dirender untuk halaman indexable; 404/500/preview tidak punya canonical.
+- ✅ Halaman 500 khusus (SSR/DB gagal) dengan `noindex`.
 - ✅ OG image: `/og.png` (statis, 1200×630) sebagai **default semua halaman**; per-project `c_fill,w_1200,h_630,g_auto` dari cover → gambar galeri pertama. Project tanpa gambar tetap punya `og:image` + `og:image:alt`.
 - ✅ JSON-LD `Person` di homepage.
 - ✅ Halaman 404 khusus.

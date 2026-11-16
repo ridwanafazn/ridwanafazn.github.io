@@ -6,15 +6,10 @@ import Icon from '../../components/Icon.astro';
 import { getProjectById, getAllProjects } from '../../lib/content';
 
 const id = Astro.params.id!;
-let project: Awaited<ReturnType<typeof getProjectById>> | null = null;
-let notFound = false;
+const project = await getProjectById(id);
+const notFound = !project;
 
-try {
-  project = await getProjectById(id);
-} catch {
-  notFound = true;
-  Astro.response.status = 404;
-}
+if (notFound) Astro.response.status = 404;
 
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;

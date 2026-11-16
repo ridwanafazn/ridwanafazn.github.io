@@ -4,9 +4,33 @@ import { getAllProjects } from '../lib/content';
 
 export const prerender = false;
 
+const escapeXml = (value: string) =>
+  value.replace(/[<>&'"]/g, (char) => {
+    switch (char) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case "'":
+        return '&apos;';
+      default:
+        return '&quot;';
+    }
+  });
+
 export const GET: APIRoute = async ({ site }) => {
   const base = (site?.toString() ?? 'https://ridwanafazn.my.id').replace(/\/$/, '');
-  const projects = await getAllProjects();
+
+  // Sitemap harus tetap hidup walau DB kosong/bermasalah: crawler tetap
+  // mendapat halaman statis, bukan 500.
+  let projects: Awaited<ReturnType<typeof getAllProjects>> = [];
+  try {
+    projects = await getAllProjects();
+  } catch (err) {
+    console.error('[sitemap] gagal memuat project:', err);
+  }
 
   const urls = [
     { loc: `${base}/`, priority: '1.0' },
@@ -18,7 +42,9 @@ export const GET: APIRoute = async ({ site }) => {
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    urls.map((u) => `  <url><loc>${u.loc}</loc><priority>${u.priority}</priority></url>`).join('\n') +
+    urls
+      .map((u) => `  <url><loc>${escapeXml(u.loc)}</loc><priority>${u.priority}</priority></url>`)
+      .join('\n') +
     `\n</urlset>\n`;
 
   return new Response(xml, {
