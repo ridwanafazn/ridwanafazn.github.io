@@ -216,7 +216,7 @@ src/
 - Gambar galeri: `srcset` `w_480/800/1600` + `sizes` (tile 30vw, mobile 46vw). Lightbox pakai `w_1600`.
 - Cover: 16/9 lebar (`md:-mx-6 lg:-mx-12`), **hanya jika `coverImage` ada**.
 - **Next project** di akhir halaman.
-- `line-length` diperbaiki (`max-w-[68ch]`), `edge-flush-cards` & eyebrow hilang.
+- `line-length` diperbaiki (sekarang `max-w-[60ch]`; `68ch` masih menghasilkan ~89 karakter per baris di Public Sans), `edge-flush-cards` & eyebrow hilang.
 - Debt: `/preview/portfolio/[slug]` belum ikut layout baru; ekstrak komponen bersama saat menyentuh preview.
 
 ### Fase D revamp — SELESAI (2026-11-16)
@@ -226,6 +226,17 @@ src/
 - **Hover preview ledger** (desktop, `(hover:hover) and (pointer:fine)`): gambar `w_480` mengikuti kursor, `pointer-events-none`, tanpa impact mobile.
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
+
+### Pilot palette olive + orange — BRANCH (2026-11-17)
+- Branch `design/olive-orange-pilot`, belum di-merge/deploy.
+- Token: kertas `#E2E5D6`, ink `#17180F`, olive `#4F5638` (struktur), orange `#C2410C` (signal), teks orange `#A8360E`, olive-soft `#C3C8A9` untuk permukaan gelap. Kertas sengaja hijau (G > R) agar tidak terbaca cream.
+- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me), hero (titik orange pada h1), link section, panah ledger saat hover, border atas HowIBuild, tint globe olive.
+- `FloatingNav` dilepas dari homepage: dot-nya menimpa panah ledger di layar <768px. Komponen tetap ada di repo.
+- Ledger: kotak thumbnail kosong tidak lagi digambar (hanya border kalau ada `previewImage`).
+- Baris narasi case study `max-w-68ch` → `60ch`; 68ch terbukti menghasilkan ~89 karakter per baris.
+- `impeccable detect`: 0 anti-pattern di `/`, `/projects`, `/about`, `/projects/zledger` (desktop 1280 dan mobile 390), sisa 3 advisory nomor HowIBuild.
+- Kontras: muted 5.8:1, olive 6.1:1, `signal-strong` 5.2:1, putih di `signal` 5.18:1.
+- Belum: cover 0/13, rewrite `/about`, diagram per project.
 
 ### Polish footer — SELESAI (2026-11-16)
 - “Built with Astro” disembunyikan di `max-width: 767px` (`hidden md:inline`), sehingga baris copyright di mobile tetap satu baris. Di desktop teks tetap tampil.

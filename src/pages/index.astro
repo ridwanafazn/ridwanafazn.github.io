@@ -3,7 +3,6 @@ export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
 import Badge from '../components/Badge.astro';
-import FloatingNav from '../components/FloatingNav.astro';
 import HowIBuild from '../components/HowIBuild.astro';
 import HeroGlobe from '../components/HeroGlobe.astro';
 import ProjectLedger from '../components/ProjectLedger.astro';
@@ -43,26 +42,25 @@ const personSchema = {
   image="/og.png"
 >
   <script type="application/ld+json" set:html={JSON.stringify(personSchema).replace(/</g, '\\u003c')} />
-  <FloatingNav />
 
   <header id="hero" class="relative mb-14 md:mb-20 scroll-mt-32">
     <HeroGlobe />
 
     <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
       <div class="lg:col-span-7">
-        <h1 class="font-bold text-[clamp(2.75rem,9vw,4.75rem)] leading-[0.98] tracking-tight text-on-background opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.1s_forwards]">
-          {profileData.role}.
+        <h1 class="hero-enter font-bold text-[clamp(2.75rem,9vw,4.75rem)] leading-[0.98] tracking-tight text-on-background" style="--hero-delay: 0.1s">
+          {profileData.role}<span class="text-signal" aria-hidden="true">.</span>
         </h1>
 
-        <p class="mt-6 max-w-[34ch] text-xl leading-snug text-on-surface-variant md:text-2xl opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.25s_forwards]">
+        <p class="hero-enter mt-6 max-w-[34ch] text-xl leading-snug text-on-surface-variant md:text-2xl" style="--hero-delay: 0.25s">
           {profileData.tagline}
         </p>
 
-        <p class="mt-6 hidden max-w-[56ch] text-[15px] leading-relaxed text-on-surface-variant md:block opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.35s_forwards]">
+        <p class="hero-enter mt-6 hidden max-w-[56ch] text-[15px] leading-relaxed text-on-surface-variant md:block" style="--hero-delay: 0.35s">
           {profileData.bio}
         </p>
 
-        <div class="mt-9 flex items-stretch opacity-0 animate-[fadeSlideUp_0.6s_cubic-bezier(0.22,1,0.36,1)_0.45s_forwards]">
+        <div class="hero-enter mt-9 flex items-stretch" style="--hero-delay: 0.45s">
           <a
             href="mailto:ridwanafzn@gmail.com"
             class="inline-flex items-center justify-center gap-2 border border-on-background bg-on-background px-4 py-3.5 font-mono text-[12px] font-bold uppercase tracking-wider text-background transition-colors duration-200 hover:border-accent hover:bg-accent md:px-7"
@@ -119,7 +117,7 @@ const personSchema = {
 
       <a
         href={projectsLink}
-        class="group flex shrink-0 items-center gap-1.5 font-mono text-[12px] font-bold uppercase tracking-wider text-accent transition-colors hover:text-accent-hover"
+        class="group flex shrink-0 items-center gap-1.5 font-mono text-[12px] font-bold uppercase tracking-wider text-signal-strong transition-colors hover:text-signal"
       >
         Lihat Semua
         <Icon name="arrow-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" />

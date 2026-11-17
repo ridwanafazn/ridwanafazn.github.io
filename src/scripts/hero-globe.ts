@@ -55,7 +55,7 @@ function buildParticleEarth(img: HTMLImageElement, density: number) {
   dctx.fill();
 
   const material = new THREE.PointsMaterial({
-    color: 0xffffff,
+    color: 0xf3f2e9,
     size: 0.05,
     map: new THREE.CanvasTexture(dot),
     transparent: true,
@@ -73,7 +73,7 @@ function buildAtmosphere() {
   const atmosphere = new THREE.Mesh(
     new THREE.SphereGeometry(GLOBE_RADIUS * 1.05, 64, 64),
     new THREE.ShaderMaterial({
-      uniforms: { color: { value: new THREE.Color(0x2a62b3) } },
+      uniforms: { color: { value: new THREE.Color(0x3e4429) } },
       vertexShader: `
         varying float intensity;
         void main() {
@@ -86,7 +86,7 @@ function buildAtmosphere() {
         uniform vec3 color;
         varying float intensity;
         void main() {
-          gl_FragColor = vec4(color * 1.5, intensity);
+          gl_FragColor = vec4(color, intensity * 0.7);
         }
       `,
       side: THREE.BackSide,
@@ -99,7 +99,7 @@ function buildAtmosphere() {
 
   const core = new THREE.Mesh(
     new THREE.SphereGeometry(GLOBE_RADIUS * 0.98, 64, 64),
-    new THREE.MeshBasicMaterial({ color: 0x020408, transparent: true, opacity: 0.95 }),
+    new THREE.MeshBasicMaterial({ color: 0x141509, transparent: true, opacity: 0.95 }),
   );
   group.add(core);
   return group;

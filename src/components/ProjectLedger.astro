@@ -46,7 +46,10 @@ const rowGrid = showIndex
           )}
 
           <span
-            class="hidden h-9 w-14 overflow-hidden border border-outline bg-surface-hover md:block"
+            class:list={[
+              'hidden h-9 w-14 overflow-hidden md:block',
+              project.previewImage ? 'border border-outline bg-surface-hover' : '',
+            ]}
             aria-hidden="true"
           >
             {project.previewImage && (
@@ -90,7 +93,7 @@ const rowGrid = showIndex
 
           <Icon
             name="arrow-right"
-            class="h-4 w-4 justify-self-end text-on-surface-variant transition-all duration-200 group-hover:translate-x-1 group-hover:text-accent"
+            class="h-4 w-4 justify-self-end text-on-surface-variant transition-all duration-200 group-hover:translate-x-1 group-hover:text-signal"
           />
         </a>
       </li>

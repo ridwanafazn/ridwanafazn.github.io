@@ -9,18 +9,21 @@ Sumber kebenaran: `src/styles/global.css` + `docs/DESIGN.md`. Dokumen ini adalah
 
 ## Arah
 
-"Ledger": arsip teknis dengan tipografi editorial. Kertas mineral, tinta, satu aksen verdigris. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
+"Ledger": arsip teknis dengan tipografi editorial. Kertas mineral olive, tinta, satu sinyal orange. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
 
-## Token (jangan tambah warna baru)
+## Token (dua peran, bukan dua hiasan)
 
 ```
-bg        #E4E6E1   ink        #111110   muted   #57554F
-surface   #F5F6F2   hover      #EFF1EB   rule    #CFD2C9 / #B4B8AC
-accent    #2C6558   accent-hov #234F45
+bg        #E2E5D6   ink        #17180F   muted   #565847
+surface   #F2F3E8   hover      #ECEEE1   rule    #CDD0BF / #B0B4A1
+olive     #4F5638   hover      #3E4429   soft    #C3C8A9  (di atas permukaan gelap)
+signal    #C2410C   hover      #9A3309   text    #A8360E
 display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 ```
 
-- Satu aksen. Aksen hanya untuk: state aktif, hover judul/tautan, underline, penanda kecil.
+- **Olive = struktur**: rule, label, diagram, hover judul, badge, state pasif-aktif yang tenang.
+- **Orange = sinyal**: maksimal ~5% permukaan. Hanya untuk state aktif, progress scroll, satu CTA per halaman, dan satu penanda kecil. Jangan dipakai sebagai latar section.
+- Teks orange kecil wajib `#A8360E` (5.2:1). `#C2410C` di atas kertas hanya 4.1:1 — aman untuk garis/fill, bukan body text.
 - Radius maksimum `rounded-lg` untuk kartu; tombol dan badge `rounded-none`/`rounded`.
 - Tanpa gradient, tanpa glow, tanpa `backdrop-blur` (kecuali overlay lightbox), tanpa shadow berwarna.
 
@@ -38,6 +41,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 10. `opacity: 0` sebagai default konten (harus lewat `html.js`).
 11. Material Symbols / icon font. Ikon = inline SVG dari `src/components/Icon.astro`.
 12. Warna di luar token; jangan pakai kelas `slate-*`, `gray-*`, `blue-*` langsung.
+13. Orange sebagai latar section besar atau lebih dari satu blok orange per layar.
 
 ## Struktur halaman
 
@@ -45,7 +49,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 - **Strip data**: hairline grid `gap-px bg-outline`, sel `bg-background`.
 - **Daftar proyek**: `ProjectLedger` (baris berindeks). Jangan kembali ke carousel/card grid.
 - **Case study**: h1 + meta plate (Peran/Stack/Tautan) → narasi → Hasil → Galeri → Proyek berikutnya.
-- **Narasi**: `longDescription` dipecah oleh `## Heading`; prosa `max-w-[68ch]`.
+- **Narasi**: `longDescription` dipecah oleh `## Heading`; prosa `max-w-[60ch]` (Public Sans sempit — 68ch menghasilkan ~89 karakter per baris).
 
 ## Motion
 

@@ -12,22 +12,34 @@
   --font-heading: "Bricolage Grotesque", "Public Sans", ui-sans-serif, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Skema Warna — "Ledger": mineral cool, tinta, verdigris */
-  --color-background: #E4E6E1;
-  --color-on-background: #111110;
-  --color-on-surface-variant: #57554F;
+  /* Skema Warna — "Ledger" v2: kertas mineral olive, tinta, satu sinyal orange.
+     Dua peran, bukan dua hiasan:
+     - accent  = struktur (rule, label, diagram, hover judul)
+     - signal  = penanda (state aktif, progress, satu CTA). Maksimal 5% permukaan. */
+  --color-background: #E2E5D6;
+  --color-on-background: #17180F;
+  --color-on-surface-variant: #565847;
 
   /* Latar Belakang Kartu (Solid, tanpa transparansi) */
-  --color-surface: #F5F6F2;
-  --color-surface-hover: #EFF1EB;
+  --color-surface: #F2F3E8;
+  --color-surface-hover: #ECEEE1;
 
   /* Border Solid */
-  --color-outline: #CFD2C9;
-  --color-outline-strong: #B4B8AC;
+  --color-outline: #CDD0BF;
+  --color-outline-strong: #B0B4A1;
 
-  /* Aksen Tunggal — Verdigris (patina tinta, bukan terracotta) */
-  --color-accent: #2C6558;
-  --color-accent-hover: #234F45;
+  /* Struktur — olive (menggantikan verdigris, bukan menambah hue baru) */
+  --color-accent: #4F5638;
+  --color-accent-hover: #3E4429;
+  --color-accent-soft: #C3C8A9; /* olive untuk permukaan gelap */
+
+  /* Sinyal — orange vermilion.
+     signal        : fill & garis; putih di atasnya 5.18:1
+     signal-hover  : fill saat hover
+     signal-strong : teks kecil di atas kertas 5.21:1 (signal mentah hanya 4.13:1) */
+  --color-signal: #C2410C;
+  --color-signal-hover: #9A3309;
+  --color-signal-strong: #A8360E;
 
   /* Semantik */
   --color-success: #1F6B43;
@@ -40,7 +52,7 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-on-background font-sans antialiased selection:bg-accent/20 selection:text-accent;
+    @apply bg-background text-on-background font-sans antialiased selection:bg-signal/20 selection:text-signal-strong;
     text-wrap: pretty;
   }
   h1, h2, h3 {
@@ -59,9 +71,9 @@
     letter-spacing: -0.01em;
   }
 
-  /* Fokus keyboard konsisten di seluruh situs */
+  /* Fokus keyboard konsisten di seluruh situs — sinyal orange */
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-signal);
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -179,6 +191,23 @@
   .reveal-delay-2 { transition-delay: 160ms; }
   .reveal-delay-3 { transition-delay: 240ms; }
   .reveal-delay-4 { transition-delay: 320ms; }
+
+  /* Hero: konten terlihat secara default; animasi hanya lapisan hiasan.
+     Delay diatur lewat --hero-delay. Reduced-motion mematikan total,
+     bukan mempersingkat, supaya tidak ada jendela konten tak terlihat. */
+  .hero-enter {
+    opacity: 1;
+    animation: fadeSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--hero-delay, 0s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-enter {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 @layer utilities {
@@ -344,7 +373,7 @@ html:not(.js) #mobile-menu-btn {
   display: block;
   height: 100%;
   width: 100%;
-  background: var(--color-accent);
+  background: var(--color-signal);
   transform: scaleX(0);
   transform-origin: 0 50%;
 }
@@ -388,11 +417,11 @@ html:not(.js) #mobile-menu-btn {
    ========================================= */
 
 html {
-  caret-color: var(--color-accent);
+  caret-color: var(--color-signal);
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--color-signal) 20%, transparent);
   color: var(--color-on-background);
 }
 

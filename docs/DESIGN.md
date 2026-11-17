@@ -23,16 +23,20 @@
 
 ```css
 @theme {
-  /* Warna — "Ledger": mineral cool, tinta, verdigris */
-  --color-background:        #E4E6E1;  /* page */
-  --color-on-background:     #111110;  /* ink */
-  --color-on-surface-variant:#57554F;
-  --color-surface:           #F5F6F2;
-  --color-surface-hover:     #EFF1EB;
-  --color-outline:           #CFD2C9;
-  --color-outline-strong:    #B4B8AC;
-  --color-accent:            #2C6558;  /* verdigris — satu-satunya aksen */
-  --color-accent-hover:      #234F45;
+  /* Warna — "Ledger" v2: kertas mineral olive, tinta, satu sinyal orange */
+  --color-background:        #E2E5D6;  /* page */
+  --color-on-background:     #17180F;  /* ink */
+  --color-on-surface-variant:#565847;
+  --color-surface:           #F2F3E8;
+  --color-surface-hover:     #ECEEE1;
+  --color-outline:           #CDD0BF;
+  --color-outline-strong:    #B0B4A1;
+  --color-accent:            #4F5638;  /* olive — struktur */
+  --color-accent-hover:      #3E4429;
+  --color-accent-soft:       #C3C8A9;  /* olive di atas permukaan gelap */
+  --color-signal:            #C2410C;  /* orange — fill/garis, putih 5.18:1 */
+  --color-signal-hover:      #9A3309;
+  --color-signal-strong:     #A8360E;  /* teks kecil di atas kertas 5.21:1 */
   --color-success:           #1F6B43;
   --color-warning:           #8A5A14;
   --color-error:             #9B2C1F;
@@ -44,6 +48,9 @@
 }
 ```
 
+**Dua peran, bukan dua hiasan.** Olive menggantikan verdigris untuk semua peran struktural (rule, label, hover judul, badge, diagram). Orange mengambil peran *signal* yang sebelumnya kosong: state aktif, progress scroll, satu CTA per halaman, dan satu penanda kecil. Batas pemakaian orange ±5% permukaan; tidak pernah sebagai latar section.
+
+- **Kontras:** `signal` `#C2410C` = 4.1:1 di atas kertas → hanya non-teks/teks besar. Teks kecil pakai `signal-strong` `#A8360E` (5.2:1). Putih di atas `signal` = 5.18:1.
 - **Radius:** kartu `rounded-lg` (8px), badge/tombol `rounded` (4px) / `rounded-md` (6px). Tidak ada `rounded-full` pada kartu.
 - **Shadow:** tidak dipakai di kartu public. Pemisah = border 1px, bukan bayangan.
 - **Surface:** solid. Tidak ada `backdrop-blur` di kartu. Blur hanya dipakai di **navbar public** dan **overlay lightbox** (intentional).
@@ -68,7 +75,7 @@
 
 | Route | Komponen | JS yang dimuat | Catatan |
 |---|---|---|---|
-| `/` | HeroGlobe, spec strip (Fokus/Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, Current Focus, HowIBuild, FloatingNav (mobile) | reveal + spec stagger (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024 |
+| `/` | HeroGlobe, spec strip (Fokus/Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, Current Focus, HowIBuild | reveal + spec stagger (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024. `FloatingNav` dilepas: dot-nya menimpa panah ledger di mobile |
 | `/about` | Timeline, pendidikan, sertifikasi, volunteering | reveal | tanpa kartu bersarang |
 | `/projects` | **ProjectLedger** 13 baris (indeks + thumbnail + role + stack: 2 item + `+N`) | reveal + hover preview | tanpa carousel; 13 proyek dalam satu layar; detail stack lengkap ada di halaman project |
 | `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), lightbox (hanya jika ada gambar), next-project | reveal + slider + lightbox | project tanpa gambar tidak merender lightbox/dialog kosong; OG jatuh ke `/og.png` |
@@ -163,11 +170,11 @@ Efek yang ada sekarang: hero `fadeSlideUp`, `.reveal` (kiri/kanan/belakang + sta
 ## 6. Roadmap visual
 
 Arah: **neo-minimalism / "clarity + one bold move"** — bukan neo-brutalism, bukan bento, bukan glass.
-Palet menghindari klaster "cream + serif + terracotta" (krem hangat diganti mineral cool, serif diganti grotesque, terracotta diganti verdigris).
+Palet menghindari klaster "cream + serif + terracotta": kertasnya mineral olive (bukan krem), hurufnya grotesque + mono (bukan serif), dan orange-nya vermilion pekat (bukan terracotta pudar). Orange tetap minoritas — kalau permukaannya didominasi orange, arahnya kembali ke template.
 
 Sudah dikerjakan di Fase A:
 1. ✅ Tipografi self-host + display Bricolage Grotesque; mono ≥ 12px.
-2. ✅ Aksen verdigris `#2C6558`; satu aksen.
+2. ✅ Dua peran warna: olive `#4F5638` (struktur) + signal orange `#C2410C` (penanda). Verdigris dipensiunkan.
 3. ✅ Ikon inline SVG, tanpa icon font.
 4. ✅ Motion hygiene + reveal progressive.
 
@@ -199,3 +206,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-11 | Public SSR + edge cache 60s (bukan prerender) | ✅ diterapkan |
 | 2026-11-15 | Koreksi dokumen ini ke kondisi aktual + adopsi skill `impeccable` | ✅ |
 | 2026-11-15 | **Fase A**: font self-host (Bricolage/Public Sans/JetBrains), palet mineral + verdigris, ikon inline SVG, reveal progressive, meta/OG/canonical, a11y 100 | ✅ |
+| 2026-11-17 | **Pilot palette**: kertas olive `#E6E6D8`, olive `#4F5638` sebagai struktur, orange `#C2410C`/`#A8360E` sebagai satu-satunya sinyal. Globe di-tint olive. Diterapkan di token global, navbar, hero, spec strip, ledger, HowIBuild | ✅ (branch `design/olive-orange-pilot`) |
