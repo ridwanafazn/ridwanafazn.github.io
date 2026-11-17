@@ -2,8 +2,7 @@
 export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
-import Badge from '../components/Badge.astro';
-import HowIBuild from '../components/HowIBuild.astro';
+import BrandIcon from '../components/BrandIcon.astro';
 import HeroGlobe from '../components/HeroGlobe.astro';
 import ProjectLedger from '../components/ProjectLedger.astro';
 import Icon from '../components/Icon.astro';
@@ -84,20 +83,16 @@ const personSchema = {
   </header>
 
   <section aria-label="Ringkasan profil" class="mb-16 md:mb-20">
-    <dl class="grid grid-cols-2 gap-px bg-outline md:grid-cols-4">
-      <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
-        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Fokus</dt>
-        <dd class="mt-2 text-[15px] leading-snug text-on-background">{profileData.currentFocus.title}</dd>
-      </div>
+    <dl class="grid grid-cols-1 gap-px bg-outline sm:grid-cols-3">
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Sejak</dt>
         <dd class="mt-2 font-mono text-[15px] tabular-nums text-on-background">{since}</dd>
       </div>
-      <div class="spec-cell col-span-2 min-w-0 bg-background p-5 md:col-span-1 md:p-6">
+      <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Stack</dt>
         <dd class="mt-2 font-mono text-[12px] uppercase tracking-normal text-on-background">{stackSummary}</dd>
       </div>
-      <div class="spec-cell col-span-2 min-w-0 bg-background p-5 pr-12 md:col-span-1 md:p-6">
+      <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Kontak</dt>
         <dd class="mt-2 text-[13px] md:text-[15px]">
           <a
@@ -148,29 +143,21 @@ const personSchema = {
       )}
       {skillsData.map((skillGroup, i) => (
         <div class={`reveal border-b border-outline py-6 md:py-7 ${i % 2 === 0 ? 'from-left md:pr-8' : 'from-right md:border-l md:border-outline md:pl-8'} ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
-          <h3 class="mb-4 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">
+          <h3 class="mb-4 flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">
+            <span class="h-1.5 w-1.5 bg-signal" aria-hidden="true"></span>
             {skillGroup.category}
           </h3>
-          <div class="flex flex-wrap gap-2">
+          <ul class="flex flex-wrap gap-x-5 gap-y-2.5">
             {skillGroup.items.map((item) => (
-              <Badge text={item} />
+              <li class="flex items-center gap-2 font-mono text-[12px] text-on-surface-variant">
+                <BrandIcon name={item} class="h-4 w-4 shrink-0 text-on-background" />
+                <span class="whitespace-nowrap">{item}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       ))}
     </div>
   </section>
 
-  <section class="mb-16 md:mb-20 relative z-10">
-    <div class="reveal from-behind grid gap-6 border-y border-outline py-8 md:grid-cols-12 md:gap-10 md:py-10">
-      <h2 class="text-2xl tracking-tight text-on-background md:col-span-4 md:text-3xl">
-        {profileData.currentFocus.title}
-      </h2>
-      <p class="max-w-[62ch] text-[15px] leading-relaxed text-on-surface-variant md:col-span-8">
-        {profileData.currentFocus.description}
-      </p>
-    </div>
-  </section>
-
-  <HowIBuild data={profileData.howIBuild} />
 </Layout>

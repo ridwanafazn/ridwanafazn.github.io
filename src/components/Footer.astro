@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
 
 const currentYear = new Date().getFullYear();
 ---
@@ -14,13 +15,16 @@ const currentYear = new Date().getFullYear();
     
     <div class="flex gap-6 font-mono text-[12px] uppercase tracking-widest text-on-surface-variant font-semibold">
 
-      <a href="https://www.linkedin.com/in/ridwanafazn/" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors duration-200">
+      <a href="https://www.linkedin.com/in/ridwanafazn/" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-1.5 hover:text-accent transition-colors duration-200">
+        <BrandIcon name="LinkedIn" class="h-3.5 w-3.5 text-on-surface-variant transition-colors group-hover:text-signal" />
         LinkedIn
       </a>
-      <a href="https://github.com/ridwanafazn" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors duration-200">
+      <a href="https://github.com/ridwanafazn" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-1.5 hover:text-accent transition-colors duration-200">
+        <BrandIcon name="GitHub" class="h-3.5 w-3.5 text-on-surface-variant transition-colors group-hover:text-signal" />
         GitHub
       </a>
-      <a href="https://www.instagram.com/ridwanafazn/" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors duration-200">
+      <a href="https://www.instagram.com/ridwanafazn/" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-1.5 hover:text-accent transition-colors duration-200">
+        <BrandIcon name="Instagram" class="h-3.5 w-3.5 text-on-surface-variant transition-colors group-hover:text-signal" />
         Instagram
       </a>
     </div>

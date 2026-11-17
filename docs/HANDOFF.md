@@ -231,7 +231,7 @@ src/
 - Branch `design/olive-orange-pilot` di-merge fast-forward ke `main`, push, dan deploy ke Worker versi `a495ad28-0ea5-4f36-9ae4-774f9b6f397d`.
 - Riwayat: pilot v1 (kertas olive tint) dan v2 (olive `#35421C`) ditolak. **Olive dihapus** karena sulit ditempatkan — tidak cukup netral untuk struktur, tidak cukup kuat sebagai aksen.
 - **Final**: latar `#F8F7F4`, ink `#14160F`, muted `#5A5E4E`, surface `#F1F2EC`, rule `#D5D8CD`/`#BFC4B4`. `accent` = ink (struktur netral). Orange vivid `#D9480F` (border/ikon/teks besar), burnt `#C2410C` (teks kecil + fill CTA), hover `#9A3309`.
-- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me pakai `signal-strong`), hero (titik orange pada h1), link section, panah ledger saat hover, HowIBuild `bg-accent` (ink) + border atas **6px** `signal`, globe dinetralkan (tanpa tint olive).
+- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me pakai `signal-strong`), hero (titik orange pada h1), link section, panah ledger saat hover, globe dinetralkan (tanpa tint olive).
 - `FloatingNav` dilepas dari homepage: dot-nya menimpa panah ledger di layar <768px. Komponen tetap ada di repo.
 - Ledger: kotak thumbnail kosong tidak lagi digambar (hanya border kalau ada `previewImage`).
 - Baris narasi case study `max-w-68ch` → `60ch`; 68ch terbukti menghasilkan ~89 karakter per baris.
@@ -239,6 +239,14 @@ src/
 - Kontras: ink 17.0:1, muted 6.2:1, `signal-strong` 4.83:1, putih di `signal-strong` 5.18:1. `signal` vivid 4.01:1 → hanya non-teks/teks besar.
 - Readability: nomor menu mobile (`01 //`, `02 //`, `03 //`) tidak lagi memakai `opacity-60`; sebelumnya efektif ~2.7:1, sekarang 6.2:1.
 - Belum: cover 0/13, rewrite `/about`, diagram per project.
+
+### Landing cleanup — SELESAI (2026-11-17)
+- Globe: shader atmosphere (glow aditif) dan CSS mask fade dihapus. Globe sekarang solid, berhenti tepat di garis atas spec strip; tidak ada kabut putih.
+- Tech Stack: pill `Badge` diganti **ikon brand Simple Icons + label 12px**; setiap kategori punya marker orange 6px. Ikon konsep non-brand memakai garis (network/link/queue/spark/tool/code).
+- Current Focus ("Finz app" + deskripsi) dan HowIBuild ("Dari ide ke produksi" + Spec/Design/Build/Konteks) dihapus dari homepage. Spec strip kini 3 sel: Sejak / Stack / Kontak.
+- Footer: ikon LinkedIn / GitHub / Instagram 14px di kiri teks.
+- Komponen `HowIBuild.astro`, `Badge` (masih dipakai preview), dan data `howIBuild`/`currentFocus` tetap ada di repo/DB tetapi tidak dirender di homepage.
+- Deploy: `<isi setelah deploy>`.
 
 ### Polish footer — SELESAI (2026-11-16)
 - “Built with Astro” disembunyikan di `max-width: 767px` (`hidden md:inline`), sehingga baris copyright di mobile tetap satu baris. Di desktop teks tetap tampil.

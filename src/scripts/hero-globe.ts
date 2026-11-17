@@ -67,42 +67,13 @@ function buildParticleEarth(img: HTMLImageElement, density: number) {
   return points;
 }
 
-function buildAtmosphere() {
-  const group = new THREE.Group();
-
-  const atmosphere = new THREE.Mesh(
-    new THREE.SphereGeometry(GLOBE_RADIUS * 1.05, 64, 64),
-    new THREE.ShaderMaterial({
-      uniforms: { color: { value: new THREE.Color(0x2f302b) } },
-      vertexShader: `
-        varying float intensity;
-        void main() {
-          vec3 vNormal = normalize(normalMatrix * normal);
-          intensity = pow(0.6 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.5);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform vec3 color;
-        varying float intensity;
-        void main() {
-          gl_FragColor = vec4(color, intensity * 0.7);
-        }
-      `,
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-      depthWrite: false,
-    }),
-  );
-  group.add(atmosphere);
-
-  const core = new THREE.Mesh(
+// Bola solid tanpa atmosphere. Versi lama memakai shader glow additif yang
+// menghasilkan kabut putih di sekitar globe; sekarang hanya core + titik daratan.
+function buildCore() {
+  return new THREE.Mesh(
     new THREE.SphereGeometry(GLOBE_RADIUS * 0.98, 64, 64),
-    new THREE.MeshBasicMaterial({ color: 0x111210, transparent: true, opacity: 0.95 }),
+    new THREE.MeshBasicMaterial({ color: 0x111210 }),
   );
-  group.add(core);
-  return group;
 }
 
 type GlobeInstance = { canvas: HTMLCanvasElement; relayout: () => void; destroy: () => void };
@@ -155,7 +126,7 @@ export function initHeroGlobe() {
 
   const earthGroup = new THREE.Group();
   earthGroup.rotation.y = INDONESIA_ROTATION;
-  earthGroup.add(buildAtmosphere());
+  earthGroup.add(buildCore());
   scene.add(earthGroup);
 
   const controls = new OrbitControls(camera, surface);

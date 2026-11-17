@@ -52,7 +52,7 @@
 
 - Orange punya dua nilai: `signal` `#D9480F` (vivid) untuk border 6px, progress, ikon, dan teks display ≥24px; `signal-strong` `#C2410C` untuk teks kecil dan fill CTA.
 - **Kontras:** ink 17.0:1, muted 6.2:1, `signal-strong` 4.83:1, putih di atas `signal-strong` 5.18:1. `signal` vivid hanya 4.01:1 → jangan untuk teks kecil atau tombol; putih di atasnya 4.30:1 (gagal 4.5).
-- **Bidang gelap:** band HowIBuild memakai `bg-accent` (ink) + border atas `6px` `signal`. Ini satu-satunya bidang gelap besar; jangan menambah bidang kedua.
+- **Bidang gelap:** homepage tidak punya band besar; globe adalah satu-satunya massa gelap. Untuk section baru, maksimal satu bidang gelap per halaman.
 - **Radius:** kartu `rounded-lg` (8px), badge/tombol `rounded` (4px) / `rounded-md` (6px). Tidak ada `rounded-full` pada kartu.
 - **Shadow:** tidak dipakai di kartu public. Pemisah = border 1px, bukan bayangan.
 - **Surface:** solid. Tidak ada `backdrop-blur` di kartu. Blur hanya dipakai di **navbar public** dan **overlay lightbox** (intentional).
@@ -77,7 +77,7 @@
 
 | Route | Komponen | JS yang dimuat | Catatan |
 |---|---|---|---|
-| `/` | HeroGlobe, spec strip (Fokus/Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, Current Focus, HowIBuild | reveal + spec stagger (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024. `FloatingNav` dilepas: dot-nya menimpa panah ledger di mobile |
+| `/` | HeroGlobe, spec strip (Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack | reveal + spec stagger (globe hanya ≥1024px & idle) | globe 559 KB **tidak** dimuat di mobile/<1024. `FloatingNav`, Current Focus, dan HowIBuild dihapus dari homepage. Globe solid tanpa atmosphere/mask. Tech Stack memakai ikon brand + label 12px |
 | `/about` | Timeline, pendidikan, sertifikasi, volunteering | reveal | tanpa kartu bersarang |
 | `/projects` | **ProjectLedger** 13 baris (indeks + thumbnail + role + stack: 2 item + `+N`) | reveal + hover preview | tanpa carousel; 13 proyek dalam satu layar; detail stack lengkap ada di halaman project |
 | `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), lightbox (hanya jika ada gambar), next-project | reveal + slider + lightbox | project tanpa gambar tidak merender lightbox/dialog kosong; OG jatuh ke `/og.png` |
@@ -209,4 +209,5 @@ Sudah dikerjakan di Fase B:
 | 2026-11-15 | Koreksi dokumen ini ke kondisi aktual + adopsi skill `impeccable` | ✅ |
 | 2026-11-15 | **Fase A**: font self-host (Bricolage/Public Sans/JetBrains), palet mineral + verdigris, ikon inline SVG, reveal progressive, meta/OG/canonical, a11y 100 | ✅ |
 | 2026-11-17 | **Pilot palette v1**: kertas olive tint, olive `#4F5638`, orange `#C2410C`. Ditolak — terbaca pucet karena kertas berwarna menyerap kedua aksen | ❌ |
-| 2026-11-17 | **Cold Steel**: latar `#F8F7F4`, tinta `#14160F`, orange `#D9480F` (non-teks) + `#C2410C` (teks/CTA). **Olive dihapus** — sulit ditempatkan; band HowIBuild kembali ink + border 6px | ✅ (branch `design/olive-orange-pilot`) |
+| 2026-11-17 | **Cold Steel**: latar `#F8F7F4`, tinta `#14160F`, orange `#D9480F` (non-teks) + `#C2410C` (teks/CTA). **Olive dihapus** — sulit ditempatkan; band HowIBuild kembali ink + border 6px | ✅ |
+| 2026-11-17 | **Landing cleanup**: atmosphere + mask globe dihapus (globe solid), Tech Stack jadi ikon brand + label kecil, Current Focus & HowIBuild dihapus, spec strip jadi 3 sel, footer memakai ikon sosial | ✅ |

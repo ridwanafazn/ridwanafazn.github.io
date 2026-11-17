@@ -29,15 +29,12 @@
       right: calc((100% - 100vw) / 2);
       /* Naik ke belakang navbar dan turun ke belakang spec strip */
       top: -7rem;
-      bottom: -7rem;
+      /* Berhenti tepat di garis atas spec strip (hero mb-20 = 80px). */
+      bottom: -5rem;
       height: auto;
-      /* Tanpa tepi keras: memudar di kiri dan sebelum spec strip */
-      --globe-fade-x: linear-gradient(to right, transparent 0%, #000 30%);
-      --globe-fade-y: linear-gradient(to bottom, #000 0%, #000 45%, transparent 92%);
-      -webkit-mask-image: var(--globe-fade-x), var(--globe-fade-y);
-      -webkit-mask-composite: source-in;
-      mask-image: var(--globe-fade-x), var(--globe-fade-y);
-      mask-composite: intersect;
+      /* Tanpa mask: tidak ada gradasi putih. Globe dipotong bersih oleh
+         panel spec strip yang opaque di bawahnya. */
+      mask-image: none;
     }
 
     #hero-globe-wrap:active {

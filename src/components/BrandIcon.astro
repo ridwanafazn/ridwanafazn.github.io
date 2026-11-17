@@ -1,0 +1,85 @@
+---
+// Ikon brand (Simple Icons) + fallback garis untuk konsep non-brand.
+// Dekoratif: selalu aria-hidden. Ukuran diatur lewat class.
+import { brandIconPaths } from './brand-icons';
+
+interface Props {
+  name: string;
+  class?: string;
+}
+
+const { name, class: className = 'h-4 w-4' } = Astro.props;
+
+const keyByName: Record<string, string> = {
+  rust: 'rust',
+  golang: 'go',
+  'node.js': 'nodedotjs',
+  laravel: 'laravel',
+  python: 'python',
+  java: 'openjdk',
+  'google cloud platform': 'googlecloud',
+  docker: 'docker',
+  rabbitmq: 'rabbitmq',
+  'next.js': 'nextdotjs',
+  'nuxt.js': 'nuxt',
+  astro: 'astro',
+  'tailwind css': 'tailwindcss',
+  react: 'react',
+  'vue.js': 'vuedotjs',
+  svelte: 'svelte',
+  linkedin: 'linkedin',
+  github: 'github',
+  instagram: 'instagram',
+};
+
+const generic: Record<string, string> = {
+  spark: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
+  tool: '<path d="M14.5 6.5a4 4 0 0 0 5 5l-9 9a2.1 2.1 0 0 1-3-3z"/><path d="M6 6l2 2"/>',
+  queue: '<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/><circle cx="18" cy="17" r="1.5"/>',
+  network:
+    '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8"/><path d="M7 8l4 8"/><path d="M17 8l-4 8"/>',
+  link: '<path d="M10 13a4.5 4.5 0 0 0 6.4 0l2-2a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 11a4.5 4.5 0 0 0-6.4 0l-2 2a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
+  code: '<path d="M9 7l-4 5 4 5"/><path d="M15 7l4 5-4 5"/>',
+};
+
+const key = keyByName[name.toLowerCase()] ?? name.toLowerCase();
+const brand = brandIconPaths[key];
+
+const genericKey = /\bai\b|llm/i.test(name)
+  ? 'spark'
+  : /tool/i.test(name)
+    ? 'tool'
+    : /message|broker|queue/i.test(name)
+      ? 'queue'
+      : /distributed|websocket|system/i.test(name)
+        ? 'network'
+        : /api|rest|integration|third-party/i.test(name)
+          ? 'link'
+          : 'code';
+---
+
+{
+  brand ? (
+    <svg
+      class={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      set:html={brand}
+    />
+  ) : (
+    <svg
+      class={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      set:html={generic[genericKey]}
+    />
+  )
+}
