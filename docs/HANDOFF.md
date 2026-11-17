@@ -237,6 +237,7 @@ src/
 - Baris narasi case study `max-w-68ch` → `60ch`; 68ch terbukti menghasilkan ~89 karakter per baris.
 - `impeccable detect`: 0 anti-pattern di `/`, `/projects`, `/about`, `/projects/zledger` (desktop 1280 dan mobile 390), sisa 3 advisory nomor HowIBuild.
 - Kontras: ink 17.0:1, muted 6.2:1, `signal-strong` 4.83:1, putih di `signal-strong` 5.18:1. `signal` vivid 4.01:1 → hanya non-teks/teks besar.
+- Readability: nomor menu mobile (`01 //`, `02 //`, `03 //`) tidak lagi memakai `opacity-60`; sebelumnya efektif ~2.7:1, sekarang 6.2:1.
 - Belum: cover 0/13, rewrite `/about`, diagram per project.
 
 ### Polish footer — SELESAI (2026-11-16)
