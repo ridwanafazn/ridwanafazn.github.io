@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `752fe005-0ae9-4cd9-9434-901afd0a4651` (2026-11-17, GitHub heatmap) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `162f3202-f65e-4d12-a230-27f980557140` (2026-11-17, GitHub heatmap) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -254,7 +254,7 @@ src/
 - Cache 6 jam di `caches.default` (key sintetis) + memori untuk dev. Fetch timeout 2.5 dtk. Fetch/parse gagal → section tidak dirender, halaman tetap 200.
 - UI: heatmap 5 langkah (`outline` → `on-background`) + orange `signal` hanya level tertinggi; total 12 bulan dalam mono 12px; link GitHub. Mobile: scroll horizontal, mulai dari minggu terbaru (`direction: rtl`), hint “Geser”.
 - Kalau markup GitHub berubah: ganti ke GraphQL + PAT read-only `GITHUB_TOKEN`; fallback saat ini hanya menyembunyikan section.
-- Deploy: `752fe005-0ae9-4cd9-9434-901afd0a4651` (2026-11-17). Judul section `GitHub`; legenda hanya 5 kotak (tanpa label Sedikit/Banyak). Verifikasi live: 407 kontribusi, 368 `<rect>`, 6 sel orange.
+- Deploy: `162f3202-f65e-4d12-a230-27f980557140` (2026-11-17). Judul section `GitHub`; link kanan `@ridwanafazn`; legenda hanya 5 kotak (tanpa label Sedikit/Banyak). Verifikasi live: 407 kontribusi, 368 `<rect>`, 6 sel orange.
 
 ### Polish footer — SELESAI (2026-11-16)
 - “Built with Astro” disembunyikan di `max-width: 767px` (`hidden md:inline`), sehingga baris copyright di mobile tetap satu baris. Di desktop teks tetap tampil.
