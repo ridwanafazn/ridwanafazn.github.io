@@ -23,20 +23,20 @@
 
 ```css
 @theme {
-  /* Warna — "Ledger" v2: kertas mineral olive, tinta, satu sinyal orange */
-  --color-background:        #E2E5D6;  /* page */
-  --color-on-background:     #17180F;  /* ink */
-  --color-on-surface-variant:#565847;
-  --color-surface:           #F2F3E8;
-  --color-surface-hover:     #ECEEE1;
-  --color-outline:           #CDD0BF;
-  --color-outline-strong:    #B0B4A1;
-  --color-accent:            #4F5638;  /* olive — struktur */
-  --color-accent-hover:      #3E4429;
-  --color-accent-soft:       #C3C8A9;  /* olive di atas permukaan gelap */
-  --color-signal:            #C2410C;  /* orange — fill/garis, putih 5.18:1 */
-  --color-signal-hover:      #9A3309;
-  --color-signal-strong:     #A8360E;  /* teks kecil di atas kertas 5.21:1 */
+  /* Warna — "Cold Steel": putih netral, olive dalam, satu sinyal orange */
+  --color-background:        #F8F7F4;  /* page */
+  --color-on-background:     #14160F;  /* ink — 17.0:1 */
+  --color-on-surface-variant:#5A5E4E;  /* 6.2:1 */
+  --color-surface:           #F1F2EC;
+  --color-surface-hover:     #EAECE4;
+  --color-outline:           #D5D8CD;
+  --color-outline-strong:    #BFC4B4;
+  --color-accent:            #35421C;  /* olive — struktur; 10.1:1 di putih */
+  --color-accent-hover:      #273214;
+  --color-accent-soft:       #C3C8A9;  /* olive terang di atas field gelap */
+  --color-signal:            #D9480F;  /* orange vivid — border/ikon/teks besar, 4.0:1 */
+  --color-signal-hover:      #9A3309;  /* hover fill; putih 7.36:1 */
+  --color-signal-strong:     #C2410C;  /* teks kecil & fill CTA; 4.83:1, putih 5.18:1 */
   --color-success:           #1F6B43;
   --color-warning:           #8A5A14;
   --color-error:             #9B2C1F;
@@ -48,9 +48,10 @@
 }
 ```
 
-**Dua peran, bukan dua hiasan.** Olive menggantikan verdigris untuk semua peran struktural (rule, label, hover judul, badge, diagram). Orange mengambil peran *signal* yang sebelumnya kosong: state aktif, progress scroll, satu CTA per halaman, dan satu penanda kecil. Batas pemakaian orange ±5% permukaan; tidak pernah sebagai latar section.
+**Dua peran, bukan dua hiasan.** Olive `#35421C` adalah struktur dan bidang: rule, label, chip, field band HowIBuild. Orange punya dua nilai: `signal` `#D9480F` yang vivid untuk non-teks (border 6px, progress, ikon, teks display ≥24px) dan `signal-strong` `#C2410C` untuk teks kecil serta fill CTA. Latar putih netral `#F8F7F4` — bukan kertas berwarna — supaya kedua warna ini yang membawa karakter.
 
-- **Kontras:** `signal` `#C2410C` = 4.1:1 di atas kertas → hanya non-teks/teks besar. Teks kecil pakai `signal-strong` `#A8360E` (5.2:1). Putih di atas `signal` = 5.18:1.
+- **Kontras:** ink 17.0:1, olive 10.1:1, muted 6.2:1, `signal-strong` 4.83:1, putih di atas `signal-strong` 5.18:1. `signal` vivid hanya 4.01:1 → jangan untuk teks kecil atau tombol; putih di atasnya 4.30:1 (gagal 4.5).
+- **Bidang olive:** band HowIBuild memakai `bg-accent` + border atas `6px` `signal`. Ini satu-satunya bidang gelap besar; jangan menambah bidang kedua.
 - **Radius:** kartu `rounded-lg` (8px), badge/tombol `rounded` (4px) / `rounded-md` (6px). Tidak ada `rounded-full` pada kartu.
 - **Shadow:** tidak dipakai di kartu public. Pemisah = border 1px, bukan bayangan.
 - **Surface:** solid. Tidak ada `backdrop-blur` di kartu. Blur hanya dipakai di **navbar public** dan **overlay lightbox** (intentional).
@@ -170,11 +171,11 @@ Efek yang ada sekarang: hero `fadeSlideUp`, `.reveal` (kiri/kanan/belakang + sta
 ## 6. Roadmap visual
 
 Arah: **neo-minimalism / "clarity + one bold move"** — bukan neo-brutalism, bukan bento, bukan glass.
-Palet menghindari klaster "cream + serif + terracotta": kertasnya mineral olive (bukan krem), hurufnya grotesque + mono (bukan serif), dan orange-nya vermilion pekat (bukan terracotta pudar). Orange tetap minoritas — kalau permukaannya didominasi orange, arahnya kembali ke template.
+Palet menghindari klaster "cream + serif + terracotta": kertasnya putih netral `#F8F7F4` (bukan krem), hurufnya grotesque + mono (bukan serif), olive-nya dalam `#35421C`, dan orange-nya vermilion `#D9480F`/`#C2410C` (bukan terracotta pudar). Olive boleh menjadi bidang; orange tetap aksen, bukan latar halaman.
 
 Sudah dikerjakan di Fase A:
 1. ✅ Tipografi self-host + display Bricolage Grotesque; mono ≥ 12px.
-2. ✅ Dua peran warna: olive `#4F5638` (struktur) + signal orange `#C2410C` (penanda). Verdigris dipensiunkan.
+2. ✅ Dua peran warna: olive `#35421C` (struktur + field) + orange `#D9480F`/`#C2410C` (penanda). Verdigris dipensiunkan.
 3. ✅ Ikon inline SVG, tanpa icon font.
 4. ✅ Motion hygiene + reveal progressive.
 
@@ -206,4 +207,5 @@ Sudah dikerjakan di Fase B:
 | 2026-11-11 | Public SSR + edge cache 60s (bukan prerender) | ✅ diterapkan |
 | 2026-11-15 | Koreksi dokumen ini ke kondisi aktual + adopsi skill `impeccable` | ✅ |
 | 2026-11-15 | **Fase A**: font self-host (Bricolage/Public Sans/JetBrains), palet mineral + verdigris, ikon inline SVG, reveal progressive, meta/OG/canonical, a11y 100 | ✅ |
-| 2026-11-17 | **Pilot palette**: kertas olive `#E6E6D8`, olive `#4F5638` sebagai struktur, orange `#C2410C`/`#A8360E` sebagai satu-satunya sinyal. Globe di-tint olive. Diterapkan di token global, navbar, hero, spec strip, ledger, HowIBuild | ✅ (branch `design/olive-orange-pilot`) |
+| 2026-11-17 | **Pilot palette v1**: kertas olive tint, olive `#4F5638`, orange `#C2410C`. Ditolak — terbaca pucet karena kertas berwarna menyerap kedua aksen | ❌ |
+| 2026-11-17 | **Cold Steel (final)**: latar `#F8F7F4` netral, olive dalam `#35421C`, orange vivid `#D9480F` untuk non-teks + burnt `#C2410C` untuk teks/CTA. Band HowIBuild jadi field olive dengan border 6px | ✅ (branch `design/olive-orange-pilot`) |

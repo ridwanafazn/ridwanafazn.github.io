@@ -12,34 +12,34 @@
   --font-heading: "Bricolage Grotesque", "Public Sans", ui-sans-serif, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Skema Warna — "Ledger" v2: kertas mineral olive, tinta, satu sinyal orange.
+  /* Skema Warna — "Cold Steel": putih netral, olive dalam, satu sinyal orange.
      Dua peran, bukan dua hiasan:
-     - accent  = struktur (rule, label, diagram, hover judul)
-     - signal  = penanda (state aktif, progress, satu CTA). Maksimal 5% permukaan. */
-  --color-background: #E2E5D6;
-  --color-on-background: #17180F;
-  --color-on-surface-variant: #565847;
+     - accent  = struktur (rule, label, field, hover judul)
+     - signal  = penanda. Orange vivid untuk non-teks; orange burnt untuk teks/fill. */
+  --color-background: #F8F7F4;
+  --color-on-background: #14160F;
+  --color-on-surface-variant: #5A5E4E;
 
   /* Latar Belakang Kartu (Solid, tanpa transparansi) */
-  --color-surface: #F2F3E8;
-  --color-surface-hover: #ECEEE1;
+  --color-surface: #F1F2EC;
+  --color-surface-hover: #EAECE4;
 
   /* Border Solid */
-  --color-outline: #CDD0BF;
-  --color-outline-strong: #B0B4A1;
+  --color-outline: #D5D8CD;
+  --color-outline-strong: #BFC4B4;
 
-  /* Struktur — olive (menggantikan verdigris, bukan menambah hue baru) */
-  --color-accent: #4F5638;
-  --color-accent-hover: #3E4429;
-  --color-accent-soft: #C3C8A9; /* olive untuk permukaan gelap */
+  /* Struktur — olive dalam. 10.07:1 di atas putih. */
+  --color-accent: #35421C;
+  --color-accent-hover: #273214;
+  --color-accent-soft: #C3C8A9; /* olive terang untuk permukaan gelap */
 
-  /* Sinyal — orange vermilion.
-     signal        : fill & garis; putih di atasnya 5.18:1
-     signal-hover  : fill saat hover
-     signal-strong : teks kecil di atas kertas 5.21:1 (signal mentah hanya 4.13:1) */
-  --color-signal: #C2410C;
+  /* Sinyal — orange.
+     signal        : border, garis, ikon, teks besar (4.01:1 di putih; non-teks OK)
+     signal-hover  : fill saat hover (putih 7.36:1)
+     signal-strong : teks kecil & fill CTA (4.83:1 di putih; putih di atasnya 5.18:1) */
+  --color-signal: #D9480F;
   --color-signal-hover: #9A3309;
-  --color-signal-strong: #A8360E;
+  --color-signal-strong: #C2410C;
 
   /* Semantik */
   --color-success: #1F6B43;

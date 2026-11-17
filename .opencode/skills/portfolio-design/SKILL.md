@@ -9,21 +9,21 @@ Sumber kebenaran: `src/styles/global.css` + `docs/DESIGN.md`. Dokumen ini adalah
 
 ## Arah
 
-"Ledger": arsip teknis dengan tipografi editorial. Kertas mineral olive, tinta, satu sinyal orange. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
+"Cold Steel": arsip teknis dengan tipografi editorial. Putih netral, olive dalam, satu sinyal orange. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
 
 ## Token (dua peran, bukan dua hiasan)
 
 ```
-bg        #E2E5D6   ink        #17180F   muted   #565847
-surface   #F2F3E8   hover      #ECEEE1   rule    #CDD0BF / #B0B4A1
-olive     #4F5638   hover      #3E4429   soft    #C3C8A9  (di atas permukaan gelap)
-signal    #C2410C   hover      #9A3309   text    #A8360E
+bg        #F8F7F4   ink        #14160F   muted   #5A5E4E
+surface   #F1F2EC   hover      #EAECE4   rule    #D5D8CD / #BFC4B4
+olive     #35421C   hover      #273214   soft    #C3C8A9  (di atas field gelap)
+signal    #D9480F   hover      #9A3309   text    #C2410C
 display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 ```
 
-- **Olive = struktur**: rule, label, diagram, hover judul, badge, state pasif-aktif yang tenang.
-- **Orange = sinyal**: maksimal ~5% permukaan. Hanya untuk state aktif, progress scroll, satu CTA per halaman, dan satu penanda kecil. Jangan dipakai sebagai latar section.
-- Teks orange kecil wajib `#A8360E` (5.2:1). `#C2410C` di atas kertas hanya 4.1:1 — aman untuk garis/fill, bukan body text.
+- **Olive = struktur dan bidang**: rule, label, chip, hover judul, dan field band HowIBuild (`bg-accent`).
+- **Orange = sinyal**: `#D9480F` hanya untuk non-teks/teks besar; `#C2410C` untuk teks kecil dan fill CTA. Jangan pakai vivid orange untuk teks 12px (4.30:1 dengan putih). Jangan jadikan orange latar halaman.
+- `#D9480F` di atas putih 4.01:1; `#C2410C` 4.83:1; putih di atas `#C2410C` 5.18:1. Jangan turunkan latar ke krem — itu yang membuat palet terbaca pucet.
 - Radius maksimum `rounded-lg` untuk kartu; tombol dan badge `rounded-none`/`rounded`.
 - Tanpa gradient, tanpa glow, tanpa `backdrop-blur` (kecuali overlay lightbox), tanpa shadow berwarna.
 
@@ -41,7 +41,8 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 10. `opacity: 0` sebagai default konten (harus lewat `html.js`).
 11. Material Symbols / icon font. Ikon = inline SVG dari `src/components/Icon.astro`.
 12. Warna di luar token; jangan pakai kelas `slate-*`, `gray-*`, `blue-*` langsung.
-13. Orange sebagai latar section besar atau lebih dari satu blok orange per layar.
+13. Orange sebagai latar halaman; satu bidang olive besar (band) sudah cukup.
+14. Orange vivid `#D9480F` untuk teks kecil atau tombol berteks putih.
 
 ## Struktur halaman
 

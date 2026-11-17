@@ -227,15 +227,16 @@ src/
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
 
-### Pilot palette olive + orange — BRANCH (2026-11-17)
+### Palette "Cold Steel" olive + orange — BRANCH (2026-11-17)
 - Branch `design/olive-orange-pilot`, belum di-merge/deploy.
-- Token: kertas `#E2E5D6`, ink `#17180F`, olive `#4F5638` (struktur), orange `#C2410C` (signal), teks orange `#A8360E`, olive-soft `#C3C8A9` untuk permukaan gelap. Kertas sengaja hijau (G > R) agar tidak terbaca cream.
-- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me), hero (titik orange pada h1), link section, panah ledger saat hover, border atas HowIBuild, tint globe olive.
+- **Pilot v1 ditolak**: kertas olive tint `#E2E5D6` + olive `#4F5638` terbaca pucet karena latar berwarna menyerap kedua aksen.
+- **Final**: latar putih netral `#F8F7F4`, ink `#14160F`, muted `#5A5E4E`, olive `#35421C` (struktur + field band), orange vivid `#D9480F` (non-teks/teks besar), orange burnt `#C2410C` (teks kecil + fill CTA). Surface `#F1F2EC`, rule `#D5D8CD`/`#BFC4B4`, olive-soft `#C3C8A9`.
+- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me pakai `signal-strong`), hero (titik orange pada h1), link section, panah ledger saat hover, HowIBuild `bg-accent` + border atas **6px** `signal`, tint globe olive.
 - `FloatingNav` dilepas dari homepage: dot-nya menimpa panah ledger di layar <768px. Komponen tetap ada di repo.
 - Ledger: kotak thumbnail kosong tidak lagi digambar (hanya border kalau ada `previewImage`).
 - Baris narasi case study `max-w-68ch` → `60ch`; 68ch terbukti menghasilkan ~89 karakter per baris.
 - `impeccable detect`: 0 anti-pattern di `/`, `/projects`, `/about`, `/projects/zledger` (desktop 1280 dan mobile 390), sisa 3 advisory nomor HowIBuild.
-- Kontras: muted 5.8:1, olive 6.1:1, `signal-strong` 5.2:1, putih di `signal` 5.18:1.
+- Kontras: ink 17.0:1, olive 10.1:1, muted 6.2:1, `signal-strong` 4.83:1, putih di `signal-strong` 5.18:1. `signal` vivid 4.01:1 → hanya non-teks/teks besar.
 - Belum: cover 0/13, rewrite `/about`, diagram per project.
 
 ### Polish footer — SELESAI (2026-11-16)
