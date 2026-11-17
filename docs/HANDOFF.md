@@ -249,7 +249,7 @@ src/
 - Deploy: `04eb37ff-cea8-48f5-bcde-d33be62ff90d` (2026-11-17).
 
 ### GitHub activity heatmap — SELESAI (2026-11-17)
-- Section `Aktivitas GitHub` di homepage, setelah Tech Stack.
+- Section `GitHub` di homepage, setelah Tech Stack.
 - Sumber: `https://github.com/users/ridwanafazn/contributions` — halaman publik, **tanpa token/secret**. Parser mengambil `data-date`/`data-level` + total “N contributions in the last year”.
 - Cache 6 jam di `caches.default` (key sintetis) + memori untuk dev. Fetch timeout 2.5 dtk. Fetch/parse gagal → section tidak dirender, halaman tetap 200.
 - UI: heatmap 5 langkah (`outline` → `on-background`) + orange `signal` hanya level tertinggi; total 12 bulan dalam mono 12px; link GitHub. Mobile: scroll horizontal, mulai dari minggu terbaru (`direction: rtl`), hint “Geser”.
