@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `a495ad28-0ea5-4f36-9ae4-774f9b6f397d` (2026-11-17, palet Cold Steel) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `04eb37ff-cea8-48f5-bcde-d33be62ff90d` (2026-11-17, landing cleanup) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -246,7 +246,7 @@ src/
 - Current Focus ("Finz app" + deskripsi) dan HowIBuild ("Dari ide ke produksi" + Spec/Design/Build/Konteks) dihapus dari homepage. Spec strip kini 3 sel: Sejak / Stack / Kontak.
 - Footer: ikon LinkedIn / GitHub / Instagram 14px di kiri teks.
 - Komponen `HowIBuild.astro`, `Badge` (masih dipakai preview), dan data `howIBuild`/`currentFocus` tetap ada di repo/DB tetapi tidak dirender di homepage.
-- Deploy: `<isi setelah deploy>`.
+- Deploy: `04eb37ff-cea8-48f5-bcde-d33be62ff90d` (2026-11-17).
 
 ### Polish footer — SELESAI (2026-11-16)
 - “Built with Astro” disembunyikan di `max-width: 767px` (`hidden md:inline`), sehingga baris copyright di mobile tetap satu baris. Di desktop teks tetap tampil.
