@@ -3,15 +3,20 @@ export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
 import BrandIcon from '../components/BrandIcon.astro';
+import GitHubActivity from '../components/GitHubActivity.astro';
 import HeroGlobe from '../components/HeroGlobe.astro';
 import ProjectLedger from '../components/ProjectLedger.astro';
 import Icon from '../components/Icon.astro';
 
 import { getProfile, getTopProjects, getSkills } from '../lib/content';
+import { getGitHubContributions } from '../lib/github';
 
-const profileData = await getProfile();
-const topProjects = await getTopProjects();
-const skillsData = await getSkills();
+const [profileData, topProjects, skillsData, githubData] = await Promise.all([
+  getProfile(),
+  getTopProjects(),
+  getSkills(),
+  getGitHubContributions(),
+]);
 const base = import.meta.env.BASE_URL;
 const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
@@ -160,4 +165,5 @@ const personSchema = {
     </div>
   </section>
 
+  {githubData && <GitHubActivity data={githubData} />}
 </Layout>

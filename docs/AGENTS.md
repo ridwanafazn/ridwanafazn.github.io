@@ -152,6 +152,7 @@ neon status | branches list | connection-string --pooled
 22. **Rate limit login** memakai binding `LOGIN_RATE_LIMIT` (10/60 dtk per IP) di `wrangler.jsonc`. Middleware fail-open kalau binding error; Better Auth diberi `cf-connecting-ip` lewat `advanced.ipAddress.ipAddressHeaders` agar tidak memakai bucket global. Jangan hapus `ratelimits` saat mengubah konfigurasi Worker.
 23. **`import.meta.env.DEV` bisa `false` di dev Cloudflare** karena `NODE_ENV=production` dari `wrangler.jsonc`; gunakan `import.meta.env.MODE === 'development'` untuk percabangan dev (dipakai bypass `?v=`). `PROD` juga bisa menyesatkan di dev.
 24. **`astro:env` server `access: 'public'` = nilai build-time.** `.env.local` ikut ter-inline ke Worker produksi (pernah membuat `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` berisi `localhost`). Untuk nilai yang berbeda dev/produksi pakai `access: 'secret'` agar dibaca runtime. Jangan mengembalikan `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` ke `public`.
+25. **Heatmap GitHub mengambil HTML publik** `https://github.com/users/ridwanafazn/contributions` (tanpa token). Hasil di-cache 6 jam di `caches.default` + memori dev; fetch timeout 2,5 dtk. Kalau fetch/parse gagal, `getGitHubContributions()` mengembalikan `null` dan section tidak dirender — **jangan** membuat halaman 500. Kalau markup GitHub berubah, ganti ke GraphQL + PAT read-only `GITHUB_TOKEN`.
 
 ---
 

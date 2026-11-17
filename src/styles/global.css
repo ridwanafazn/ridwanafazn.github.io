@@ -178,7 +178,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html.js .reveal {
+    /* Selector `from-*` lebih spesifik dari `.reveal`; tanpa ini elemen
+       tetap bergeser 28px sampai IntersectionObserver menandainya visible. */
+    html.js .reveal,
+    html.js .reveal.from-left,
+    html.js .reveal.from-right,
+    html.js .reveal.from-behind {
       opacity: 1;
       transform: none;
       transition: none;

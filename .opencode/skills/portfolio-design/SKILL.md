@@ -51,6 +51,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 - **Daftar proyek**: `ProjectLedger` (baris berindeks). Jangan kembali ke carousel/card grid.
 - **Case study**: h1 + meta plate (Peran/Stack/Tautan) → narasi → Hasil → Galeri → Proyek berikutnya.
 - **Narasi**: `longDescription` dipecah oleh `## Heading`; prosa `max-w-[60ch]` (Public Sans sempit — 68ch menghasilkan ~89 karakter per baris).
+- **GitHub**: heatmap 12 bulan setelah Tech Stack. Skala 5 langkah (`outline` → `on-background`), orange `signal` hanya level tertinggi. Mobile scroll horizontal mulai minggu terbaru. Jangan tampilkan angka besar atau feed `PushEvent`.
 
 ## Motion
 
