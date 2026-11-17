@@ -9,20 +9,20 @@ Sumber kebenaran: `src/styles/global.css` + `docs/DESIGN.md`. Dokumen ini adalah
 
 ## Arah
 
-"Cold Steel": arsip teknis dengan tipografi editorial. Putih netral, olive dalam, satu sinyal orange. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
+"Cold Steel": arsip teknis dengan tipografi editorial. Putih netral, tinta, satu aksen orange. Tanpa olive. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
 
-## Token (dua peran, bukan dua hiasan)
+## Token (satu aksen)
 
 ```
 bg        #F8F7F4   ink        #14160F   muted   #5A5E4E
 surface   #F1F2EC   hover      #EAECE4   rule    #D5D8CD / #BFC4B4
-olive     #35421C   hover      #273214   soft    #C3C8A9  (di atas field gelap)
+accent    #14160F   hover      #2A2C24   soft    #C9CBC2  (struktur netral)
 signal    #D9480F   hover      #9A3309   text    #C2410C
 display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 ```
 
-- **Olive = struktur dan bidang**: rule, label, chip, hover judul, dan field band HowIBuild (`bg-accent`).
-- **Orange = sinyal**: `#D9480F` hanya untuk non-teks/teks besar; `#C2410C` untuk teks kecil dan fill CTA. Jangan pakai vivid orange untuk teks 12px (4.30:1 dengan putih). Jangan jadikan orange latar halaman.
+- **Tidak ada olive.** `accent` adalah nama lama untuk struktur netral (ink); jangan menambahkan hijau/olive ke token.
+- **Orange = satu-satunya warna**: `#D9480F` hanya untuk non-teks/teks besar; `#C2410C` untuk teks kecil dan fill CTA. Jangan pakai vivid orange untuk teks 12px (4.30:1 dengan putih). Jangan jadikan orange latar halaman.
 - `#D9480F` di atas putih 4.01:1; `#C2410C` 4.83:1; putih di atas `#C2410C` 5.18:1. Jangan turunkan latar ke krem — itu yang membuat palet terbaca pucet.
 - Radius maksimum `rounded-lg` untuk kartu; tombol dan badge `rounded-none`/`rounded`.
 - Tanpa gradient, tanpa glow, tanpa `backdrop-blur` (kecuali overlay lightbox), tanpa shadow berwarna.
@@ -41,7 +41,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 10. `opacity: 0` sebagai default konten (harus lewat `html.js`).
 11. Material Symbols / icon font. Ikon = inline SVG dari `src/components/Icon.astro`.
 12. Warna di luar token; jangan pakai kelas `slate-*`, `gray-*`, `blue-*` langsung.
-13. Orange sebagai latar halaman; satu bidang olive besar (band) sudah cukup.
+13. Orange sebagai latar halaman; satu bidang gelap (band ink) sudah cukup.
 14. Orange vivid `#D9480F` untuk teks kecil atau tombol berteks putih.
 
 ## Struktur halaman

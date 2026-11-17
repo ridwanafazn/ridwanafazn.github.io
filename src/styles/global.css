@@ -12,10 +12,9 @@
   --font-heading: "Bricolage Grotesque", "Public Sans", ui-sans-serif, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Skema Warna — "Cold Steel": putih netral, olive dalam, satu sinyal orange.
-     Dua peran, bukan dua hiasan:
-     - accent  = struktur (rule, label, field, hover judul)
-     - signal  = penanda. Orange vivid untuk non-teks; orange burnt untuk teks/fill. */
+  /* Skema Warna — "Cold Steel": putih netral, tinta, satu aksen orange.
+     Tidak ada olive. `accent` adalah nama lama untuk struktur netral (class lama
+     tetap jalan); satu-satunya warna kromatik adalah `signal`. */
   --color-background: #F8F7F4;
   --color-on-background: #14160F;
   --color-on-surface-variant: #5A5E4E;
@@ -28,10 +27,10 @@
   --color-outline: #D5D8CD;
   --color-outline-strong: #BFC4B4;
 
-  /* Struktur — olive dalam. 10.07:1 di atas putih. */
-  --color-accent: #35421C;
-  --color-accent-hover: #273214;
-  --color-accent-soft: #C3C8A9; /* olive terang untuk permukaan gelap */
+  /* Struktur — netral (bukan aksen). */
+  --color-accent: #14160F;
+  --color-accent-hover: #2A2C24;
+  --color-accent-soft: #C9CBC2; /* abu terang untuk permukaan gelap */
 
   /* Sinyal — orange.
      signal        : border, garis, ikon, teks besar (4.01:1 di putih; non-teks OK)

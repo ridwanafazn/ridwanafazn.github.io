@@ -227,16 +227,16 @@ src/
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
 
-### Palette "Cold Steel" olive + orange — BRANCH (2026-11-17)
+### Palette "Cold Steel" — putih/tinta + orange — BRANCH (2026-11-17)
 - Branch `design/olive-orange-pilot`, belum di-merge/deploy.
-- **Pilot v1 ditolak**: kertas olive tint `#E2E5D6` + olive `#4F5638` terbaca pucet karena latar berwarna menyerap kedua aksen.
-- **Final**: latar putih netral `#F8F7F4`, ink `#14160F`, muted `#5A5E4E`, olive `#35421C` (struktur + field band), orange vivid `#D9480F` (non-teks/teks besar), orange burnt `#C2410C` (teks kecil + fill CTA). Surface `#F1F2EC`, rule `#D5D8CD`/`#BFC4B4`, olive-soft `#C3C8A9`.
-- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me pakai `signal-strong`), hero (titik orange pada h1), link section, panah ledger saat hover, HowIBuild `bg-accent` + border atas **6px** `signal`, tint globe olive.
+- Riwayat: pilot v1 (kertas olive tint) dan v2 (olive `#35421C`) ditolak. **Olive dihapus** karena sulit ditempatkan — tidak cukup netral untuk struktur, tidak cukup kuat sebagai aksen.
+- **Final**: latar `#F8F7F4`, ink `#14160F`, muted `#5A5E4E`, surface `#F1F2EC`, rule `#D5D8CD`/`#BFC4B4`. `accent` = ink (struktur netral). Orange vivid `#D9480F` (border/ikon/teks besar), burnt `#C2410C` (teks kecil + fill CTA), hover `#9A3309`.
+- Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me pakai `signal-strong`), hero (titik orange pada h1), link section, panah ledger saat hover, HowIBuild `bg-accent` (ink) + border atas **6px** `signal`, globe dinetralkan (tanpa tint olive).
 - `FloatingNav` dilepas dari homepage: dot-nya menimpa panah ledger di layar <768px. Komponen tetap ada di repo.
 - Ledger: kotak thumbnail kosong tidak lagi digambar (hanya border kalau ada `previewImage`).
 - Baris narasi case study `max-w-68ch` → `60ch`; 68ch terbukti menghasilkan ~89 karakter per baris.
 - `impeccable detect`: 0 anti-pattern di `/`, `/projects`, `/about`, `/projects/zledger` (desktop 1280 dan mobile 390), sisa 3 advisory nomor HowIBuild.
-- Kontras: ink 17.0:1, olive 10.1:1, muted 6.2:1, `signal-strong` 4.83:1, putih di `signal-strong` 5.18:1. `signal` vivid 4.01:1 → hanya non-teks/teks besar.
+- Kontras: ink 17.0:1, muted 6.2:1, `signal-strong` 4.83:1, putih di `signal-strong` 5.18:1. `signal` vivid 4.01:1 → hanya non-teks/teks besar.
 - Belum: cover 0/13, rewrite `/about`, diagram per project.
 
 ### Polish footer — SELESAI (2026-11-16)
