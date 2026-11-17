@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-16
+> **Terakhir diperbarui:** 2026-11-17
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | manual terakhir `7c01fdaf-b5ac-4767-b3aa-a3fe688fe70a`; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `a495ad28-0ea5-4f36-9ae4-774f9b6f397d` (2026-11-17, palet Cold Steel) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -227,8 +227,8 @@ src/
 - **Skill proyek**: `.opencode/skills/portfolio-design/SKILL.md` — token, larangan, struktur, checklist. Aktif otomatis untuk sesi agent berikutnya.
 - Catatan: cover tetap 0/13, jadi 7 project belum punya preview/OG image sampai cover diisi. Sejak F3, project tanpa gambar memakai OG default `/og.png`.
 
-### Palette "Cold Steel" — putih/tinta + orange — BRANCH (2026-11-17)
-- Branch `design/olive-orange-pilot`, belum di-merge/deploy.
+### Palette "Cold Steel" — putih/tinta + orange — SELESAI (2026-11-17)
+- Branch `design/olive-orange-pilot` di-merge fast-forward ke `main`, push, dan deploy ke Worker versi `a495ad28-0ea5-4f36-9ae4-774f9b6f397d`.
 - Riwayat: pilot v1 (kertas olive tint) dan v2 (olive `#35421C`) ditolak. **Olive dihapus** karena sulit ditempatkan — tidak cukup netral untuk struktur, tidak cukup kuat sebagai aksen.
 - **Final**: latar `#F8F7F4`, ink `#14160F`, muted `#5A5E4E`, surface `#F1F2EC`, rule `#D5D8CD`/`#BFC4B4`. `accent` = ink (struktur netral). Orange vivid `#D9480F` (border/ikon/teks besar), burnt `#C2410C` (teks kecil + fill CTA), hover `#9A3309`.
 - Diterapkan: `global.css` (token, focus ring, selection, caret, nav progress), Navbar (underline aktif, CTA Hire Me pakai `signal-strong`), hero (titik orange pada h1), link section, panah ledger saat hover, HowIBuild `bg-accent` (ink) + border atas **6px** `signal`, globe dinetralkan (tanpa tint olive).
