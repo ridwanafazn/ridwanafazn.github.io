@@ -22,7 +22,7 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
 const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
-const stackSummary = ['Lang', 'BE', 'FE', 'Cloud', 'Arch'].join('·');
+const stackSummary = ['FE', 'BE', 'AI', 'Mobile'].join('·');
 
 // Language memakai lebar penuh (2 kolom) karena daftarnya paling panjang.
 const isLanguage = (group: { category: string }) => /^language\b/i.test(group.category);

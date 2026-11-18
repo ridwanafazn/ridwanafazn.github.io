@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `0c60285f-e2f6-481b-b220-5acae229f450` (2026-11-18, Tech Stack 5 kategori) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `b55d48d0-6767-491f-a55a-814b648ae44a` (2026-11-18, Tech Stack 5 kategori + hero `FE·BE·AI·Mobile`) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -258,10 +258,10 @@ src/
 
 ### Tech Stack 5 kategori — SELESAI (2026-11-18)
 - Data `skills.categories` di Neon diganti 5 kategori: **Language** (10), **Backend** (8), **Frontend** (7), **Cloud and Infrastructure** (7), **Architecture and Integrations** (8). `_key` lama dari Sanity tidak dipertahankan.
-- Homepage: **Language** memakai `md:col-span-2` (baris penuh 2 kolom) dengan item grid `md:grid-cols-5`; empat kategori lain tetap 2×2 dengan pembatas vertikal dan stagger reveal. Hero spec strip ikut menjadi `Lang·BE·FE·Cloud·Arch`.
+- Homepage: **Language** memakai `md:col-span-2` (baris penuh 2 kolom) dengan item grid `md:grid-cols-5`; empat kategori lain tetap 2×2 dengan pembatas vertikal dan stagger reveal. Hero spec strip tetap editorial `FE·BE·AI·Mobile`.
 - `BrandIcon` diperluas 19 brand Simple Icons (JavaScript, TypeScript, PHP, Dart, Kotlin, Express, NestJS, Gin, FastAPI, Spring Boot, Actix, .NET, Alpine.js, Flutter, AWS, Cloudflare, Supabase, Neon, Cloudinary). Ikon konsep (SQL, REST, gRPC, WebSocket, RAG, CAG, KAG, Recommendation System, CNN) tetap garis generik; `gRPC` tidak ada di Simple Icons.
 - `db/seed.ts` disamakan dengan data live agar instalasi baru tidak mengembalikan stack lama.
-- Deploy: `0c60285f-e2f6-481b-b220-5acae229f450` (2026-11-18). Verifikasi live: 5 kategori tampil, `Language` `md:col-span-2`.
+- Deploy: `b55d48d0-6767-491f-a55a-814b648ae44a` (2026-11-18). Verifikasi live: 5 kategori tampil, `Language` `md:col-span-2`, spec strip hero `FE·BE·AI·Mobile`.
 
 ### Polish footer — SELESAI (2026-11-16)
 - “Built with Astro” disembunyikan di `max-width: 767px` (`hidden md:inline`), sehingga baris copyright di mobile tetap satu baris. Di desktop teks tetap tampil.
