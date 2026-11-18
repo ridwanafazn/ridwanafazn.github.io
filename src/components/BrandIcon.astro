@@ -18,6 +18,7 @@ const keyByName: Record<string, string> = {
   python: 'python',
   java: 'openjdk',
   'google cloud platform': 'googlecloud',
+  gcp: 'googlecloud',
   docker: 'docker',
   rabbitmq: 'rabbitmq',
   'next.js': 'nextdotjs',
@@ -25,37 +26,50 @@ const keyByName: Record<string, string> = {
   astro: 'astro',
   'tailwind css': 'tailwindcss',
   react: 'react',
+  vue: 'vuedotjs',
   'vue.js': 'vuedotjs',
   svelte: 'svelte',
+  'express.js': 'express',
+  'go gin': 'gin',
+  'spring boot': 'springboot',
+  'actix web': 'actix',
+  'asp.net core': 'dotnet',
+  'alpine.js': 'alpinedotjs',
+  aws: 'amazonwebservices',
   linkedin: 'linkedin',
   github: 'github',
   instagram: 'instagram',
 };
 
 const generic: Record<string, string> = {
-  spark: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
+  spark:
+    '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
   tool: '<path d="M14.5 6.5a4 4 0 0 0 5 5l-9 9a2.1 2.1 0 0 1-3-3z"/><path d="M6 6l2 2"/>',
   queue: '<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/><circle cx="18" cy="17" r="1.5"/>',
   network:
     '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M8 6h8"/><path d="M7 8l4 8"/><path d="M17 8l-4 8"/>',
   link: '<path d="M10 13a4.5 4.5 0 0 0 6.4 0l2-2a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 11a4.5 4.5 0 0 0-6.4 0l-2 2a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
+  database:
+    '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
   code: '<path d="M9 7l-4 5 4 5"/><path d="M15 7l4 5-4 5"/>',
 };
 
 const key = keyByName[name.toLowerCase()] ?? name.toLowerCase();
 const brand = brandIconPaths[key];
 
-const genericKey = /\bai\b|llm/i.test(name)
+const genericKey = /\bai\b|llm|\b(rag|cag|kag)\b|cnn|vision/i.test(name)
   ? 'spark'
   : /tool/i.test(name)
     ? 'tool'
     : /message|broker|queue/i.test(name)
       ? 'queue'
-      : /distributed|websocket|system/i.test(name)
+      : /distributed|websocket|grpc|rpc|system/i.test(name)
         ? 'network'
         : /api|rest|integration|third-party/i.test(name)
           ? 'link'
-          : 'code';
+          : /\bsql\b|database/i.test(name)
+            ? 'database'
+            : 'code';
 ---
 
 {

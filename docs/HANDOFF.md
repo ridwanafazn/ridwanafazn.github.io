@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-17
+> **Terakhir diperbarui:** 2026-11-18
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `162f3202-f65e-4d12-a230-27f980557140` (2026-11-17, GitHub heatmap) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `0c60285f-e2f6-481b-b220-5acae229f450` (2026-11-18, Tech Stack 5 kategori) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -61,7 +61,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | featured (`is_top_project`) | 3 — `neuroplastisism`, `smile-fest`, `jymz` |
 | activities | 2 |
 | profile | 1 |
-| skills | 1 (4 kategori) |
+| skills | 1 (5 kategori) |
 | assets | **55** (bukan 1) |
 | users/accounts | 1 (admin) |
 
@@ -255,6 +255,13 @@ src/
 - UI: heatmap 5 langkah (`outline` → `on-background`) + orange `signal` hanya level tertinggi; total 12 bulan dalam mono 12px; link GitHub. Mobile: scroll horizontal, mulai dari minggu terbaru (`direction: rtl`), hint “Geser”.
 - Kalau markup GitHub berubah: ganti ke GraphQL + PAT read-only `GITHUB_TOKEN`; fallback saat ini hanya menyembunyikan section.
 - Deploy: `162f3202-f65e-4d12-a230-27f980557140` (2026-11-17). Judul section `GitHub`; link kanan `@ridwanafazn`; legenda hanya 5 kotak (tanpa label Sedikit/Banyak). Verifikasi live: 407 kontribusi, 368 `<rect>`, 6 sel orange.
+
+### Tech Stack 5 kategori — SELESAI (2026-11-18)
+- Data `skills.categories` di Neon diganti 5 kategori: **Language** (10), **Backend** (8), **Frontend** (7), **Cloud and Infrastructure** (7), **Architecture and Integrations** (8). `_key` lama dari Sanity tidak dipertahankan.
+- Homepage: **Language** memakai `md:col-span-2` (baris penuh 2 kolom) dengan item grid `md:grid-cols-5`; empat kategori lain tetap 2×2 dengan pembatas vertikal dan stagger reveal. Hero spec strip ikut menjadi `Lang·BE·FE·Cloud·Arch`.
+- `BrandIcon` diperluas 19 brand Simple Icons (JavaScript, TypeScript, PHP, Dart, Kotlin, Express, NestJS, Gin, FastAPI, Spring Boot, Actix, .NET, Alpine.js, Flutter, AWS, Cloudflare, Supabase, Neon, Cloudinary). Ikon konsep (SQL, REST, gRPC, WebSocket, RAG, CAG, KAG, Recommendation System, CNN) tetap garis generik; `gRPC` tidak ada di Simple Icons.
+- `db/seed.ts` disamakan dengan data live agar instalasi baru tidak mengembalikan stack lama.
+- Deploy: `0c60285f-e2f6-481b-b220-5acae229f450` (2026-11-18). Verifikasi live: 5 kategori tampil, `Language` `md:col-span-2`.
 
 ### Polish footer — SELESAI (2026-11-16)
 - “Built with Astro” disembunyikan di `max-width: 767px` (`hidden md:inline`), sehingga baris copyright di mobile tetap satu baris. Di desktop teks tetap tampil.

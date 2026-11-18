@@ -77,7 +77,7 @@
 
 | Route | Komponen | JS yang dimuat | Catatan |
 |---|---|---|---|
-| `/` | HeroGlobe, spec strip (Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, **GitHubActivity** | reveal + spec stagger (globe hanya ≥1024px & idle); heatmap GitHub SSR, tanpa JS client | globe 559 KB **tidak** dimuat di mobile/<1024. `FloatingNav`, Current Focus, dan HowIBuild dihapus. Globe solid tanpa atmosphere/mask. Tech Stack memakai ikon brand + label 12px. Heatmap kontribusi 12 bulan: 5 langkah abu + orange hanya level tertinggi; mobile scroll horizontal mulai dari minggu terbaru |
+| `/` | HeroGlobe, spec strip (Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, **GitHubActivity** | reveal + spec stagger (globe hanya ≥1024px & idle); heatmap GitHub SSR, tanpa JS client | globe 559 KB **tidak** dimuat di mobile/<1024. `FloatingNav`, Current Focus, dan HowIBuild dihapus. Globe solid tanpa atmosphere/mask. Tech Stack memakai ikon brand + label 12px (5 kategori; **Language** baris penuh `md:col-span-2` dengan item 5 kolom, 4 kategori lain 2×2). Heatmap kontribusi 12 bulan: 5 langkah abu + orange hanya level tertinggi; mobile scroll horizontal mulai dari minggu terbaru |
 | `/about` | Timeline, pendidikan, sertifikasi, volunteering | reveal | tanpa kartu bersarang |
 | `/projects` | **ProjectLedger** 13 baris (indeks + thumbnail + role + stack: 2 item + `+N`) | reveal + hover preview | tanpa carousel; 13 proyek dalam satu layar; detail stack lengkap ada di halaman project |
 | `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), lightbox (hanya jika ada gambar), next-project | reveal + slider + lightbox | project tanpa gambar tidak merender lightbox/dialog kosong; OG jatuh ke `/og.png` |
@@ -212,3 +212,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-17 | **Cold Steel**: latar `#F8F7F4`, tinta `#14160F`, orange `#D9480F` (non-teks) + `#C2410C` (teks/CTA). **Olive dihapus** — sulit ditempatkan; band HowIBuild kembali ink + border 6px | ✅ |
 | 2026-11-17 | **Landing cleanup**: atmosphere + mask globe dihapus (globe solid), Tech Stack jadi ikon brand + label kecil, Current Focus & HowIBuild dihapus, spec strip jadi 3 sel, footer memakai ikon sosial | ✅ |
 | 2026-11-17 | **GitHub activity**: heatmap kontribusi 12 bulan di homepage setelah Tech Stack. Sumber endpoint publik GitHub (tanpa token), cache 6 jam, fail-open. Skala 5 langkah; orange hanya level tertinggi | ✅ |
+| 2026-11-18 | **Tech Stack 5 kategori**: Language/Backend/Frontend/Cloud and Infrastructure/Architecture and Integrations. Language memakai baris penuh di grid 2 kolom (`md:col-span-2`); ikon brand diperluas 19 brand, konsep non-brand tetap SVG garis | ✅ |

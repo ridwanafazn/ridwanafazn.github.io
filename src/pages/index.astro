@@ -22,7 +22,20 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
 const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
-const stackSummary = ['FE', 'BE', 'Cloud', 'Mobile', 'AI', 'ML'].join('·');
+const stackSummary = ['Lang', 'BE', 'FE', 'Cloud', 'Arch'].join('·');
+
+// Language memakai lebar penuh (2 kolom) karena daftarnya paling panjang.
+const isLanguage = (group: { category: string }) => /^language\b/i.test(group.category);
+const skillCells = skillsData.map((skillGroup, i) => {
+  const wide = isLanguage(skillGroup);
+  const narrowIndex = skillsData.slice(0, i).filter((group) => !isLanguage(group)).length;
+  return {
+    ...skillGroup,
+    wide,
+    side: wide ? 'wide' : narrowIndex % 2 === 0 ? 'left' : 'right',
+    delay: !wide && narrowIndex > 0 && narrowIndex < 4 ? `reveal-delay-${narrowIndex}` : '',
+  };
+});
 
 const personSchema = {
   '@context': 'https://schema.org',
@@ -146,13 +159,13 @@ const personSchema = {
           Belum ada data keahlian.
         </p>
       )}
-      {skillsData.map((skillGroup, i) => (
-        <div class={`reveal border-b border-outline py-6 md:py-7 ${i % 2 === 0 ? 'from-left md:pr-8' : 'from-right md:border-l md:border-outline md:pl-8'} ${i === 1 ? 'reveal-delay-1' : i === 2 ? 'reveal-delay-2' : i === 3 ? 'reveal-delay-3' : ''}`}>
+      {skillCells.map((skillGroup) => (
+        <div class={`reveal border-b border-outline py-6 md:py-7 ${skillGroup.wide ? 'md:col-span-2' : skillGroup.side === 'left' ? 'from-left md:pr-8' : 'from-right md:border-l md:border-outline md:pl-8'} ${skillGroup.delay}`}>
           <h3 class="mb-4 flex items-center gap-2 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-on-surface-variant">
             <span class="h-1.5 w-1.5 bg-signal" aria-hidden="true"></span>
             {skillGroup.category}
           </h3>
-          <ul class="flex flex-wrap gap-x-5 gap-y-2.5">
+          <ul class={skillGroup.wide ? 'grid grid-cols-2 gap-x-6 gap-y-2.5 md:grid-cols-5' : 'flex flex-wrap gap-x-5 gap-y-2.5'}>
             {skillGroup.items.map((item) => (
               <li class="flex items-center gap-2 font-mono text-[12px] text-on-surface-variant">
                 <BrandIcon name={item} class="h-4 w-4 shrink-0 text-on-background" />

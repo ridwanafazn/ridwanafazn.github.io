@@ -71,9 +71,26 @@ async function seed() {
   if (!skillsExists) {
     await db.insert(skills).values({
       categories: [
-        { category: 'Frontend', items: ['React', 'Astro', 'Tailwind CSS'] },
-        { category: 'Backend', items: ['Node.js', 'Postgres', 'Drizzle', 'Neon'] },
-        { category: 'Infrastructure', items: ['Cloudflare Workers', 'Cloudinary', 'CI/CD'] },
+        {
+          category: 'Language',
+          items: ['JavaScript', 'TypeScript', 'Golang', 'PHP', 'Python', 'Java', 'Rust', 'SQL', 'Dart', 'Kotlin'],
+        },
+        {
+          category: 'Backend',
+          items: ['Express.js', 'NestJS', 'Go Gin', 'FastAPI', 'Spring Boot', 'Actix Web', 'Laravel', 'ASP.NET Core'],
+        },
+        {
+          category: 'Frontend',
+          items: ['React', 'Next.js', 'Astro', 'Vue', 'Laravel', 'Alpine.js', 'Flutter'],
+        },
+        {
+          category: 'Cloud and Infrastructure',
+          items: ['AWS', 'GCP', 'Cloudflare', 'Supabase', 'Neon', 'Cloudinary', 'Docker'],
+        },
+        {
+          category: 'Architecture and Integrations',
+          items: ['REST', 'gRPC', 'WebSocket', 'RAG', 'CAG', 'KAG', 'Recommendation System', 'CNN Computer Vision'],
+        },
       ],
     });
   }
