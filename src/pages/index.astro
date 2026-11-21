@@ -20,7 +20,6 @@ const [profileData, topProjects, skillsData, githubData] = await Promise.all([
 const base = import.meta.env.BASE_URL;
 const basePath = base.endsWith('/') ? base : `${base}/`;
 const projectsLink = `${basePath}projects`;
-const aboutLink = `${basePath}about`;
 
 const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
@@ -67,8 +66,6 @@ const personSchema = {
   <HeroAbstract
     role={profileData.role}
     tagline={profileData.tagline ?? 'Keep it simple, make it scale.'}
-    projectsHref={projectsLink}
-    aboutHref={aboutLink}
   />
 
   <section aria-label="Ringkasan profil" class="mb-16 md:mb-20">

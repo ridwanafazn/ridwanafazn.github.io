@@ -48,7 +48,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 
 ## Struktur halaman
 
-- **Hero homepage**: HeroAbstract — copy kiri (`Software Engineer` + `Keep it simple, make it scale.`), cutout portrait di tengah, app GIS Sentry di kanan. Navbar lama (kotak rounded) digate muncul setelah 70% tinggi hero. Hero 7/5 + globe lama tidak dipakai di homepage. Di ≤980px app mengambang di kanan setinggi mulut, bukan baris penuh di bawah copy.
+- **Hero homepage**: HeroAbstract — `Software Engineer` h1 besar dua baris, `Keep it simple, make it scale.` subtext kecil, cutout portrait di tengah, app GIS Sentry di kanan. Tanpa CTA/stiker dan tanpa label app. Navbar lama (kotak rounded) digate muncul setelah 70% tinggi hero. Hero 7/5 + globe lama tidak dipakai di homepage. Di ≤980px app mengambang di kanan setinggi mulut, bukan baris penuh di bawah copy.
 - **Strip data**: hairline grid `gap-px bg-outline`, sel `bg-background`.
 - **Daftar proyek**: `ProjectLedger` (baris berindeks). Jangan kembali ke carousel/card grid.
 - **Case study**: h1 + meta plate (Peran/Stack/Tautan) → narasi → Hasil → Galeri → Proyek berikutnya.

@@ -2,11 +2,13 @@
 interface Props {
   role: string;
   tagline: string;
-  projectsHref: string;
-  aboutHref: string;
 }
 
-const { role, tagline, projectsHref, aboutHref } = Astro.props;
+const { role, tagline } = Astro.props;
+
+const roleLines = role.split(/\s+/).filter(Boolean);
+const [taglineLead, ...taglineRest] = tagline.split(',');
+const taglineTail = taglineRest.join(',').trim();
 
 const marqueeItems = [
   role.toUpperCase(),
@@ -30,19 +32,15 @@ const marqueeItems = [
 
   <div class="hero-stage">
     <div class="hero-copy">
-      <span class="hero-role">{role}</span>
-
-      <h1 class="hero-headline" aria-label={tagline}>
-        <span class="hero-line hero-line-1" data-text="Keep it">Keep it</span>
-        <span class="hero-line hero-line-2" data-text="simple,">simple,</span>
-        <span class="hero-line hero-line-3" data-text="make it">make it</span>
-        <span class="hero-line hero-line-4" data-text="scale."><em>scale.</em></span>
+      <h1 class="hero-headline">
+        {roleLines.map((line, index) => (
+          <span class="hero-line" data-text={line} style={`animation-delay: ${0.06 + index * 0.08}s`}>{line}</span>
+        ))}
       </h1>
 
-      <div class="hero-actions">
-        <a class="hero-btn-primary" href={projectsHref}>Lihat proyek</a>
-        <a class="hero-btn-text" href={aboutHref}>Tentang saya ↗</a>
-      </div>
+      <p class="hero-subtext">
+        {taglineLead}{taglineTail && <>, <em>{taglineTail}</em></>}
+      </p>
     </div>
 
     <div class="hero-portrait">
@@ -79,12 +77,8 @@ const marqueeItems = [
             <path d="M2 1l18 12-8 2-3 8L2 1z" fill="currentColor" stroke="#080907" stroke-width="1.4"></path>
           </svg>
         </div>
-        <span class="hero-app-tag">GIS Sentry / live</span>
       </figure>
     </div>
-
-    <div class="hero-sticker hero-sticker-a" aria-hidden="true">12 PROJECTS<br />0 EXCUSES</div>
-    <div class="hero-sticker hero-sticker-b" aria-hidden="true">SYSTEMS<br />THAT STAY<br />CORRECT</div>
   </div>
 
   <div class="hero-marquee" aria-hidden="true">
@@ -275,42 +269,20 @@ const marqueeItems = [
   .hero-copy {
     position: absolute;
     left: var(--hero-pad);
-    top: 3%;
+    top: 35%;
     z-index: 14;
     width: min(34vw, 430px);
     max-width: 430px;
     padding: 0;
   }
 
-  .hero-role {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    margin-bottom: 20px;
-    color: var(--hero-lime);
-    font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .hero-role::before {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--hero-lime);
-  }
-
   .hero-headline {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: clamp(3.1rem, 5vw, 5.2rem);
+    font-size: clamp(3.6rem, 5.6vw, 5.8rem);
     font-weight: 600;
-    line-height: 0.86;
-    letter-spacing: -0.055em;
+    line-height: 0.88;
+    letter-spacing: -0.06em;
     text-wrap: initial;
   }
 
@@ -334,29 +306,6 @@ const marqueeItems = [
     pointer-events: none;
   }
 
-  .hero-line-1 { animation-delay: 0.06s; }
-  .hero-line-2 { animation-delay: 0.14s; margin-left: 12%; }
-  .hero-line-3 { animation-delay: 0.22s; }
-
-  .hero-line-4 {
-    animation-delay: 0.3s;
-    margin-top: 0.03em;
-    margin-left: 18%;
-    color: var(--hero-lime);
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: 1.22em;
-    font-style: italic;
-    font-weight: 400;
-    line-height: 0.78;
-    letter-spacing: -0.03em;
-    transform: rotate(-4deg);
-    transform-origin: left center;
-  }
-
-  .hero-line-4::before {
-    opacity: 0.45;
-  }
-
   @keyframes hero-line-in {
     from {
       clip-path: inset(0 0 100% 0);
@@ -370,50 +319,22 @@ const marqueeItems = [
     }
   }
 
-  .hero-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    margin-top: 28px;
+  .hero-subtext {
+    max-width: 34ch;
+    margin: 20px 0 0;
+    color: var(--hero-paper-dim);
+    font-size: clamp(1.05rem, 1.35vw, 1.35rem);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
   }
 
-  .hero-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0 22px;
-    border: 1px solid var(--hero-lime);
-    background: var(--hero-lime);
-    color: var(--hero-ink);
-    font-size: 14px;
-    font-weight: 700;
-    transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
-  }
-
-  .hero-btn-primary:hover {
-    background: var(--hero-paper);
-    border-color: var(--hero-paper);
-    transform: translateY(-2px) rotate(-1deg);
-  }
-
-  .hero-btn-primary:active {
-    transform: translateY(0) rotate(0);
-  }
-
-  .hero-btn-text {
-    padding: 2px 0;
-    border-bottom: 1px solid var(--hero-line);
-    color: var(--hero-paper);
-    font-size: 13px;
-    font-weight: 600;
-    transition: color 160ms ease, border-color 160ms ease;
-  }
-
-  .hero-btn-text:hover {
+  .hero-subtext em {
     color: var(--hero-lime);
-    border-bottom-color: var(--hero-lime);
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 1.15em;
+    font-style: italic;
+    letter-spacing: -0.01em;
   }
 
   .hero-portrait {
@@ -568,22 +489,6 @@ const marqueeItems = [
     pointer-events: none;
   }
 
-  .hero-app-tag {
-    position: absolute;
-    left: -16px;
-    bottom: -14px;
-    z-index: 3;
-    padding: 8px 11px;
-    background: var(--hero-lime);
-    color: var(--hero-ink);
-    font: 700 10px/1.2 var(--font-sans);
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-    text-transform: uppercase;
-    transform: rotate(-4deg);
-    box-shadow: 6px 6px 0 var(--hero-red);
-  }
-
   .hero-app-cursor {
     position: absolute;
     left: 57%;
@@ -593,36 +498,6 @@ const marqueeItems = [
     height: 28px;
     color: var(--hero-lime);
     filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.45));
-  }
-
-  .hero-sticker {
-    position: absolute;
-    z-index: 13;
-    padding: 9px 12px;
-    font: 700 10px/1.25 var(--font-sans);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  .hero-sticker-a {
-    left: 3%;
-    bottom: 4%;
-    background: var(--hero-lime);
-    color: var(--hero-ink);
-    transform: rotate(-7deg);
-    box-shadow: 6px 6px 0 var(--hero-red);
-  }
-
-  .hero-sticker-b {
-    left: 46%;
-    bottom: 5%;
-    border: 1px solid var(--hero-ink);
-    background: var(--hero-paper);
-    color: var(--hero-ink);
-    transform: rotate(4deg);
-    box-shadow: 6px 6px 0 var(--hero-red);
   }
 
   .hero-marquee {
@@ -755,14 +630,13 @@ const marqueeItems = [
     }
 
     .hero-headline {
-      font-size: clamp(2.6rem, 7.2vw, 3.8rem);
+      font-size: clamp(3rem, 7.2vw, 4.2rem);
     }
 
-    .hero-actions {
-      flex-direction: row;
-      align-items: center;
-      gap: 18px;
-      margin-top: 20px;
+    .hero-subtext {
+      max-width: 36ch;
+      margin-top: 16px;
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
     }
 
     /* App mengambang di kanan, setinggi mulut — tidak lagi jadi baris
@@ -794,10 +668,6 @@ const marqueeItems = [
 
     .hero-plane-lime {
       left: 50%;
-    }
-
-    .hero-sticker {
-      display: none;
     }
 
     .hero-marquee {
@@ -836,25 +706,12 @@ const marqueeItems = [
     }
 
     .hero-headline {
-      font-size: clamp(2.5rem, 12vw, 3.4rem);
+      font-size: clamp(2.7rem, 12vw, 3.6rem);
     }
 
-    .hero-role {
-      margin-bottom: 14px;
-    }
-
-    .hero-actions {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
-    }
-
-    .hero-btn-primary {
-      width: 100%;
-    }
-
-    .hero-btn-text {
-      align-self: flex-start;
+    .hero-subtext {
+      margin-top: 14px;
+      font-size: 1rem;
     }
 
     .hero-app-wrap {
@@ -876,13 +733,6 @@ const marqueeItems = [
       height: 28px;
       padding: 0 8px;
       gap: 5px;
-      font-size: 8px;
-    }
-
-    .hero-app-tag {
-      left: -6px;
-      bottom: -8px;
-      padding: 6px 8px;
       font-size: 8px;
     }
 
