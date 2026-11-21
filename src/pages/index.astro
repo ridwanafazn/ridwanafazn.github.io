@@ -4,7 +4,7 @@ export const prerender = false;
 import Layout from '../layouts/Layout.astro';
 import BrandIcon from '../components/BrandIcon.astro';
 import GitHubActivity from '../components/GitHubActivity.astro';
-import HeroGlobe from '../components/HeroGlobe.astro';
+import HeroAbstract from '../components/HeroAbstract.astro';
 import ProjectLedger from '../components/ProjectLedger.astro';
 import Icon from '../components/Icon.astro';
 
@@ -18,7 +18,9 @@ const [profileData, topProjects, skillsData, githubData] = await Promise.all([
   getGitHubContributions(),
 ]);
 const base = import.meta.env.BASE_URL;
-const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
+const basePath = base.endsWith('/') ? base : `${base}/`;
+const projectsLink = `${basePath}projects`;
+const aboutLink = `${basePath}about`;
 
 const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
@@ -57,48 +59,17 @@ const personSchema = {
   title="Ridwan Pages"
   description={`${profileData.role} — ${profileData.tagline} Portofolio sistem produksi: LMS, ledger, dan platform event.`}
   image="/og.png"
+  gateNav
+  bareHero
 >
   <script type="application/ld+json" set:html={JSON.stringify(personSchema).replace(/</g, '\\u003c')} />
 
-  <header id="hero" class="relative mb-14 md:mb-20 scroll-mt-32">
-    <HeroGlobe />
-
-    <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
-      <div class="lg:col-span-7">
-        <h1 class="hero-enter font-bold text-[clamp(2.75rem,9vw,4.75rem)] leading-[0.98] tracking-tight text-on-background" style="--hero-delay: 0.1s">
-          {profileData.role}<span class="text-signal" aria-hidden="true">.</span>
-        </h1>
-
-        <p class="hero-enter mt-6 max-w-[34ch] text-xl leading-snug text-on-surface-variant md:text-2xl" style="--hero-delay: 0.25s">
-          {profileData.tagline}
-        </p>
-
-        <p class="hero-enter mt-6 hidden max-w-[56ch] text-[15px] leading-relaxed text-on-surface-variant md:block" style="--hero-delay: 0.35s">
-          {profileData.bio}
-        </p>
-
-        <div class="hero-enter mt-9 flex items-stretch" style="--hero-delay: 0.45s">
-          <a
-            href="mailto:ridwanafzn@gmail.com"
-            class="inline-flex items-center justify-center gap-2 border border-on-background bg-on-background px-4 py-3.5 font-mono text-[12px] font-bold uppercase tracking-wider text-background transition-colors duration-200 hover:border-accent hover:bg-accent md:px-7"
-          >
-            Contact Me
-            <Icon name="arrow-right" class="h-4 w-4" />
-          </a>
-          <a
-            href={projectsLink}
-            class="group inline-flex items-center justify-center gap-2 border border-l-0 border-on-background px-4 py-3.5 font-mono text-[12px] font-bold uppercase tracking-wider text-on-background transition-colors duration-200 hover:bg-on-background hover:text-background md:px-7"
-          >
-            Project List
-            <Icon name="arrow-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </a>
-        </div>
-      </div>
-
-      <!-- Ruang globe di desktop; komponen HeroGlobe dirender absolut di sini -->
-      <div class="hidden lg:block lg:col-span-5 lg:h-[440px]" aria-hidden="true"></div>
-    </div>
-  </header>
+  <HeroAbstract
+    role={profileData.role}
+    tagline={profileData.tagline ?? 'Keep it simple, make it scale.'}
+    projectsHref={projectsLink}
+    aboutHref={aboutLink}
+  />
 
   <section aria-label="Ringkasan profil" class="mb-16 md:mb-20">
     <dl class="grid grid-cols-1 gap-px bg-outline sm:grid-cols-3">

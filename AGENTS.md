@@ -26,6 +26,7 @@
 - Migrasi Sanity → Neon **selesai** (13 project, 55 asset, 54 gambar galeri, profile, skills, 2 activities).
 - Admin panel + galeri gambar **selesai**; public **SSR + cache**.
 - **Live**: https://ridwanafazn.my.id (`www` → 301 apex) · fallback https://portofx-v2.ridwanafzn.workers.dev
+- **Hero homepage**: **HeroAbstract** (2026-11-21) — full-bleed, cutout portrait, app GIS Sentry, navbar gate 70%; **live** (deploy `96018606`).
 - **Sisa**: gambar cover project — **0 dari 13** project punya cover; galeri sudah terisi.
 - **Branch**: `main` (sudah ada commit + deploy; branch `migrate/astro-ssr-neon` sudah selesai).
 
@@ -46,4 +47,4 @@
 
 ## Konteks untuk agent baru
 
-> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan (54 foto); live di https://ridwanafazn.my.id (www → 301 apex). Sisa: **cover image 0/13**. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`. Public site **bukan** zero-JS (three.js + reveal + ledger + slider galeri)."
+> "Baca `docs/HANDOFF.md` dulu. Project: portfolio Astro 7 SSR di Cloudflare Workers, DB Neon, auth Better Auth, asset Cloudinary. Sanity sudah dihapus. Admin panel & galeri sudah jalan (54 foto); live di https://ridwanafazn.my.id (www → 301 apex). Sisa: **cover image 0/13**. Jangan pakai `output:'hybrid'`, Lucia, argon2, atau `wrangler pages deploy`. Public site **bukan** zero-JS (reveal + ledger + slider galeri + menu). Hero homepage = HeroAbstract (belum deploy), bukan globe lama."

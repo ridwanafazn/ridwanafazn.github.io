@@ -14,7 +14,7 @@
 | **Repo** | `github.com/ridwanafazn/portofx-v2` |
 | **Branch aktif** | `main` (20 commit, working tree bersih) — `migrate/astro-ssr-neon` sudah selesai |
 | **Stack** | **Astro 7.4.5** (SSR + edge cache) · **Neon Postgres** · **Drizzle ORM 0.45.4** · **Better Auth 1.7.20** · **Cloudinary** · **Cloudflare Workers 14.4.7** |
-| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Sisa: **cover image 0/13** (galeri 54 foto sudah ada) |
+| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Hero homepage sudah **HeroAbstract** (2026-11-21, deploy `96018606`). Sisa: **cover image 0/13** (galeri 54 foto sudah ada) |
 
 ---
 
@@ -138,7 +138,7 @@ neon status | branches list | connection-string --pooled
 8. Profile PUT di-merge dengan row existing (form admin hanya mengirim sebagian field). `profile.cv_url` = satu sumber tombol Resume desktop + mobile.
 9. Activities bisa diedit (PATCH). Filter key yang dikirim agar default Zod tidak mereset `order`/`highlights`.
 10. Sidebar admin collapse/expand: state `localStorage['admin-sidebar']`, kelas `sidebar-collapsed` di `<html>`. Judul dokumen `Ridwan Pages`, brand `ridwanafazn`.
-11. **Public site BUKAN zero-JS.** Halaman publik memuat three.js (globe, ±139 KB), IntersectionObserver reveal, slider, lightbox, dan menu mobile. Jangan menuliskan/mengarahkan "zero-JS" untuk public.
+11. **Public site BUKAN zero-JS.** Halaman publik memuat IntersectionObserver reveal, slider galeri, lightbox, dan menu mobile. **Three.js/globe tidak lagi dipakai di homepage** (HeroGlobe tidak di-render); jangan menuliskan/mengarahkan "zero-JS" untuk public.
 12. **`AUTH_COOKIE_NAME` / `AUTH_COOKIE_DOMAIN` / `AUTH_COOKIE_SECURE` di `wrangler.jsonc` tidak dibaca kode.** `src/lib/auth.ts` hanya memakai `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AUTH_TRUSTED_ORIGINS`; nama cookie memakai default Better Auth. Jangan menganggapnya sebagai konfigurasi aktif.
 13. **`pnpm lint` belum bisa jalan** — `eslint` tidak ada di `devDependencies` dan tidak ada config. Pakai `pnpm typecheck` dulu sampai lint di-setup.
 14. **Browser Cache TTL zona = `0` (“Respect Existing Headers”) sejak 2026-11-16.** Sebelumnya `14400` (4 jam), sehingga HTML yang di-cache edge dipaksa `max-age=14400` meski Worker mengirim 60. Jangan menaikkannya lagi: HTML harus ikut `max-age=60` dari `src/middleware.ts`; aset ber-hash tetap `max-age=31536000, immutable`.
@@ -153,6 +153,10 @@ neon status | branches list | connection-string --pooled
 23. **`import.meta.env.DEV` bisa `false` di dev Cloudflare** karena `NODE_ENV=production` dari `wrangler.jsonc`; gunakan `import.meta.env.MODE === 'development'` untuk percabangan dev (dipakai bypass `?v=`). `PROD` juga bisa menyesatkan di dev.
 24. **`astro:env` server `access: 'public'` = nilai build-time.** `.env.local` ikut ter-inline ke Worker produksi (pernah membuat `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` berisi `localhost`). Untuk nilai yang berbeda dev/produksi pakai `access: 'secret'` agar dibaca runtime. Jangan mengembalikan `BETTER_AUTH_URL`/`AUTH_TRUSTED_ORIGINS` ke `public`.
 25. **Heatmap GitHub mengambil HTML publik** `https://github.com/users/ridwanafazn/contributions` (tanpa token). Hasil di-cache 6 jam di `caches.default` + memori dev; fetch timeout 2,5 dtk. Kalau fetch/parse gagal, `getGitHubContributions()` mengembalikan `null` dan section tidak dirender — **jangan** membuat halaman 500. Kalau markup GitHub berubah, ganti ke GraphQL + PAT read-only `GITHUB_TOKEN`.
+26. **Homepage hero = `HeroAbstract`**, bukan hero Cold Steel/globe. Copy kiri, cutout portrait tengah, app GIS Sentry kanan; full-bleed `100vw`. Section setelah hero **tidak boleh ikut dirombak** saat menyentuh hero. Di ≤980px app **mengambang di kanan setinggi mulut** (absolute), panel merah `::before` portrait, copy di bawah; jangan kembalikan app ke baris penuh—hero jadi sangat panjang seperti laporan 2026-11-21.
+27. **Navbar homepage digate.** `Layout` menerima `gateNav` + `bareHero`; `Navbar` memasang `data-nav-gate`; CSS gate ada di `global.css` (unlayered); `syncNav()` menampilkan navbar lama setelah **70% tinggi `#hero`**. Script Navbar berjalan sebelum `<main>`/hero ada — **jangan** menganggap hero yang belum ada sebagai “boleh tampil”; kalau hero null, navbar harus hidden. Jangan mengganti navbar ini dengan pill floating baru.
+28. **Aset hero:** `public/images/ridwan-cutout.webp` (123 KB) + PNG fallback; font `public/fonts/instrument-serif-italic.woff2` (preload di `Layout`). Kalau memindahkan foto ke Cloudinary, update CSP/`img-src` dan path `HeroAbstract`.
+29. **Vite dev watch** mengabaikan `.taste-skill/**` dan `mockups/shots/**` (`astro.config.mjs`). Tanpa ini, Chrome profile dari screenshot tool memicu `EBUSY` dan error `No Astro CSS at index 0`; kalau dev korup: `pnpm exec astro dev stop` lalu `pnpm dev`.
 
 ---
 

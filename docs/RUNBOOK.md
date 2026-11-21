@@ -57,6 +57,24 @@ pnpm db:seed
 
 > **Catatan:** `astro dev` di Astro 7 + Cloudflare adapter memakai **workerd**. Jangan pakai `wrangler dev` untuk aplikasi Astro; gunakan `astro dev` / `astro preview`.
 
+### Preview di HP (LAN/hotspot)
+
+```bash
+# laptop & HP di hotspot yang sama
+pnpm dev --host 0.0.0.0
+```
+
+Buka `http://<IP-laptop>:4321/` dari browser HP. Cek IP laptop:
+
+```powershell
+Get-NetIPAddress -AddressFamily IPv4 |
+  Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' }
+```
+
+- Firewall Windows harus mengizinkan Node pada profil jaringan aktif; kalau tidak, HP akan timeout.
+- Kalau HMR korup (`No Astro CSS at index 0`): `pnpm exec astro dev stop` lalu `pnpm dev` lagi. Jangan jalankan `pnpm build` saat dev hidup.
+- `astro.config.mjs` mengabaikan `.taste-skill/**` dan `mockups/shots/**` di Vite watch; jangan hapus, karena profile Chrome dari screenshot tool bisa memicu `EBUSY` dan merusak HMR.
+
 ---
 
 ## 3. Deploy Production

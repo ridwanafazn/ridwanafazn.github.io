@@ -16,6 +16,12 @@ export default defineConfig({
       // dengan dep optimizer workerd — exclude dari pre-bundle.
       exclude: ['better-auth', '@neondatabase/serverless', 'drizzle-orm'],
     },
+    server: {
+      watch: {
+        // Chrome profile hasil screenshot tools + artefak review bukan source.
+        ignored: ['**/.taste-skill/**', '**/mockups/shots/**'],
+      },
+    },
   },
   integrations: [],
   env: {

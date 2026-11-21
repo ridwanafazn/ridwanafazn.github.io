@@ -2,6 +2,12 @@
 import { getProfile } from '../lib/content';
 import Icon from './Icon.astro';
 
+interface Props {
+  gateNav?: boolean;
+}
+
+const { gateNav = false } = Astro.props;
+
 const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 
@@ -30,7 +36,7 @@ const isCurrent = (targetPath: string) => {
 };
 ---
 
-<header class="fixed top-0 w-full z-50 flex justify-center mt-0 md:mt-4 pointer-events-none">
+<header data-nav-gate={gateNav ? 'true' : 'false'} class="fixed top-0 w-full z-50 flex justify-center mt-0 md:mt-4 pointer-events-none">
   
   <div data-nav-shell data-scrolled="false" class="nav-shell relative z-50 pointer-events-auto bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 border-b md:border border-outline w-full md:w-auto md:rounded-md px-6 md:px-8 h-16 flex items-center justify-between gap-6 md:gap-16 transition-all duration-300">
     
@@ -134,6 +140,27 @@ const isCurrent = (targetPath: string) => {
       if (!shell || !shell.isConnected) shell = document.querySelector('[data-nav-shell]');
       if (!shell) return;
       shell.setAttribute('data-scrolled', String(window.scrollY > 16));
+
+      var header = shell.closest('header');
+      if (header && header.getAttribute('data-nav-gate') === 'true') {
+        var hero = document.querySelector('#hero');
+        var threshold = hero ? hero.getBoundingClientRect().height * 0.7 : 0;
+        /* Script Navbar jalan sebelum <main>/hero di DOM. Jangan anggap
+           "hero belum ada" sebagai "boleh tampil"—itu membuat navbar
+           terlihat di atas hero. */
+        var visible = hero ? window.scrollY > threshold : false;
+
+        header.classList.toggle('is-nav-visible', visible);
+
+        if (visible) {
+          header.removeAttribute('inert');
+          header.removeAttribute('aria-hidden');
+        } else {
+          header.setAttribute('inert', '');
+          header.setAttribute('aria-hidden', 'true');
+          closeAll();
+        }
+      }
     }
 
     function menuOf(element) {
@@ -224,6 +251,8 @@ const isCurrent = (targetPath: string) => {
 
       syncNav();
       window.addEventListener('scroll', syncNav, { passive: true });
+      document.addEventListener('DOMContentLoaded', syncNav);
+      window.addEventListener('load', syncNav);
 
       document.addEventListener(
         'click',

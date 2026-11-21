@@ -9,6 +9,10 @@ interface Props {
   /** OG image (absolut/path). Default `/og.png` 1200×630. */
   image?: string;
   noindex?: boolean;
+  /** Homepage: sembunyikan navbar sampai 70% hero discroll. */
+  gateNav?: boolean;
+  /** Homepage: hero full-bleed mulai dari atas viewport. */
+  bareHero?: boolean;
 }
 
 const {
@@ -16,6 +20,8 @@ const {
   description = 'Portofolio Ridwan Afazn — software engineer yang membangun sistem produksi: LMS dengan pembayaran & sertifikat terverifikasi, ledger double-entry, dan platform event real-time.',
   image,
   noindex = false,
+  gateNav = false,
+  bareHero = false,
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
@@ -61,6 +67,7 @@ const ogImage = new URL(image ?? '/og.png', Astro.site ?? Astro.url.origin).href
         <link rel="preload" href="/fonts/bricolage-grotesque-normal-var.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="preload" href="/fonts/public-sans-normal-var.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="preload" href="/fonts/jetbrains-mono-normal-var.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/instrument-serif-italic.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
 
         <script is:inline>
@@ -73,9 +80,9 @@ const ogImage = new URL(image ?? '/og.png', Astro.site ?? Astro.url.origin).href
 
         <a href="#main" class="skip-link">Langsung ke konten</a>
 
-        <Navbar />
+        <Navbar gateNav={gateNav} />
         
-        <main id="main" class="flex-grow pt-24 md:pt-28 pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10">
+        <main id="main" class={`flex-grow ${bareHero ? 'pt-0' : 'pt-24 md:pt-28'} pb-24 px-6 md:px-12 max-w-7xl mx-auto w-full relative z-10`}>
             <noscript>
                 <nav class="no-js-nav" aria-label="Navigasi">
                     <a href={base}>Home</a>

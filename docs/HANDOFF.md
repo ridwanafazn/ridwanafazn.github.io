@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-18
+> **Terakhir diperbarui:** 2026-11-21
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `b55d48d0-6767-491f-a55a-814b648ae44a` (2026-11-18, Tech Stack 5 kategori + hero `FE·BE·AI·Mobile`) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `96018606-6dca-456d-bac2-3c4266eaaceb` (2026-11-21, Hero Abstract + navbar gate) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -188,6 +188,18 @@ src/
 37. **Rate limit login** = binding `LOGIN_RATE_LIMIT` (10/60 dtk per IP, `wrangler.jsonc`). Middleware fail-open; Better Auth memakai `cf-connecting-ip` lewat `advanced.ipAddress`. Jangan hapus binding saat mengubah Worker.
 38. **`import.meta.env.DEV` salah di dev Cloudflare** (`false` karena `NODE_ENV=production`). Untuk percabangan dev pakai `import.meta.env.MODE === 'development'`. Kalau memakai `DEV`, bypass `?v=` mati dan CSP dev memakai aturan produksi.
 39. **`astro:env` server `access: 'public'` di-inline saat build.** Nilai dari `.env.local` ikut masuk ke bundle produksi, jadi jangan dipakai untuk konfigurasi yang berbeda per environment (URL, trusted origins). Gunakan `access: 'secret'` agar dibaca dari Worker env saat runtime. Ini penyebab bug “Invalid origin” 2026-11-16.
+
+### Hero Abstract + navbar gate — SELESAI + DEPLOY (2026-11-21)
+
+- Homepage hero diganti total; **section di bawah hero tidak diubah** (spec strip, Featured Projects, Tech Stack, GitHub).
+- Komponen baru: `src/components/HeroAbstract.astro` — poster gelap full-bleed, copy kiri (`Software Engineer` + `Keep it simple, make it scale.`), **foto cutout di tengah**, app **GIS Sentry** di kanan (top 30%, sejajar mulut).
+- Aset: `public/images/ridwan-cutout.webp` (123 KB) + PNG fallback; font `public/fonts/instrument-serif-italic.woff2` (self-host, preload di `Layout`).
+- **Tidak ada top navbar di hero.** Navbar lama (kotak rounded) tetap dipakai, tapi digate: muncul setelah **70% tinggi `#hero`** discroll. `Layout` menerima `gateNav` + `bareHero`; `main` homepage `pt-0`; `Navbar` memakai `data-nav-gate` + CSS gate di `global.css` + logika `syncNav()`.
+- Hero memakai `width: 100vw` + margin full-bleed. Di **tablet/mobile (≤980px)** app window **mengambang di kanan setinggi mulut** (`top: 16%`, `width: min(44vw,280px)`), panel merah jadi `::before` portrait (bukan 45% tinggi hero), copy di bawah, marquee. Di ≤640 app `width: min(44vw,170px)`, `right: 8%`. Jangan kembalikan app ke baris penuh di bawah copy—itu membuat hero sangat panjang.
+- App window dinaikkan ke `top: 30%` (sejajar mulut); sphere hitam dan badge teks lingkaran dihapus; brand/tahun statis di atas hero dihapus.
+- `astro.config.mjs`: Vite `server.watch.ignored` untuk `.taste-skill/**` dan `mockups/shots/**` (mencegah EBUSY/“No Astro CSS” saat screenshot tool menulis profile Chrome di repo).
+- Verifikasi: `pnpm typecheck` dan `pnpm build` hijau; gate diuji (atas: hidden/inert, >70%: visible); 1440/390 dicek.
+- **Deploy:** `96018606-6dca-456d-bac2-3c4266eaaceb` (2026-11-21, 100% traffic). Live verified `x-cache=MISS`, `newHero=True`, `oldHero=False` di `ridwanafazn.my.id` dan workers.dev. Dev LAN (opsional): `pnpm dev --host 0.0.0.0` → `http://<IP-laptop>:4321/`.
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.

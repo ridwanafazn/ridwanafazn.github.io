@@ -11,6 +11,8 @@ Sumber kebenaran: `src/styles/global.css` + `docs/DESIGN.md`. Dokumen ini adalah
 
 "Cold Steel": arsip teknis dengan tipografi editorial. Putih netral, tinta, satu aksen orange. Tanpa olive. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
 
+**Pengecualian:** hero homepage = **HeroAbstract** (poster gelap full-bleed). Di sana gradient/noise/marquee/shadow berwarna/Instrument Serif memang dipakai. Jangan menyalin gaya poster ini ke halaman/section lain, dan jangan “merapikannya” menjadi Cold Steel biasa.
+
 ## Token (satu aksen)
 
 ```
@@ -46,7 +48,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 
 ## Struktur halaman
 
-- **Hero**: asimetris 7/5. Kiri teks + CTA, kanan ruang globe (desktop saja). Jangan center.
+- **Hero homepage**: HeroAbstract — copy kiri (`Software Engineer` + `Keep it simple, make it scale.`), cutout portrait di tengah, app GIS Sentry di kanan. Navbar lama (kotak rounded) digate muncul setelah 70% tinggi hero. Hero 7/5 + globe lama tidak dipakai di homepage. Di ≤980px app mengambang di kanan setinggi mulut, bukan baris penuh di bawah copy.
 - **Strip data**: hairline grid `gap-px bg-outline`, sel `bg-background`.
 - **Daftar proyek**: `ProjectLedger` (baris berindeks). Jangan kembali ke carousel/card grid.
 - **Case study**: h1 + meta plate (Peran/Stack/Tautan) → narasi → Hasil → Galeri → Proyek berikutnya.
@@ -57,11 +59,12 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 
 - Native saja: CSS transition/transform, IntersectionObserver, `requestAnimationFrame`. Tanpa GSAP/Framer.
 - Hormati `prefers-reduced-motion`; konten tetap terlihat tanpa JS.
-- Globe: `>=1024px`, `requestIdleCallback`, dynamic import. Jangan dimuat di mobile.
+- Globe/three.js tidak dipakai di homepage (HeroGlobe tidak di-render). HeroAbstract memakai entrance, marquee, app float, dan nav gate; semuanya berhenti di `prefers-reduced-motion`.
 
 ## Gambar
 
 - Cloudinary, `c_limit` + `q_auto,f_auto`. Galeri: `srcset` `w_480/800/1600` + `sizes`.
+- Foto hero: `public/images/ridwan-cutout.webp` (123 KB) + PNG fallback; jangan ganti ke Cloudinary tanpa update CSP/path. App window memakai screenshot GIS Sentry Cloudinary.
 - OG: 1200×630, `c_fill,g_auto` (lihat `ogImage` di `src/lib/content.ts`).
 - Selalu `width`/`height` atau aspect-ratio; `loading="lazy"` kecuali di atas fold.
 

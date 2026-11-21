@@ -10,7 +10,7 @@
 
 | Klaim di dokumen lama | Aktual (2026-11-15) |
 |---|---|
-| "Public site **zero-JS**" | **Salah.** Public memuat three.js (globe, hanya ≥1024px), IntersectionObserver reveal, slider galeri, lightbox, dan menu mobile. |
+| "Public site **zero-JS**" | **Salah.** Public memuat IntersectionObserver reveal, slider galeri, lightbox, dan menu mobile. Three.js/globe tidak lagi dipakai di homepage (HeroAbstract). |
 | Palette blue-800 + orange accent + dark mode otomatis | **Salah.** Sekarang kertas hangat + satu aksen slate; **tidak ada dark mode** (tidak ada `prefers-color-scheme` maupun toggle). |
 | Admin pakai **Shadcn/UI + Radix + TanStack Table** | **Salah.** Tidak ada file `.tsx` (0). Admin = Astro components + Tailwind. |
 | **Cloudinary Media Library Widget** untuk upload/pick | **Salah.** Upload custom: `multiple` + drag&drop, paralel maks 3, signature sekali per batch, progress + error per file. |
@@ -18,6 +18,20 @@
 | 10 project, 1 asset | **Salah.** 13 project, 55 asset, 54 gambar galeri, **0 cover**. |
 
 ---
+
+## 0.2 Hero Abstract (homepage) — 2026-11-21
+
+Homepage memakai **HeroAbstract** (`src/components/HeroAbstract.astro`), bukan hero Cold Steel biasa.
+
+- **Full-bleed gelap** `#080907`; copy kiri (`Software Engineer` + `Keep it simple, make it scale.`), **foto cutout di tengah**, app window GIS Sentry di kanan (`top: 30%`, sejajar mulut).
+- **Tablet/mobile ≤980px:** app window **absolute di kanan setinggi mulut** (`top:16%`), bukan baris penuh setelah copy; panel merah menjadi `::before` portrait; copy di bawah; hero ringkas. ≤640px app `width:min(44vw,170px)`, `right:8%`.
+- Unsur poster: panel merah trapezoid, garis lime diagonal, kata `SCALE` outline, grid/crosshair, noise, stiker, marquee, entrance animation, app float.
+- `scale.` memakai **Instrument Serif italic** self-host (`public/fonts/instrument-serif-italic.woff2`, preload di `Layout`).
+- Foto: `public/images/ridwan-cutout.webp` (123 KB) + `ridwan-cutout.png` fallback.
+- **Tidak ada top navbar di hero.** Navbar lama (kotak rounded, bukan pill) muncul setelah **70% tinggi `#hero`** discroll. Gate: `data-nav-gate` di `Navbar`, CSS di `global.css`, `syncNav()`; `Layout` menerima `gateNav` + `bareHero`.
+- Section di bawah hero **tidak berubah** dan tetap memakai container Cold Steel (`max-w-7xl`, `pt-0` hanya untuk homepage lewat `bareHero`).
+- Ini **pengecualian yang disengaja** terhadap aturan “tanpa gradient/glow/band gelap” dan hero 7/5. Jangan menyalin gaya ini ke halaman lain.
+- Globe lama **tidak dipakai lagi di homepage**; `HeroGlobe` masih ada di repo tetapi tidak di-render.
 
 ## 1. Design tokens (aktual)
 
@@ -77,7 +91,7 @@
 
 | Route | Komponen | JS yang dimuat | Catatan |
 |---|---|---|---|
-| `/` | HeroGlobe, spec strip (Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, **GitHubActivity** | reveal + spec stagger (globe hanya ≥1024px & idle); heatmap GitHub SSR, tanpa JS client | globe 559 KB **tidak** dimuat di mobile/<1024. `FloatingNav`, Current Focus, dan HowIBuild dihapus. Globe solid tanpa atmosphere/mask. Tech Stack memakai ikon brand + label 12px (5 kategori; **Language** baris penuh `md:col-span-2` dengan item 5 kolom, 4 kategori lain 2×2). Heatmap kontribusi 12 bulan: 5 langkah abu + orange hanya level tertinggi; mobile scroll horizontal mulai dari minggu terbaru |
+| `/` | **HeroAbstract**, spec strip (Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, **GitHubActivity** | hero entrance/marquee/app float + nav gate 70%; spec strip/GitHub tetap | hero full-bleed; cutout portrait + app GIS Sentry; globe tidak lagi dimuat di homepage. `FloatingNav`, Current Focus, dan HowIBuild dihapus. Tech Stack memakai ikon brand + label 12px (5 kategori; **Language** baris penuh `md:col-span-2` dengan item 5 kolom, 4 kategori lain 2×2). Heatmap kontribusi 12 bulan: 5 langkah abu + orange hanya level tertinggi; mobile scroll horizontal mulai dari minggu terbaru |
 | `/about` | Timeline, pendidikan, sertifikasi, volunteering | reveal | tanpa kartu bersarang |
 | `/projects` | **ProjectLedger** 13 baris (indeks + thumbnail + role + stack: 2 item + `+N`) | reveal + hover preview | tanpa carousel; 13 proyek dalam satu layar; detail stack lengkap ada di halaman project |
 | `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, berhenti di ujung), lightbox (hanya jika ada gambar), next-project | reveal + slider + lightbox | project tanpa gambar tidak merender lightbox/dialog kosong; OG jatuh ke `/og.png` |
@@ -213,3 +227,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-17 | **Landing cleanup**: atmosphere + mask globe dihapus (globe solid), Tech Stack jadi ikon brand + label kecil, Current Focus & HowIBuild dihapus, spec strip jadi 3 sel, footer memakai ikon sosial | ✅ |
 | 2026-11-17 | **GitHub activity**: heatmap kontribusi 12 bulan di homepage setelah Tech Stack. Sumber endpoint publik GitHub (tanpa token), cache 6 jam, fail-open. Skala 5 langkah; orange hanya level tertinggi | ✅ |
 | 2026-11-18 | **Tech Stack 5 kategori**: Language/Backend/Frontend/Cloud and Infrastructure/Architecture and Integrations. Language memakai baris penuh di grid 2 kolom (`md:col-span-2`); ikon brand diperluas 19 brand, konsep non-brand tetap SVG garis | ✅ |
+| 2026-11-21 | **Hero Abstract**: poster gelap full-bleed, cutout portrait di tengah, app GIS Sentry di kanan, panel merah trapezoid, marquee, Instrument Serif; navbar lama digate muncul setelah 70% hero. Section bawah tidak diubah | ✅ deploy `96018606` |

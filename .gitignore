@@ -42,3 +42,6 @@ backups/
 
 # impeccable: platform-specific engine binary (re-install with `npx impeccable install`)
 .opencode/skills/impeccable/scripts/bin/
+
+# taste-skill: Chrome profiles/screenshots from local checks
+.taste-skill/
