@@ -12,6 +12,7 @@ const taglineTail = taglineRest.join(',').trim();
 
 const marqueeItems = [
   role.toUpperCase(),
+  'AI APPLICATION ENGINEER',
   'KEEP IT SIMPLE',
   'MAKE IT SCALE',
   'LEDGER',
@@ -86,13 +87,13 @@ const marqueeItems = [
       {marqueeItems.map((item) => (
         <>
           <span>{item}</span>
-          <i>✦</i>
+          <i class="hero-marquee-mark" aria-hidden="true"></i>
         </>
       ))}
       {marqueeItems.map((item) => (
         <>
           <span>{item}</span>
-          <i>✦</i>
+          <i class="hero-marquee-mark" aria-hidden="true"></i>
         </>
       ))}
     </div>
@@ -271,15 +272,15 @@ const marqueeItems = [
     left: var(--hero-pad);
     top: 35%;
     z-index: 14;
-    width: min(34vw, 430px);
-    max-width: 430px;
+    width: min(36vw, 480px);
+    max-width: 480px;
     padding: 0;
   }
 
   .hero-headline {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: clamp(3.6rem, 5.6vw, 5.8rem);
+    font-size: clamp(3.8rem, 6vw, 6.2rem);
     font-weight: 600;
     line-height: 0.88;
     letter-spacing: -0.06em;
@@ -331,10 +332,11 @@ const marqueeItems = [
 
   .hero-subtext em {
     color: var(--hero-lime);
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: 1.15em;
-    font-style: italic;
-    letter-spacing: -0.01em;
+    font-family: inherit;
+    font-size: 1em;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: inherit;
   }
 
   .hero-portrait {
@@ -533,10 +535,13 @@ const marqueeItems = [
     -webkit-text-stroke: 1px rgba(243, 245, 241, 0.6);
   }
 
-  .hero-marquee-track i {
-    color: var(--hero-red);
-    font-size: 18px;
-    font-style: normal;
+  .hero-marquee-mark {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    background: var(--hero-red);
+    transform: rotate(45deg);
   }
 
   @keyframes hero-marquee {
@@ -568,13 +573,14 @@ const marqueeItems = [
   @media (max-width: 980px) {
     .hero-root {
       --hero-pad: 28px;
-      min-height: auto;
+      min-height: 100svh;
       cursor: auto;
     }
 
     .hero-stage {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, 1fr) auto;
       gap: 0;
       padding: 0 var(--hero-pad);
     }
@@ -584,9 +590,9 @@ const marqueeItems = [
       left: auto;
       right: auto;
       bottom: auto;
-      order: -1;
+      grid-area: 1 / 1;
       width: 100%;
-      height: auto;
+      height: 100%;
       min-height: 0;
       max-height: none;
       padding: 12px 0 0;
@@ -600,37 +606,39 @@ const marqueeItems = [
       position: absolute;
       z-index: -1;
       top: 4%;
-      right: 8%;
+      right: 4%;
       bottom: 0;
-      left: 8%;
+      left: 4%;
       background: var(--hero-red);
       clip-path: polygon(0 4%, 100% 0, 100% 96%, 6% 100%);
       transform: skewY(-2deg);
     }
 
     .hero-portrait picture {
-      height: auto;
+      height: 100%;
     }
 
     .hero-portrait img {
-      width: auto;
-      height: auto;
-      max-width: 84%;
-      max-height: 42svh;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      object-fit: cover;
+      object-position: center 18%;
     }
 
     .hero-copy {
       position: relative;
       left: auto;
       top: auto;
-      order: 0;
+      grid-area: 2 / 1;
       width: 100%;
       max-width: 620px;
       padding: 8px 0 0;
     }
 
     .hero-headline {
-      font-size: clamp(3rem, 7.2vw, 4.2rem);
+      font-size: clamp(3.2rem, 7.8vw, 4.6rem);
     }
 
     .hero-subtext {
@@ -639,16 +647,18 @@ const marqueeItems = [
       font-size: clamp(1rem, 1.5vw, 1.2rem);
     }
 
-    /* App mengambang di kanan, setinggi mulut — tidak lagi jadi baris
-       penuh di bawah copy yang memanjangkan hero. */
+    /* App satu grid cell dengan portrait, menempel di kanan-bawah.
+       Row height tetap ditentukan portrait; copy tidak tertimpa. */
     .hero-app-wrap {
-      position: absolute;
-      right: 4%;
-      top: 16%;
-      order: 0;
+      position: relative;
+      right: auto;
+      top: auto;
+      grid-area: 1 / 1;
+      align-self: end;
+      justify-self: end;
       width: min(44vw, 280px);
       max-width: 280px;
-      margin: 0;
+      margin: 0 0 10px;
       z-index: 12;
     }
 
@@ -687,13 +697,12 @@ const marqueeItems = [
 
     .hero-portrait::before {
       top: 3%;
-      right: 6%;
-      left: 6%;
+      right: 3%;
+      left: 3%;
     }
 
     .hero-portrait img {
-      max-width: 88%;
-      max-height: 38svh;
+      object-position: center 14%;
     }
 
     .hero-copy {
@@ -706,7 +715,7 @@ const marqueeItems = [
     }
 
     .hero-headline {
-      font-size: clamp(2.7rem, 12vw, 3.6rem);
+      font-size: clamp(3.1rem, 13vw, 4rem);
     }
 
     .hero-subtext {
@@ -715,11 +724,9 @@ const marqueeItems = [
     }
 
     .hero-app-wrap {
-      right: 8%;
-      top: 14%;
-      width: min(44vw, 170px);
-      max-width: 170px;
-      margin: 0;
+      width: min(46vw, 150px);
+      max-width: 150px;
+      margin: 0 0 8px;
     }
 
     .hero-app-frame {

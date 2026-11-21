@@ -23,10 +23,10 @@
 
 Homepage memakai **HeroAbstract** (`src/components/HeroAbstract.astro`), bukan hero Cold Steel biasa.
 
-- **Full-bleed gelap** `#080907`; `Software Engineer` sebagai **h1 besar dua baris**, `Keep it simple, make it scale.` sebagai **subtext kecil**; copy desktop `top: 35%` (setara bahu); **foto cutout di tengah**, app window GIS Sentry di kanan (`top: 30%`, sejajar mulut). Tanpa CTA, tanpa stiker, label app dihapus.
-- **Tablet/mobile ≤980px:** app window **absolute di kanan setinggi mulut** (`top:16%`), bukan baris penuh setelah copy; panel merah menjadi `::before` portrait; copy di bawah; hero ringkas. ≤640px app `width:min(44vw,170px)`, `right:8%`.
-- Unsur poster: panel merah trapezoid, garis lime diagonal, kata `SCALE` outline, grid/crosshair, noise, marquee, entrance animation, app float.
-- `scale.` memakai **Instrument Serif italic** self-host (`public/fonts/instrument-serif-italic.woff2`, preload di `Layout`).
+- **Full-bleed gelap** `#080907`; `Software Engineer` sebagai **h1 besar dua baris**, `Keep it simple, make it scale.` sebagai **subtext kecil memakai Public Sans**; copy desktop `top: 35%` (setara bahu); **foto cutout di tengah**, app window GIS Sentry di kanan (`top: 30%`, sejajar mulut). Tanpa CTA, tanpa stiker, label app dihapus.
+- **Tablet/mobile ≤980px:** hero `100svh`; portrait mengisi row `1fr` (`object-fit: cover`); app satu grid cell dengan portrait, menempel **kanan-bawah**; copy + marquee di dasar; tidak ada section kedua di layar pertama. ≤640px app `150px`, margin 8px.
+- Unsur poster: panel merah trapezoid, garis lime diagonal, kata `SCALE` outline, grid/crosshair, noise, marquee dengan pemisah **diamond persegi** + `AI APPLICATION ENGINEER`, entrance animation, app float.
+- Subtext memakai **Public Sans**; Instrument Serif tidak dipakai (preload/font-face dihapus).
 - Foto: `public/images/ridwan-cutout.webp` (123 KB) + `ridwan-cutout.png` fallback.
 - **Tidak ada top navbar di hero.** Navbar lama (kotak rounded, bukan pill) muncul setelah **70% tinggi `#hero`** discroll. Gate: `data-nav-gate` di `Navbar`, CSS di `global.css`, `syncNav()`; `Layout` menerima `gateNav` + `bareHero`.
 - Section di bawah hero **tidak berubah** dan tetap memakai container Cold Steel (`max-w-7xl`, `pt-0` hanya untuk homepage lewat `bareHero`).
@@ -227,4 +227,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-17 | **Landing cleanup**: atmosphere + mask globe dihapus (globe solid), Tech Stack jadi ikon brand + label kecil, Current Focus & HowIBuild dihapus, spec strip jadi 3 sel, footer memakai ikon sosial | ✅ |
 | 2026-11-17 | **GitHub activity**: heatmap kontribusi 12 bulan di homepage setelah Tech Stack. Sumber endpoint publik GitHub (tanpa token), cache 6 jam, fail-open. Skala 5 langkah; orange hanya level tertinggi | ✅ |
 | 2026-11-18 | **Tech Stack 5 kategori**: Language/Backend/Frontend/Cloud and Infrastructure/Architecture and Integrations. Language memakai baris penuh di grid 2 kolom (`md:col-span-2`); ikon brand diperluas 19 brand, konsep non-brand tetap SVG garis | ✅ |
-| 2026-11-21 | **Hero Abstract**: poster gelap full-bleed, h1 `Software Engineer` besar, tagline subtext kecil, cutout portrait di tengah, app GIS Sentry di kanan, panel merah trapezoid, marquee, Instrument Serif; tanpa CTA/stiker; navbar lama digate muncul setelah 70% hero. Section bawah tidak diubah | ✅ deploy `5f35d143` |
+| 2026-11-21 | **Hero Abstract final**: poster gelap full-bleed, h1 `Software Engineer` besar, tagline subtext kecil Public Sans, cutout portrait, app GIS Sentry, panel merah trapezoid, marquee diamond + `AI APPLICATION ENGINEER`; tanpa CTA/stiker/label app; mobile `100svh` full-bleed tanpa section kedua; navbar lama digate 70% hero. Section bawah tidak diubah | ✅ deploy `a46f210e` |

@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `5f35d143-9e9f-4c05-a9df-16db5401f235` (2026-11-21, Hero Abstract final + navbar gate) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `a46f210e-7999-49b8-8f3c-da585847e9b9` (2026-11-21, Hero Abstract final + navbar gate) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -192,14 +192,14 @@ src/
 ### Hero Abstract + navbar gate — SELESAI + DEPLOY (2026-11-21)
 
 - Homepage hero diganti total; **section di bawah hero tidak diubah** (spec strip, Featured Projects, Tech Stack, GitHub).
-- Komponen baru: `src/components/HeroAbstract.astro` — poster gelap full-bleed, `Software Engineer` sebagai **h1 besar dua baris**, `Keep it simple, make it scale.` sebagai **subtext kecil**, **foto cutout di tengah**, app **GIS Sentry** di kanan (top 30%, sejajar mulut). Copy desktop `top: 35%` (setara bahu); **tanpa CTA, tanpa stiker, label app dihapus**.
-- Aset: `public/images/ridwan-cutout.webp` (123 KB) + PNG fallback; font `public/fonts/instrument-serif-italic.woff2` (self-host, preload di `Layout`).
+- Komponen baru: `src/components/HeroAbstract.astro` — poster gelap full-bleed, `Software Engineer` sebagai **h1 besar dua baris**, `Keep it simple, make it scale.` sebagai **subtext kecil memakai Public Sans (tanpa serif)**, **foto cutout di tengah**, app **GIS Sentry** di kanan (top 30%, sejajar mulut). Copy desktop `top: 35%` (setara bahu); **tanpa CTA, tanpa stiker, label app dihapus**. Marquee memakai pemisah **diamond persegi** dan memuat **AI APPLICATION ENGINEER**.
+- Aset: `public/images/ridwan-cutout.webp` (123 KB) + PNG fallback. Font Instrument Serif **tidak dipakai lagi**—preload dan `@font-face` sudah dihapus; subtext memakai Public Sans.
 - **Tidak ada top navbar di hero.** Navbar lama (kotak rounded) tetap dipakai, tapi digate: muncul setelah **70% tinggi `#hero`** discroll. `Layout` menerima `gateNav` + `bareHero`; `main` homepage `pt-0`; `Navbar` memakai `data-nav-gate` + CSS gate di `global.css` + logika `syncNav()`.
-- Hero memakai `width: 100vw` + margin full-bleed. Di **tablet/mobile (≤980px)** app window **mengambang di kanan setinggi mulut** (`top: 16%`, `width: min(44vw,280px)`), panel merah jadi `::before` portrait (bukan 45% tinggi hero), copy di bawah, marquee. Di ≤640 app `width: min(44vw,170px)`, `right: 8%`. Jangan kembalikan app ke baris penuh di bawah copy—itu membuat hero sangat panjang.
+- Hero memakai `width: 100vw` + margin full-bleed. Di **tablet/mobile (≤980px)** hero `100svh`: portrait mengisi row `1fr` dengan `object-fit: cover`; app berada di **grid cell yang sama** dengan portrait, menempel **kanan-bawah**; copy + marquee di dasar. Tidak ada section kedua di layar pertama. ≤640 app `150px` dengan margin 8px. Jangan mengembalikan app ke baris penuh atau `space-between`—itu membuat void besar/hero panjang.
 - App window dinaikkan ke `top: 30%` (sejajar mulut); sphere hitam dan badge teks lingkaran dihapus; brand/tahun statis di atas hero dihapus; label lime `GIS SENTRY / LIVE` dihapus (chrome app tetap).
 - `astro.config.mjs`: Vite `server.watch.ignored` untuk `.taste-skill/**` dan `mockups/shots/**` (mencegah EBUSY/“No Astro CSS” saat screenshot tool menulis profile Chrome di repo).
 - Verifikasi: `pnpm typecheck` dan `pnpm build` hijau; gate diuji (atas: hidden/inert, >70%: visible); 1440/390 dicek.
-- **Deploy:** `5f35d143-9e9f-4c05-a9df-16db5401f235` (2026-11-21, 100% traffic). Live verified `x-cache=MISS`, `newHero=True`, `oldHero=False`, `appTag=False`, `sticker=False`, `CTA=False` di `ridwanafazn.my.id`. Dev server lokal dimatikan setelah deploy.
+- **Deploy:** `a46f210e-7999-49b8-8f3c-da585847e9b9` (2026-11-21, 100% traffic). Live verified `x-cache=MISS`, `newHero=True`, `oldHero=False`, `appTag=False`, `sticker=False`, `CTA=False`; mobile 360×800: portrait `0–614`, app `482–604`, copy `614–744`, marquee `744–800`, tidak ada section kedua. Dev server lokal dimatikan setelah deploy.
 
 ### Fase A revamp — SELESAI (2026-11-15)
 - Font self-host: Bricolage Grotesque (display) + Public Sans (UI) + JetBrains Mono, 3 file WOFF2 (~97 KB), preload.

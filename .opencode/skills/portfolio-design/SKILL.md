@@ -11,7 +11,7 @@ Sumber kebenaran: `src/styles/global.css` + `docs/DESIGN.md`. Dokumen ini adalah
 
 "Cold Steel": arsip teknis dengan tipografi editorial. Putih netral, tinta, satu aksen orange. Tanpa olive. Tenang, padat, tanpa dekorasi yang tidak membawa informasi.
 
-**Pengecualian:** hero homepage = **HeroAbstract** (poster gelap full-bleed). Di sana gradient/noise/marquee/shadow berwarna/Instrument Serif memang dipakai. Jangan menyalin gaya poster ini ke halaman/section lain, dan jangan “merapikannya” menjadi Cold Steel biasa.
+**Pengecualian:** hero homepage = **HeroAbstract** (poster gelap full-bleed). Di sana gradient/noise/marquee/diamond mark/shadow berwarna memang dipakai; subtext memakai Public Sans (tanpa serif). Jangan menyalin gaya poster ini ke halaman/section lain, dan jangan “merapikannya” menjadi Cold Steel biasa.
 
 ## Token (satu aksen)
 
@@ -48,7 +48,7 @@ display   Bricolage Grotesque 500   body  Public Sans  data  JetBrains Mono
 
 ## Struktur halaman
 
-- **Hero homepage**: HeroAbstract — `Software Engineer` h1 besar dua baris, `Keep it simple, make it scale.` subtext kecil, cutout portrait di tengah, app GIS Sentry di kanan. Tanpa CTA/stiker dan tanpa label app. Navbar lama (kotak rounded) digate muncul setelah 70% tinggi hero. Hero 7/5 + globe lama tidak dipakai di homepage. Di ≤980px app mengambang di kanan setinggi mulut, bukan baris penuh di bawah copy.
+- **Hero homepage**: HeroAbstract — `Software Engineer` h1 besar dua baris, `Keep it simple, make it scale.` subtext kecil Public Sans, cutout portrait di tengah, app GIS Sentry di kanan. Tanpa CTA/stiker dan tanpa label app. Marquee memakai diamond persegi + `AI APPLICATION ENGINEER`. Navbar lama (kotak rounded) digate muncul setelah 70% tinggi hero. Hero 7/5 + globe lama tidak dipakai di homepage. Di ≤980px hero `100svh`: portrait mengisi row `1fr`, app di grid cell yang sama di kanan-bawah, copy + marquee di dasar; jangan kembalikan app ke baris penuh.
 - **Strip data**: hairline grid `gap-px bg-outline`, sel `bg-background`.
 - **Daftar proyek**: `ProjectLedger` (baris berindeks). Jangan kembali ke carousel/card grid.
 - **Case study**: h1 + meta plate (Peran/Stack/Tautan) → narasi → Hasil → Galeri → Proyek berikutnya.
