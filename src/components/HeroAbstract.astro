@@ -44,8 +44,11 @@ const marqueeItems = [
       </p>
 
       <div class="hero-quote" aria-hidden="true">
-        <p class="hero-quote-ja" lang="ja"></p>
-        <p class="hero-quote-en" lang="en"></p>
+        <i class="hero-quote-mark" aria-hidden="true"></i>
+        <div class="hero-quote-lines">
+          <p class="hero-quote-ja" lang="ja"></p>
+          <p class="hero-quote-en" lang="en"></p>
+        </div>
       </div>
     </div>
 
@@ -449,26 +452,32 @@ const marqueeItems = [
     position: absolute;
     left: 0;
     top: calc(100% + 40px);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
     width: min(100%, 360px);
     max-width: 360px;
     opacity: 0;
     transition: opacity 0.18s ease;
     pointer-events: none;
-    text-wrap: pretty;
   }
 
   .hero-root.is-spotting.is-quoting .hero-quote {
     opacity: 1;
   }
 
-  .hero-quote::before {
-    content: '';
-    display: block;
+  .hero-quote-mark {
+    flex: 0 0 auto;
     width: 5px;
     height: 5px;
-    margin: 0 0 8px;
+    margin-top: 8px;
     background: var(--hero-lime);
     transform: rotate(45deg);
+  }
+
+  .hero-quote-lines {
+    min-width: 0;
+    text-wrap: pretty;
   }
 
   .hero-quote-ja {
