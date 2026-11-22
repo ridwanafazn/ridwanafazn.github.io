@@ -36,7 +36,7 @@ const ogImage = new URL(image ?? '/og.png', Astro.site ?? Astro.url.origin).href
 ---
 
 <!doctype html>
-<html lang="id">
+<html lang="id" class={bareHero ? 'page-home' : undefined}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />

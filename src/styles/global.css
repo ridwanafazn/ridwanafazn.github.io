@@ -493,3 +493,17 @@ html {
   background: var(--color-on-surface-variant);
 }
 
+/* Mobile: gutter scrollbar di kanan hero menampilkan background html (cream).
+   Samakan gutter dengan ink hero selama 100svh, lalu kembalikan ke cream. */
+@media (max-width: 980px) {
+  html.page-home {
+    background: linear-gradient(
+      to bottom,
+      #080907 0,
+      #080907 100svh,
+      var(--color-background) 100svh,
+      var(--color-background) 100%
+    );
+  }
+}
+
