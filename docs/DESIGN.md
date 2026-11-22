@@ -26,8 +26,18 @@ Homepage memakai **HeroAbstract** (`src/components/HeroAbstract.astro`), bukan h
 - **Full-bleed gelap** `#080907`; `Software Engineer` sebagai **h1 besar dua baris**, `Keep it simple, make it scale.` sebagai **subtext kecil memakai Public Sans**; copy desktop `top: 35%` (setara bahu); **foto cutout di tengah**, app window GIS Sentry di kanan (`top: 30%`, sejajar mulut). Tanpa CTA, tanpa stiker, label app dihapus.
 - **Tablet/mobile ≤980px:** hero `100svh`; portrait mengisi row `1fr` (`object-fit: cover`); app satu grid cell dengan portrait, menempel **kanan-bawah**; copy + marquee di dasar; tidak ada section kedua di layar pertama. ≤640px app `150px`, margin 8px.
 - Unsur poster: panel merah trapezoid, garis lime diagonal, kata `SCALE` outline, grid/crosshair, noise, marquee dengan pemisah **diamond persegi** + `AI APPLICATION ENGINEER`, entrance animation, app float.
+- **Spotlight foto (2026-11-22):** foto asli tampil **penuh dan berwarna sejak awal**. Saat kursor menyorot area foto, **blob lembut** (bukan lingkaran keras) mengikuti pointer dan membuka easter egg **potret Rengoku** (`public/images/rengoku.webp`) di dalamnya. Hint mono 12px `Sorot untuk Rengoku` hilang setelah interaksi pertama.
+  - Hanya aktif dengan JS + `(min-width: 981px)` + `(hover: hover) and (pointer: fine)`; class `is-spot-ready`/`is-spotting` dipasang di `#hero`.
+  - Tanpa JS, touch/mobile, dan `prefers-reduced-motion` → lapisan Rengoku tetap tersembunyi; **foto asli tetap tampil**.
+  - Reveal memakai `mask-image: url('/images/reveal-blob.png')` (soft blob 400×440, dipakai pada `mask-size: 320px 360px`) + `mask-position` yang dihitung dari `--hero-spot-x/y`. Tidak ada ring/lensa, jadi native cursor tetap terlihat.
+  - Tracking pointer memakai satu `requestAnimationFrame`; jangan menambah listener `pointermove` kedua.
+  - Area interaksi memakai bounding box **foto asli** yang diinset 12% horizontal / 5% vertikal supaya blob tidak aktif di ruang transparan cutout.
+  - **Rengoku disejajarkan 1:1** ke kanvas 3:4 yang sama dengan foto: dari cutout **full-body** 900×1200, aset diskalakan **0.9×** lalu ditempatkan di `(23px, 127px)`. Paha/kaki di bawah tangan **tetap ikut** (hanya ~7px paling bawah yang terpotong) — jangan crop di tangan.
+  - **Quote + SFX:** tiga quote (Inggris + Jepang) — `心を燃やせ / Set your heart ablaze.`, `胸を張って生きろ / Live with your head held high.`, `炎柱・煉獄杏寿郎 / I am the Flame Hashira, Kyojuro Rengoku.` Dipilih dengan **shuffle bag**: semua muncul sebelum ada yang diulang, dan tidak ada quote yang sama dua kali berturut-turut.
+  - Quote muncul setelah **dwell 160ms** (cursor yang cuma lewat tidak memicu), di **kolom kiri bawah** (di bawah tagline, area hitam) — bukan menutupi badan foto — lalu fade out saat kursor keluar. Audio `public/audio/fire-whoosh.mp3` (Mixkit “Fire woosh”, 2.14s, 48kHz stereo, ~67 KB, Mixkit Free License) diputar **maksimal sekali per 1.2s**, volume 0.32.
+  - SFX **default OFF** setiap load. Tombol `SFX OFF/ON` di kanan-atas portrait (desktop) adalah gesture untuk membuka audio; saat ON ia memutar preview, lalu hover berikutnya memutar whoosh. Tanpa klik, reveal tetap visual-only. Mobile/no-JS/`prefers-reduced-motion` tidak menampilkan quote atau tombol SFX.
 - Subtext memakai **Public Sans**; Instrument Serif tidak dipakai (preload/font-face dihapus).
-- Foto: `public/images/ridwan-cutout.webp` (123 KB) + `ridwan-cutout.png` fallback.
+- Foto: `public/images/ridwan-cutout.webp` (123 KB) + `ridwan-cutout.png` fallback. Easter egg: `public/images/rengoku.webp` (900×1200, ~67 KB, cutout **full-body** transparan yang sudah diskalakan/disejajarkan dengan foto) + `public/images/reveal-blob.png` (soft mask 400×440) + `public/audio/fire-whoosh.mp3` (~67 KB, Mixkit “Fire woosh”).
 - **Tidak ada top navbar di hero.** Navbar lama (kotak rounded, bukan pill) muncul setelah **70% tinggi `#hero`** discroll. Gate: `data-nav-gate` di `Navbar`, CSS di `global.css`, `syncNav()`; `Layout` menerima `gateNav` + `bareHero`.
 - Section di bawah hero **tidak berubah** dan tetap memakai container Cold Steel (`max-w-7xl`, `pt-0` hanya untuk homepage lewat `bareHero`).
 - Ini **pengecualian yang disengaja** terhadap aturan “tanpa gradient/glow/band gelap” dan hero 7/5. Jangan menyalin gaya ini ke halaman lain.
@@ -174,7 +184,7 @@ Sisa: tidak ada dari daftar ini; item baru harus mengikuti aturan yang sama.
 
 ## 5. Motion — aturan
 
-Efek yang ada sekarang: hero `fadeSlideUp`, `.reveal` (kiri/kanan/belakang + stagger), `spec-cell` stagger, hover preview ledger, rotasi globe (desktop), slider galeri snap, lightbox, dan nav progress scroll-driven.
+Efek yang ada sekarang: hero `fadeSlideUp`, spotlight reveal foto hero, `.reveal` (kiri/kanan/belakang + stagger), `spec-cell` stagger, hover preview ledger, rotasi globe (desktop), slider galeri snap, lightbox, dan nav progress scroll-driven.
 
 **Aturan baru:** maksimal **dua gesture signature per halaman**. Sisanya statis. Semua animasi harus:
 - dihormati `prefers-reduced-motion` — globe **berhenti total** (bukan diperlambat) saat reduce aktif; render juga dijeda saat tab tidak terlihat,
@@ -229,3 +239,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-18 | **Tech Stack 5 kategori**: Language/Backend/Frontend/Cloud and Infrastructure/Architecture and Integrations. Language memakai baris penuh di grid 2 kolom (`md:col-span-2`); ikon brand diperluas 19 brand, konsep non-brand tetap SVG garis | ✅ |
 | 2026-11-21 | **Hero Abstract final**: poster gelap full-bleed, h1 `Software Engineer` besar, tagline subtext kecil Public Sans, cutout portrait, app GIS Sentry, panel merah trapezoid, marquee diamond + `AI APPLICATION ENGINEER`; tanpa CTA/stiker/label app; mobile `100svh` full-bleed tanpa section kedua; navbar lama digate 70% hero. Section bawah tidak diubah | ✅ deploy `a46f210e` |
 | 2026-11-22 | **Galeri rasio asli**: kartu slider memakai tinggi seragam + lebar mengikuti rasio gambar (`--gallery-card-h`), menggantikan tile `16/10 object-cover` yang memotong screenshot portrait. Navigasi prev/next dihitung per offset kartu | ✅ |
+| 2026-11-22 | **Hero spotlight**: foto asli tampil penuh; blob mask lembut (bukan lingkaran, `reveal-blob.png`) mengikuti kursor dan membuka easter egg Rengoku **full-body** (paha/kaki ikut) yang sudah disejajarkan 1:1 dengan foto. Quote Inggris+Jepang (A/B/C) di **kolom kiri bawah** lewat shuffle bag + dwell 160ms; SFX Mixkit (`fire-whoosh.mp3`) default OFF, toggle di portrait, cooldown 1.2s. Tanpa JS/touch = hanya foto asli | ✅ |

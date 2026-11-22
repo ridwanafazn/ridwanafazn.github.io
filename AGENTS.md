@@ -26,7 +26,7 @@
 - Migrasi Sanity → Neon **selesai** (13 project, 55 asset, 54 gambar galeri, profile, skills, 2 activities).
 - Admin panel + galeri gambar **selesai**; public **SSR + cache**.
 - **Live**: https://ridwanafazn.my.id (`www` → 301 apex) · fallback https://portofx-v2.ridwanafzn.workers.dev
-- **Hero homepage**: **HeroAbstract** (2026-11-21) — full-bleed, cutout portrait, app GIS Sentry, navbar gate 70%; **live** (deploy `a46f210e`).
+- **Hero homepage**: **HeroAbstract** (2026-11-21) — full-bleed, cutout portrait, app GIS Sentry, navbar gate 70%; **spotlight foto** (2026-11-22) — soft blob mask mengikuti kursor, membuka easter egg Rengoku yang sejajar dengan foto + quote Inggris/Jepang di kiri bawah (shuffle bag) + SFX Mixkit default OFF; **live** (deploy `a46f210e`).
 - **Sisa**: gambar cover project — **0 dari 13** project punya cover; galeri sudah terisi.
 - **Branch**: `main` (sudah ada commit + deploy; branch `migrate/astro-ssr-neon` sudah selesai).
 

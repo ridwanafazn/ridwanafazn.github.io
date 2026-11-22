@@ -42,19 +42,50 @@ const marqueeItems = [
       <p class="hero-subtext">
         {taglineLead}{taglineTail && <>, <em>{taglineTail}</em></>}
       </p>
+
+      <div class="hero-quote" aria-hidden="true">
+        <p class="hero-quote-ja" lang="ja"></p>
+        <p class="hero-quote-en" lang="en"></p>
+      </div>
     </div>
 
     <div class="hero-portrait">
-      <picture>
-        <source srcset="/images/ridwan-cutout.webp" type="image/webp" />
+      <div class="hero-portrait-layer hero-portrait-base">
+        <picture>
+          <source srcset="/images/ridwan-cutout.webp" type="image/webp" />
+          <img
+            src="/images/ridwan-cutout.png"
+            alt="Ridwan Afazn memakai kemeja batik hitam, melihat ke arah salinan di kiri."
+            width="1086"
+            height="1448"
+            fetchpriority="high"
+          />
+        </picture>
+      </div>
+
+      <div class="hero-portrait-layer hero-portrait-reveal" aria-hidden="true">
         <img
-          src="/images/ridwan-cutout.png"
-          alt="Ridwan Afazn memakai kemeja batik hitam, melihat ke arah salinan di kiri."
-          width="1086"
-          height="1448"
-          fetchpriority="high"
+          src="/images/rengoku.webp"
+          alt=""
+          width="900"
+          height="1200"
+          decoding="async"
+          fetchpriority="low"
         />
-      </picture>
+      </div>
+
+      <span class="hero-spot-hint" aria-hidden="true">
+        <i></i>
+        Sorot untuk Rengoku
+      </span>
+
+      <button class="hero-sfx" type="button" aria-pressed="false" aria-label="Aktifkan efek suara api">
+        <i aria-hidden="true"></i>
+        <span class="hero-sfx-label">SFX OFF</span>
+      </button>
+
+      <!-- SFX: Mixkit "Fire woosh" (ID 1348), Mixkit Free License. -->
+      <audio class="hero-sfx-audio" src="/audio/fire-whoosh.mp3" preload="none" aria-hidden="true"></audio>
     </div>
 
     <div class="hero-app-wrap">
@@ -83,7 +114,7 @@ const marqueeItems = [
   </div>
 
   <div class="hero-marquee" aria-hidden="true">
-    <div class="hero-marquee-track">
+    <div class="hero-marquee-track" data-impeccable-ignore="marquee">
       {marqueeItems.map((item) => (
         <>
           <span>{item}</span>
@@ -340,6 +371,9 @@ const marqueeItems = [
   }
 
   .hero-portrait {
+    --hero-spot-x: 50%;
+    --hero-spot-y: 50%;
+
     position: absolute;
     left: 50%;
     bottom: -18px;
@@ -354,16 +388,22 @@ const marqueeItems = [
     pointer-events: none;
   }
 
-  .hero-portrait picture {
+  .hero-portrait-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .hero-portrait-layer picture {
     display: flex;
     align-items: flex-end;
     justify-content: center;
     height: 100%;
   }
 
-  .hero-portrait img {
-    position: relative;
-    z-index: 1;
+  .hero-portrait-layer img {
     display: block;
     width: auto;
     height: 100%;
@@ -371,11 +411,174 @@ const marqueeItems = [
     max-height: 790px;
     object-fit: contain;
     object-position: bottom center;
+    mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  }
+
+  /* Foto asli selalu menjadi lapisan dasar dan terlihat penuh. */
+  .hero-portrait-base {
+    z-index: 1;
+  }
+
+  .hero-portrait-base img {
     filter:
       drop-shadow(-16px 0 0 rgba(217, 72, 15, 0.72))
       drop-shadow(9px 0 0 rgba(200, 255, 61, 0.16))
       drop-shadow(0 30px 40px rgba(0, 0, 0, 0.55));
-    mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  }
+
+  /* Rengoku hanya muncul di dalam blob lembut saat kursor menyorot foto. */
+  .hero-portrait-reveal {
+    z-index: 2;
+    opacity: 0;
+    -webkit-mask-image: url('/images/reveal-blob.png');
+    mask-image: url('/images/reveal-blob.png');
+    -webkit-mask-size: 320px 360px;
+    mask-size: 320px 360px;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: calc(var(--hero-spot-x) - 160px) calc(var(--hero-spot-y) - 180px);
+    mask-position: calc(var(--hero-spot-x) - 160px) calc(var(--hero-spot-y) - 180px);
+    transition: opacity 0.18s ease;
+  }
+
+  .hero-root.is-spotting .hero-portrait-reveal {
+    opacity: 1;
+  }
+
+  .hero-quote {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 40px);
+    width: min(100%, 360px);
+    max-width: 360px;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+    pointer-events: none;
+    text-wrap: pretty;
+  }
+
+  .hero-root.is-spotting.is-quoting .hero-quote {
+    opacity: 1;
+  }
+
+  .hero-quote::before {
+    content: '';
+    display: block;
+    width: 5px;
+    height: 5px;
+    margin: 0 0 8px;
+    background: var(--hero-lime);
+    transform: rotate(45deg);
+  }
+
+  .hero-quote-ja {
+    margin: 0;
+    color: var(--hero-paper);
+    font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Noto Sans JP', 'Noto Sans CJK JP', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-shadow: 0 2px 12px rgba(8, 9, 7, 0.8);
+  }
+
+  .hero-quote-en {
+    margin: 5px 0 0;
+    color: rgba(243, 245, 241, 0.78);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.45;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 12px rgba(8, 9, 7, 0.85);
+  }
+
+  .hero-spot-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 42px;
+    z-index: 4;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    transform: translateX(-50%);
+    color: rgba(243, 245, 241, 0.82);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: opacity 0.25s ease;
+  }
+
+  .hero-spot-hint i {
+    display: block;
+    width: 6px;
+    height: 6px;
+    background: var(--hero-lime);
+    transform: rotate(45deg);
+  }
+
+  .hero-root.is-spot-ready .hero-spot-hint {
+    display: inline-flex;
+  }
+
+  .hero-root.has-spotted .hero-spot-hint {
+    opacity: 0;
+  }
+
+  .hero-sfx {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 6;
+    display: none;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 8px;
+    border: 1px solid var(--hero-line);
+    border-radius: 0;
+    background: rgba(8, 9, 7, 0.35);
+    color: var(--hero-paper-dim);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    pointer-events: auto;
+    transition:
+      color 0.18s ease,
+      border-color 0.18s ease;
+  }
+
+  .hero-root.is-spot-ready .hero-sfx {
+    display: inline-flex;
+  }
+
+  .hero-sfx:hover,
+  .hero-sfx:focus-visible {
+    color: var(--hero-paper);
+    border-color: rgba(243, 245, 241, 0.4);
+  }
+
+  .hero-sfx i {
+    display: block;
+    width: 5px;
+    height: 5px;
+    background: var(--hero-paper-dim);
+    transform: rotate(45deg);
+    transition: background 0.18s ease;
+  }
+
+  .hero-sfx.is-on {
+    color: var(--hero-lime);
+    border-color: rgba(200, 255, 61, 0.45);
+  }
+
+  .hero-sfx.is-on i {
+    background: var(--hero-lime);
   }
 
   .hero-app-wrap {
@@ -568,6 +771,11 @@ const marqueeItems = [
     .hero-app-wrap {
       width: min(34vw, 400px);
     }
+
+    .hero-quote {
+      width: min(100%, 300px);
+      max-width: 300px;
+    }
   }
 
   @media (max-width: 980px) {
@@ -614,11 +822,11 @@ const marqueeItems = [
       transform: skewY(-2deg);
     }
 
-    .hero-portrait picture {
+    .hero-portrait-layer picture {
       height: 100%;
     }
 
-    .hero-portrait img {
+    .hero-portrait-layer img {
       width: 100%;
       height: 100%;
       max-width: none;
@@ -635,6 +843,10 @@ const marqueeItems = [
       width: 100%;
       max-width: 620px;
       padding: 8px 0 0;
+    }
+
+    .hero-quote {
+      display: none;
     }
 
     .hero-headline {
@@ -701,7 +913,7 @@ const marqueeItems = [
       left: 3%;
     }
 
-    .hero-portrait img {
+    .hero-portrait-layer img {
       object-position: center 14%;
     }
 
@@ -772,3 +984,169 @@ const marqueeItems = [
     }
   }
 </style>
+
+<script>
+  // Spotlight reveal: hanya untuk desktop dengan pointer presisi.
+  // Tanpa JS / touch / reduced-motion, foto asli tetap tampil (default CSS).
+  const hero = document.querySelector<HTMLElement>('.hero-root');
+
+  if (hero) {
+    const portrait = hero.querySelector<HTMLElement>('.hero-portrait');
+    const baseImg = hero.querySelector<HTMLImageElement>('.hero-portrait-base img');
+    const quoteJa = hero.querySelector<HTMLElement>('.hero-quote-ja');
+    const quoteEn = hero.querySelector<HTMLElement>('.hero-quote-en');
+    const sfxButton = hero.querySelector<HTMLButtonElement>('.hero-sfx');
+    const sfxLabel = hero.querySelector<HTMLElement>('.hero-sfx-label');
+    const sfxAudio = hero.querySelector<HTMLAudioElement>('.hero-sfx-audio');
+
+    const hoverQuery = window.matchMedia('(min-width: 981px) and (hover: hover) and (pointer: fine)');
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const quotes = [
+      { ja: '心を燃やせ', en: 'Set your heart ablaze.' },
+      { ja: '胸を張って生きろ', en: 'Live with your head held high.' },
+      { ja: '炎柱・煉獄杏寿郎', en: 'I am the Flame Hashira, Kyojuro Rengoku.' },
+    ] as const;
+
+    let frame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let inside = false;
+    let quoteTimer = 0;
+    let quoteBag: number[] = [];
+    let lastQuote = -1;
+    let sfxOn = false;
+    let lastSfxAt = 0;
+
+    // Shuffle bag: ketiga quote muncul sebelum ada yang diulang.
+    const pickQuote = () => {
+      if (!quoteBag.length) {
+        quoteBag = quotes.map((_, index) => index);
+        for (let i = quoteBag.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [quoteBag[i], quoteBag[j]] = [quoteBag[j], quoteBag[i]];
+        }
+        const last = quoteBag.length - 1;
+        if (quoteBag[last] === lastQuote && last > 0) {
+          [quoteBag[last], quoteBag[last - 1]] = [quoteBag[last - 1], quoteBag[last]];
+        }
+      }
+
+      const index = quoteBag.pop();
+      if (index === undefined) return;
+
+      lastQuote = index;
+      if (quoteJa) quoteJa.textContent = quotes[index].ja;
+      if (quoteEn) quoteEn.textContent = quotes[index].en;
+    };
+
+    const playSfx = (force = false) => {
+      if (!sfxOn || !sfxAudio) return;
+
+      const now = performance.now();
+      if (!force && now - lastSfxAt < 1200) return;
+      lastSfxAt = now;
+
+      try {
+        sfxAudio.currentTime = 0;
+        sfxAudio.volume = 0.32;
+        const played = sfxAudio.play();
+        if (played) void played.catch(() => {});
+      } catch {
+        // Audio diblokir browser / tidak tersedia: reveal tetap jalan.
+      }
+    };
+
+    const setSfx = (on: boolean) => {
+      sfxOn = on;
+      sfxButton?.classList.toggle('is-on', on);
+      sfxButton?.setAttribute('aria-pressed', String(on));
+      sfxButton?.setAttribute('aria-label', on ? 'Matikan efek suara api' : 'Aktifkan efek suara api');
+      if (sfxLabel) sfxLabel.textContent = on ? 'SFX ON' : 'SFX OFF';
+
+      if (on) {
+        playSfx(true);
+      } else if (sfxAudio) {
+        sfxAudio.pause();
+        sfxAudio.currentTime = 0;
+      }
+    };
+
+    const deactivate = () => {
+      inside = false;
+      hero.classList.remove('is-spotting', 'is-quoting');
+      window.clearTimeout(quoteTimer);
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    };
+
+    const revealQuote = () => {
+      pickQuote();
+      hero.classList.add('is-quoting');
+      playSfx();
+    };
+
+    const render = () => {
+      frame = 0;
+      if (!portrait || !baseImg) return;
+
+      const portraitRect = portrait.getBoundingClientRect();
+      const imageRect = baseImg.getBoundingClientRect();
+      const padX = imageRect.width * 0.12;
+      const padY = imageRect.height * 0.05;
+
+      const within =
+        pointerX >= imageRect.left + padX &&
+        pointerX <= imageRect.right - padX &&
+        pointerY >= imageRect.top + padY &&
+        pointerY <= imageRect.bottom - padY;
+
+      if (!within) {
+        if (inside) deactivate();
+        return;
+      }
+
+      portrait.style.setProperty('--hero-spot-x', `${pointerX - portraitRect.left}px`);
+      portrait.style.setProperty('--hero-spot-y', `${pointerY - portraitRect.top}px`);
+
+      if (!inside) {
+        inside = true;
+        hero.classList.add('is-spotting');
+        hero.classList.add('has-spotted');
+
+        // Beri jeda singkat supaya cursor yang cuma lewat tidak memicu quote/audio.
+        window.clearTimeout(quoteTimer);
+        quoteTimer = window.setTimeout(revealQuote, 160);
+      }
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.target instanceof Element && event.target.closest('.hero-sfx')) {
+        if (inside) deactivate();
+        return;
+      }
+
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (!frame) frame = requestAnimationFrame(render);
+    };
+
+    sfxButton?.addEventListener('click', () => setSfx(!sfxOn));
+    setSfx(false);
+
+    const syncEnabled = () => {
+      const enabled = hoverQuery.matches && !reduceQuery.matches;
+      hero.classList.toggle('is-spot-ready', enabled);
+      if (!enabled) deactivate();
+    };
+
+    syncEnabled();
+    hoverQuery.addEventListener('change', syncEnabled);
+    reduceQuery.addEventListener('change', syncEnabled);
+
+    hero.addEventListener('pointermove', onPointerMove, { passive: true });
+    hero.addEventListener('pointerleave', deactivate);
+  }
+</script>
