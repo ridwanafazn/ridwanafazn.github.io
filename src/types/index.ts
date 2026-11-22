@@ -73,7 +73,16 @@ export interface Project {
   previewImage?: string;
   /** Kartu share 1200×630 (cover atau gambar galeri pertama). */
   ogImage?: string;
-  gallery?: { url: string; srcset?: string; caption?: string; alt?: string; name?: string }[];
+  gallery?: {
+    url: string;
+    srcset?: string;
+    /** Dimensi asli aset (dipakai galeri agar lebar kartu = rasio asli). */
+    width?: number;
+    height?: number;
+    caption?: string;
+    alt?: string;
+    name?: string;
+  }[];
   links?: {
     label: string;
     url: string;

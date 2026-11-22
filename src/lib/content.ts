@@ -31,28 +31,49 @@ function srcSet(publicId: string, widths: number[]) {
     .join(', ');
 }
 
+type AssetMeta = { publicId: string; width: number | null; height: number | null };
+
 async function assetMap() {
   const rows = await db
-    .select({ id: assets.id, publicId: assets.cloudinaryPublicId })
+    .select({
+      id: assets.id,
+      publicId: assets.cloudinaryPublicId,
+      width: assets.width,
+      height: assets.height,
+    })
     .from(assets)
     .where(isNull(assets.deletedAt));
-  return new Map(rows.map((r) => [r.id, r.publicId]));
+  return new Map<string, AssetMeta>(rows.map((r) => [r.id, r]));
 }
 
 function toProject(
   row: typeof portfolios.$inferSelect,
-  byId: Map<string, string>,
+  byId: Map<string, AssetMeta>,
 ): Project {
-  const coverPublicId = row.coverImageId ? byId.get(row.coverImageId) : undefined;
-  const gallery: { url: string; srcset?: string; caption?: string; alt?: string; name?: string }[] = [];
+  const cover = row.coverImageId ? byId.get(row.coverImageId) : undefined;
+  const coverPublicId = cover?.publicId;
+  // Dimensi asli ikut dikirim agar kartu galeri bisa memesan lebar
+  // (tinggi seragam, lebar = rasio gambar) sebelum gambar selesai dimuat.
+  const gallery: {
+    url: string;
+    srcset?: string;
+    width?: number;
+    height?: number;
+    caption?: string;
+    alt?: string;
+    name?: string;
+  }[] = [];
   let firstGalleryPublicId: string | undefined;
   for (const g of row.gallery ?? []) {
-    const publicId = byId.get(g.assetId);
-    if (!publicId) continue;
+    const asset = byId.get(g.assetId);
+    if (!asset) continue;
+    const { publicId } = asset;
     firstGalleryPublicId ??= publicId;
     gallery.push({
       url: cdn(publicId, 1600),
       srcset: srcSet(publicId, [480, 800, 1600]),
+      width: asset.width ?? undefined,
+      height: asset.height ?? undefined,
       caption: g.caption,
       alt: g.alt,
       name: fileName(publicId),

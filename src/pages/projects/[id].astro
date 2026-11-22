@@ -16,6 +16,14 @@ const projectsLink = `${base.endsWith('/') ? base : base + '/'}projects`;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+// Kartu galeri bertinggi tetap (maks 19rem), jadi lebar tampil = rasio gambar.
+// Dipakai di `sizes` agar screenshot portrait tidak mengunduh varian 1600px.
+const gallerySizes = (image: { width?: number; height?: number }) => {
+  const ratio = image.width && image.height ? image.width / image.height : 1.6;
+  const cardWidth = Math.min(560, Math.round(304 * ratio));
+  return `(min-width: 768px) ${cardWidth}px, 80vw`;
+};
+
 type NarrativeSection = { heading: string | null; paragraphs: string[] };
 
 function parseNarrative(text: string): NarrativeSection[] {
@@ -212,17 +220,19 @@ const nextProject =
                   <button
                     type="button"
                     data-lightbox={index}
-                    class="relative block w-full cursor-zoom-in overflow-hidden border border-outline bg-surface transition-colors hover:border-outline-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    class="relative block cursor-zoom-in overflow-hidden border border-outline bg-surface transition-colors hover:border-outline-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     aria-label={`Perbesar gambar ${index + 1}`}
                   >
                     <img
                       src={image.url}
                       srcset={image.srcset}
-                      sizes="(min-width: 768px) 24rem, 82vw"
+                      sizes={gallerySizes(image)}
+                      width={image.width}
+                      height={image.height}
                       alt={image.alt ?? `${project.title} — gambar ${index + 1}`}
                       loading="lazy"
                       decoding="async"
-                      class="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                      class="block transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                     />
                   </button>
                   <figcaption class="mt-2 font-mono text-[12px] tabular-nums text-on-surface-variant">
@@ -414,11 +424,22 @@ const nextProject =
   const galleryProgress = document.querySelector<HTMLElement>('[data-gallery-progress]');
 
   if (track) {
+    // Kartu punya lebar berbeda (rasio asli), jadi lompat ke kartu berikutnya
+    // berdasarkan posisi kontennya, bukan lebar kartu pertama.
     const step = (direction: number) => {
-      const item = track.querySelector<HTMLElement>('.gallery-item');
-      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
-      const distance = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
-      track.scrollBy({ left: direction * distance, behavior: 'smooth' });
+      const box = track.getBoundingClientRect();
+      const left = track.scrollLeft;
+      const offsets = Array.from(track.querySelectorAll<HTMLElement>('.gallery-item')).map(
+        (item) => item.getBoundingClientRect().left - box.left + left,
+      );
+      const target =
+        direction > 0
+          ? offsets.find((offset) => offset > left + 4)
+          : [...offsets].reverse().find((offset) => offset < left - 4);
+      track.scrollTo({
+        left: target ?? (direction > 0 ? track.scrollWidth : 0),
+        behavior: 'smooth',
+      });
     };
 
     const sync = () => {

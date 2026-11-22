@@ -5,30 +5,33 @@ export const prerender = false;
 import Layout from '../../../layouts/Layout.astro';
 import Badge from '../../../components/Badge.astro';
 import Icon from '../../../components/Icon.astro';
-import { getPortfolioBySlug, getAssetUrlMap } from '../../../lib/queries';
+import { getPortfolioBySlug, getAssetMetaMap } from '../../../lib/queries';
 import { getTransformUrl } from '../../../lib/cloudinary';
 
 const { slug } = Astro.params;
 let row: Awaited<ReturnType<typeof getPortfolioBySlug>> = null;
 let error: string | null = null;
 let cover: string | null = null;
-let gallery: { url: string; caption?: string; alt?: string }[] = [];
+let gallery: { url: string; width?: number; height?: number; caption?: string; alt?: string }[] = [];
 
 try {
   row = await getPortfolioBySlug(slug!);
   if (!row) {
     error = 'Draft tidak ditemukan.';
   } else {
-    const byId = await getAssetUrlMap();
-    const coverPublic = row.coverImageId ? byId.get(row.coverImageId) : undefined;
-    cover = coverPublic ? getTransformUrl(coverPublic, { w: 1600, c: 'limit' }) : null;
+    const byId = await getAssetMetaMap();
+    const coverAsset = row.coverImageId ? byId.get(row.coverImageId) : undefined;
+    cover = coverAsset ? getTransformUrl(coverAsset.publicId, { w: 1600, c: 'limit' }) : null;
     gallery = [];
     for (const g of row.gallery ?? []) {
-      const publicId = byId.get(g.assetId);
-      if (!publicId) continue;
+      const asset = byId.get(g.assetId);
+      if (!asset) continue;
+      const { publicId } = asset;
       const name = (publicId.split('/').pop() ?? publicId).replace(/\.[^.]+$/, '');
       gallery.push({
         url: getTransformUrl(publicId, { w: 1600, c: 'limit' }),
+        width: asset.width ?? undefined,
+        height: asset.height ?? undefined,
         caption: g.caption,
         alt: g.alt,
         name,
@@ -129,15 +132,17 @@ const summaryParagraphs = summary
                           data-alt={alt}
                           data-caption={caption}
                           data-index={i}
-                          class="relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-outline bg-surface transition-all duration-300 hover:border-outline-strong hover:shadow-[0_14px_34px_-18px_rgb(22_21_26/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                          class="relative block cursor-zoom-in overflow-hidden rounded-lg border border-outline bg-surface transition-all duration-300 hover:border-outline-strong hover:shadow-[0_14px_34px_-18px_rgb(22_21_26/0.45)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           aria-label={`Perbesar ${caption || alt}`}
                         >
                           <img
                             src={img.url}
+                            width={img.width}
+                            height={img.height}
                             alt={alt}
                             loading="lazy"
                             decoding="async"
-                            class="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                            class="block transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                           />
                           <span class="pointer-events-none absolute inset-0 bg-on-background/0 transition-colors duration-300 group-hover:bg-on-background/10" />
                         </button>
@@ -273,11 +278,19 @@ const summaryParagraphs = summary
   const galleryProgress = document.querySelector<HTMLElement>('[data-gallery-progress]');
 
   if (track) {
+    // Kartu punya lebar berbeda (rasio asli), jadi lompat ke kartu berikutnya
+    // berdasarkan posisi kontennya, bukan lebar kartu pertama.
     const step = (dir: number) => {
-      const item = track.querySelector<HTMLElement>('.gallery-item');
-      const gap = parseFloat(getComputedStyle(track).columnGap || '12') || 12;
-      const dist = item ? item.getBoundingClientRect().width + gap : track.clientWidth;
-      track.scrollBy({ left: dir * dist, behavior: 'smooth' });
+      const box = track.getBoundingClientRect();
+      const left = track.scrollLeft;
+      const offsets = Array.from(track.querySelectorAll<HTMLElement>('.gallery-item')).map(
+        (item) => item.getBoundingClientRect().left - box.left + left,
+      );
+      const target =
+        dir > 0
+          ? offsets.find((offset) => offset > left + 4)
+          : [...offsets].reverse().find((offset) => offset < left - 4);
+      track.scrollTo({ left: target ?? (dir > 0 ? track.scrollWidth : 0), behavior: 'smooth' });
     };
 
     const sync = () => {

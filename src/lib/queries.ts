@@ -107,6 +107,20 @@ export async function getAssetUrlMap() {
   return new Map(rows.map((r) => [r.id, r.publicId]));
 }
 
+/** Asset + dimensi asli (untuk galeri rasio asli di halaman preview). */
+export async function getAssetMetaMap() {
+  const rows = await db
+    .select({
+      id: assets.id,
+      publicId: assets.cloudinaryPublicId,
+      width: assets.width,
+      height: assets.height,
+    })
+    .from(assets)
+    .where(isNull(assets.deletedAt));
+  return new Map(rows.map((r) => [r.id, r]));
+}
+
 export async function createAsset(data: Partial<typeof assets.$inferInsert>) {
   return db.insert(assets).values(data as never).returning().then((r) => r[0]);
 }

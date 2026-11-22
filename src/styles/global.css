@@ -219,7 +219,10 @@
      PROJECT GALLERY — Play Store style slider
      ========================================= */
   .gallery-track {
+    /* Tinggi kartu seragam; lebar tiap kartu mengikuti rasio asli gambar. */
+    --gallery-card-h: clamp(15rem, 28vw, 19rem);
     display: flex;
+    align-items: flex-start;
     gap: 0.75rem;
     overflow-x: auto;
     overflow-y: hidden;
@@ -234,13 +237,22 @@
 
   .gallery-item {
     flex: 0 0 auto;
-    width: clamp(16rem, 40vw, 22rem);
+    /* Rasio asli: biarkan gambar menentukan lebar kartu. */
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     scroll-snap-align: start;
     /* Berhenti di setiap kartu walau di-fling kencang */
     scroll-snap-stop: always;
   }
-  @media (max-width: 640px) {
-    .gallery-item { width: 82vw; }
+
+  /* Tanpa crop: tinggi dikunci, lebar mengikuti rasio asli gambar. */
+  .gallery-item img {
+    height: var(--gallery-card-h);
+    width: auto;
+    max-width: none;
+    object-fit: contain;
   }
 
   /* Kartu terakhir menempel ke tepi kanan supaya tidak ada ruang kosong di ujung */

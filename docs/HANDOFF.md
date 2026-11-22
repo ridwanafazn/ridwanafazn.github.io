@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-21
+> **Terakhir diperbarui:** 2026-11-22
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -18,7 +18,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `a46f210e-7999-49b8-8f3c-da585847e9b9` (2026-11-21, Hero Abstract final + navbar gate) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `1fc18461-f3af-4746-9e5b-025d67257682` (2026-11-22, galeri rasio asli + tinggi kartu seragam) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -174,7 +174,7 @@ src/
 23. **Dashboard** memakai grid stat + aksi cepat; tombol `+ Project` di header sudah dihapus (buat project dari halaman Portfolio atau aksi cepat).
 24. **Admin styling sharp**: tidak ada `rounded-*`, tanpa backdrop blur, transisi 150ms (color/opacity), tanpa hover translate. Jangan tambahkan kembali komponen rounded di area admin.
 25. **Multi-upload asset**: `/admin/assets` menerima banyak file sekaligus (input `multiple` + drag & drop), upload paralel maks 3, signature Cloudinary diminta sekali per batch, progress bar + daftar error per file.
-26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Layout **slider Play Store style** (`.gallery-track` + `.gallery-item`, scroll-snap per kartu, lebar `clamp(15rem,38vw,21rem)`), tanpa scrollbar bawaan; tombol prev/next dengan state disabled + progress bar tipis. Tile `aspect-[16/10] object-cover` supaya ringkas. Caption = nama file tanpa ekstensi, teks polos tanpa background. Klik gambar membuka lightbox blur dengan counter + prev/next + keyboard (Escape/←/→); klik area luar gambar menutup. Dirender lewat slot `overlay` di `Layout` agar menutup navbar. Navbar publik memakai frosted glass (`backdrop-blur-md`). Urutan halaman: cover → galeri → ringkasan. Cover dibatasi `max-h-[250px]` (mobile) / `max-h-[360px]` (desktop).
+26. **Galeri project**: transform Cloudinary `c_limit,w_1600,q_auto,f_auto` (rasio asli, bukan resolusi penuh). Layout **slider Play Store style** (`.gallery-track` + `.gallery-item`, scroll-snap per kartu), tanpa scrollbar bawaan; tombol prev/next dengan state disabled + progress bar tipis. **Kartu memakai rasio asli (tanpa crop): tinggi seragam `--gallery-card-h: clamp(15rem,28vw,19rem)`, lebar mengikuti rasio gambar** (aturan `.gallery-item img`), jadi screenshot portrait tetap utuh. Caption = nama file tanpa ekstensi, teks polos tanpa background. Klik gambar membuka lightbox blur dengan counter + prev/next + keyboard (Escape/←/→); klik area luar gambar menutup. Dirender lewat slot `overlay` di `Layout` agar menutup navbar. Navbar publik memakai frosted glass (`backdrop-blur-md`). Urutan halaman: cover → galeri → ringkasan. Cover dibatasi `max-h-[250px]` (mobile) / `max-h-[360px]` (desktop).
 27. **Middleware cache juga jalan di dev.** HTML publik di-cache 60s oleh `caches.default` (kunci tanpa query string). Setelah edit komponen, request biasa masih mengembalikan HTML **lama**. Di dev buka dengan `?v=<timestamp>` (bypass); di produksi `?v=` diabaikan.
 28. **Navbar scroll-state** memakai atribut `[data-scrolled]` + aturan CSS unlayered di akhir `global.css`. Jangan pindahkan aturan itu ke dalam `@layer utilities` — utility Tailwind (`bg-background/70`) akan menang dan navbar tidak pernah solid.
 29. **Browser Cache TTL Cloudflare = `0` sejak 2026-11-16.** Sebelumnya `14400`, sehingga setiap response `CF-Cache-Status: HIT` membawa `max-age=14400` (4 jam): browser pengunjung menahan HTML lama sampai 4 jam, dan HTML lama itu bisa menunjuk aset ber-hash yang sudah tidak ada setelah deploy. Dengan `0` (“Respect Existing Headers”), HTML memakai `max-age=60` dari `src/middleware.ts`; aset ber-hash tetap `max-age=31536000, immutable`. Pengunjung yang sudah terlanjur menyimpan salinan 4 jam tidak bisa dipaksa update (purge Cloudflare tidak menyentuh browser) — hard refresh atau tunggu kedaluwarsa.
@@ -340,6 +340,7 @@ Memakai aset yang sudah ada (54 gambar galeri), tanpa isian baru:
 - **Thumbnail ledger**: 56×36 untuk 6 project yang punya gambar; 7 sisanya dapat slot kosong bergaris (konsisten). Row turun dari 72px → 65px.
 - Hasil: 3 halaman tetap 100/100/100; `impeccable detect` 0 temuan.
 - **Revisi galeri (2026-11-16):** grid 6 + "lihat semua" diganti **slider Play Store**: `scroll-snap x mandatory`, `scroll-snap-stop: always`, item terakhir `snap-align: end`, `overscroll-behavior-x: contain`. Tombol prev/next disabled di ujung, progress bar tipis, panah keyboard. Lightbox tetap; slide pertama membuka indeks 2 (lead image = indeks 1, tidak diduplikasi).
+- **Rasio asli galeri (2026-11-22):** kartu tidak lagi `aspect-[16/10] object-cover` (screenshot portrait terpotong ±70%). Sekarang tinggi kartu seragam (`--gallery-card-h`), lebar mengikuti rasio asli gambar, jadi tidak ada crop. Karena lebar kartu tidak sama, `step()` slider menghitung offset tiap kartu (bukan lebar kartu pertama) agar prev/next tetap berhenti tepat di kartu berikutnya. Berlaku di `/projects/[id]` dan `/preview/portfolio/[slug]`.
 
 ---
 
