@@ -47,6 +47,22 @@
 }
 
 @layer base {
+  :root {
+    --hero-bottom-gap: 3.5rem;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --hero-bottom-gap: 5rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    :root {
+      --hero-bottom-gap: 3rem;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -500,15 +516,15 @@ html {
     background: linear-gradient(
       to bottom,
       #080907 0,
-      #080907 calc(100svh + 1rem),
-      var(--color-background) calc(100svh + 1rem),
+      #080907 calc(100svh + var(--hero-bottom-gap)),
+      var(--color-background) calc(100svh + var(--hero-bottom-gap)),
       var(--color-background) 100%
     );
     background: linear-gradient(
       to bottom,
       #080907 0,
-      #080907 calc(100dvh + 1rem),
-      var(--color-background) calc(100dvh + 1rem),
+      #080907 calc(100dvh + var(--hero-bottom-gap)),
+      var(--color-background) calc(100dvh + var(--hero-bottom-gap)),
       var(--color-background) 100%
     );
   }

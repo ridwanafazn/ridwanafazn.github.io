@@ -146,7 +146,6 @@ const marqueeItems = [
     flex-direction: column;
     width: 100vw;
     min-height: 100svh;
-    --hero-bottom-gap: 3.5rem;
     margin-right: calc(50% - 50vw);
     margin-bottom: var(--hero-bottom-gap);
     margin-left: calc(50% - 50vw);
@@ -725,12 +724,6 @@ const marqueeItems = [
     }
   }
 
-  @media (min-width: 768px) {
-    .hero-root {
-      --hero-bottom-gap: 5rem;
-    }
-  }
-
   @media (max-width: 1180px) {
     .hero-root {
       --hero-pad: 36px;
@@ -875,7 +868,6 @@ const marqueeItems = [
   @media (max-width: 640px) {
     .hero-root {
       --hero-pad: 20px;
-      --hero-bottom-gap: 3rem;
     }
 
     .hero-portrait {
