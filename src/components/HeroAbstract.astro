@@ -171,6 +171,8 @@ const marqueeItems = [
       linear-gradient(to right, rgba(243, 245, 241, 0.05) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(243, 245, 241, 0.05) 1px, transparent 1px);
     background-size: 88px 88px;
+    /* Geser 1px supaya garis grid tidak jatuh tepat di tepi kiri (tampak seperti celah putih). */
+    background-position: -1px 0;
     mask-image: linear-gradient(to bottom, black, transparent 84%);
   }
 
