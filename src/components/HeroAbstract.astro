@@ -146,8 +146,9 @@ const marqueeItems = [
     flex-direction: column;
     width: 100vw;
     min-height: 100svh;
+    --hero-bottom-gap: 3.5rem;
     margin-right: calc(50% - 50vw);
-    margin-bottom: 3.5rem;
+    margin-bottom: var(--hero-bottom-gap);
     margin-left: calc(50% - 50vw);
     overflow: clip;
     background: var(--hero-ink);
@@ -726,7 +727,7 @@ const marqueeItems = [
 
   @media (min-width: 768px) {
     .hero-root {
-      margin-bottom: 5rem;
+      --hero-bottom-gap: 5rem;
     }
   }
 
@@ -753,6 +754,9 @@ const marqueeItems = [
     .hero-root {
       --hero-pad: 28px;
       min-height: 100svh;
+      min-height: 100dvh;
+      /* Isi margin bawah dengan ink supaya browser bar tidak memperlihatkan celah cream. */
+      box-shadow: 0 var(--hero-bottom-gap) 0 var(--hero-ink);
       cursor: auto;
     }
 
@@ -871,7 +875,7 @@ const marqueeItems = [
   @media (max-width: 640px) {
     .hero-root {
       --hero-pad: 20px;
-      margin-bottom: 3rem;
+      --hero-bottom-gap: 3rem;
     }
 
     .hero-portrait {
