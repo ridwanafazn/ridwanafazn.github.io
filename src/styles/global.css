@@ -500,15 +500,15 @@ html {
     background: linear-gradient(
       to bottom,
       #080907 0,
-      #080907 100svh,
-      var(--color-background) 100svh,
+      #080907 calc(100svh + 1rem),
+      var(--color-background) calc(100svh + 1rem),
       var(--color-background) 100%
     );
     background: linear-gradient(
       to bottom,
       #080907 0,
-      #080907 100dvh,
-      var(--color-background) 100dvh,
+      #080907 calc(100dvh + 1rem),
+      var(--color-background) calc(100dvh + 1rem),
       var(--color-background) 100%
     );
   }
