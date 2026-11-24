@@ -884,8 +884,10 @@ const marqueeItems = [
       object-position: center 14%;
     }
 
+    /* Mobile: copy jadi penutup hero, jadi beri napas bawah sendiri
+       (termasuk safe area) karena marquee dihilangkan. */
     .hero-copy {
-      padding: 6px 0 0;
+      padding: 12px 0 max(40px, env(safe-area-inset-bottom));
     }
 
     .hero-outline-word {
@@ -898,7 +900,7 @@ const marqueeItems = [
     }
 
     .hero-subtext {
-      margin-top: 14px;
+      margin-top: 20px;
       font-size: 1rem;
     }
 
@@ -927,12 +929,10 @@ const marqueeItems = [
       height: 21px;
     }
 
+    /* Mobile: running text bawah dihilangkan; headline + tagline
+       memegang dasar hero tanpa elemen yang menempel. */
     .hero-marquee {
-      height: 56px;
-    }
-
-    .hero-marquee-track span {
-      font-size: 1.4rem;
+      display: none;
     }
   }
 
