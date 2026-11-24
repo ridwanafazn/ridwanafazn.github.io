@@ -14,7 +14,7 @@
 | **Repo** | `github.com/ridwanafazn/portofx-v2` |
 | **Branch aktif** | `main` (20 commit, working tree bersih) — `migrate/astro-ssr-neon` sudah selesai |
 | **Stack** | **Astro 7.4.5** (SSR + edge cache) · **Neon Postgres** · **Drizzle ORM 0.45.4** · **Better Auth 1.7.20** · **Cloudinary** · **Cloudflare Workers 14.4.7** |
-| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Hero homepage **HeroAbstract** + spotlight Rengoku/quote/SFX (marker kiri, hint dihapus, mobile gutter + grid edge + bottom gap/bottom-right sync; deploy `edaa1fae`, 2026-11-23). Sisa: **cover image 0/13** (galeri 54 foto sudah ada) |
+| **Status** | Migrasi Sanity selesai, admin panel + galeri jalan, deploy Workers jalan, **custom domain `ridwanafazn.my.id` live**. Hero homepage **HeroAbstract** + spotlight Rengoku/quote/SFX (marker kiri, hint dihapus, mobile gutter + grid edge + bottom gap/bottom-right sync; **deploy `33faa70d`, 2026-11-25** — mobile marquee off + copy breathing room). Sisa: **cover image 0/13** (galeri 54 foto sudah ada) |
 
 ---
 
