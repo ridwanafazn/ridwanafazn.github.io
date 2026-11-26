@@ -68,6 +68,17 @@ const ogImage = new URL(image ?? '/og.png', Astro.site ?? Astro.url.origin).href
         <link rel="preload" href="/fonts/public-sans-normal-var.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="preload" href="/fonts/jetbrains-mono-normal-var.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+        {bareHero && (
+          <link
+            rel="preload"
+            as="image"
+            href="/images/ridwan-cutout.webp"
+            imagesrcset="/images/ridwan-cutout-720.webp 720w, /images/ridwan-cutout-900.webp 900w, /images/ridwan-cutout.webp 1086w"
+            imagesizes="(max-width: 640px) 372px, (max-width: 980px) 55vw, 470px"
+            type="image/webp"
+            fetchpriority="high"
+          />
+        )}
 
         <script is:inline>
           // Hanya sembunyikan elemen .reveal kalau JS benar-benar jalan.

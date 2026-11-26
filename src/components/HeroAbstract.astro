@@ -57,7 +57,11 @@ const marqueeItems = [
     <div class="hero-portrait">
       <div class="hero-portrait-layer hero-portrait-base">
         <picture>
-          <source srcset="/images/ridwan-cutout.webp" type="image/webp" />
+          <source
+            srcset="/images/ridwan-cutout-720.webp 720w, /images/ridwan-cutout-900.webp 900w, /images/ridwan-cutout.webp 1086w"
+            sizes="(max-width: 640px) 372px, (max-width: 980px) 55vw, 470px"
+            type="image/webp"
+          />
           <img
             src="/images/ridwan-cutout.png"
             alt="Ridwan Afazn memakai kemeja batik hitam, melihat ke arah salinan di kiri."
@@ -70,7 +74,8 @@ const marqueeItems = [
 
       <div class="hero-portrait-layer hero-portrait-reveal" aria-hidden="true">
         <img
-          src="/images/rengoku.webp"
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          data-src="/images/rengoku.webp"
           alt=""
           width="900"
           height="1200"
@@ -99,11 +104,18 @@ const marqueeItems = [
         </div>
         <div class="hero-app-shot">
           <img
-            src="https://res.cloudinary.com/a5e2n4lq/image/upload/c_limit,w_1200,q_auto,f_auto/portfolio/gallery-01-map-1600x1000"
+            src="https://res.cloudinary.com/a5e2n4lq/image/upload/c_limit,w_800,q_auto,f_auto/portfolio/gallery-01-map-1600x1000"
+            srcset="
+              https://res.cloudinary.com/a5e2n4lq/image/upload/c_limit,w_480,q_auto,f_auto/portfolio/gallery-01-map-1600x1000 480w,
+              https://res.cloudinary.com/a5e2n4lq/image/upload/c_limit,w_800,q_auto,f_auto/portfolio/gallery-01-map-1600x1000 800w,
+              https://res.cloudinary.com/a5e2n4lq/image/upload/c_limit,w_1200,q_auto,f_auto/portfolio/gallery-01-map-1600x1000 1200w
+            "
+            sizes="(max-width: 980px) 150px, 470px"
             alt="GIS Sentry menampilkan peta skor lokasi, kandidat minimarket, dan panel analisis."
             width="1600"
             height="1000"
             loading="eager"
+            fetchpriority="low"
           />
           <svg class="hero-app-cursor" viewBox="0 0 24 28" aria-hidden="true">
             <path d="M2 1l18 12-8 2-3 8L2 1z" fill="currentColor" stroke="#080907" stroke-width="1.4"></path>
@@ -434,15 +446,22 @@ const marqueeItems = [
   .hero-portrait-reveal {
     z-index: 2;
     opacity: 0;
-    -webkit-mask-image: url('/images/reveal-blob.png');
-    mask-image: url('/images/reveal-blob.png');
-    -webkit-mask-size: 320px 360px;
-    mask-size: 320px 360px;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: calc(var(--hero-spot-x) - 160px) calc(var(--hero-spot-y) - 180px);
-    mask-position: calc(var(--hero-spot-x) - 160px) calc(var(--hero-spot-y) - 180px);
     transition: opacity 0.18s ease;
+  }
+
+  /* Mask blob hanya dibutuhkan saat spotlight aktif (desktop hover).
+     Kalau dideklarasikan di base, mobile tetap mengunduh reveal-blob.png. */
+  @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+    .hero-portrait-reveal {
+      -webkit-mask-image: url('/images/reveal-blob.png');
+      mask-image: url('/images/reveal-blob.png');
+      -webkit-mask-size: 320px 360px;
+      mask-size: 320px 360px;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: calc(var(--hero-spot-x) - 160px) calc(var(--hero-spot-y) - 180px);
+      mask-position: calc(var(--hero-spot-x) - 160px) calc(var(--hero-spot-y) - 180px);
+    }
   }
 
   .hero-root.is-spotting .hero-portrait-reveal {
@@ -970,6 +989,17 @@ const marqueeItems = [
     const sfxButton = hero.querySelector<HTMLButtonElement>('.hero-sfx');
     const sfxLabel = hero.querySelector<HTMLElement>('.hero-sfx-label');
     const sfxAudio = hero.querySelector<HTMLAudioElement>('.hero-sfx-audio');
+    const revealImg = hero.querySelector<HTMLImageElement>('.hero-portrait-reveal img');
+
+    // Rengoku tidak perlu diunduh di mobile/reduced-motion. Baru dimuat saat
+    // spotlight desktop benar-benar aktif.
+    const loadReveal = () => {
+      if (!revealImg || revealImg.dataset.loaded === 'true') return;
+      const src = revealImg.dataset.src;
+      if (!src) return;
+      revealImg.src = src;
+      revealImg.dataset.loaded = 'true';
+    };
 
     const hoverQuery = window.matchMedia('(min-width: 981px) and (hover: hover) and (pointer: fine)');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1110,6 +1140,7 @@ const marqueeItems = [
     const syncEnabled = () => {
       const enabled = hoverQuery.matches && !reduceQuery.matches;
       hero.classList.toggle('is-spot-ready', enabled);
+      if (enabled) loadReveal();
       if (!enabled) deactivate();
     };
 
