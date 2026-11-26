@@ -11,7 +11,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 
 **UI Refresh M5 (2026-11-26) — QA selesai, siap deploy:** M1–M4 selesai (foundation, `/about` “The Record”, ledger + ImageTrail, ClickSpark + GitHub heatmap). QA 390/768/1440 lolos (0 overflow/error/broken image), print & reduced-motion lolos, 404/admin/sitemap benar. Lighthouse a11y/BP/SEO **100** di `/`, `/about`, `/projects`, `/projects/[id]`; performance **0.99**, **LCP 2.2 s**, CLS 0, TBT 0, total **228 KiB**. Hero portrait responsif 720/900, app shot `srcset` + low priority, Rengoku lazy + mask desktop-only. **Belum deploy** — menunggu konfirmasi.
 
-**Revisi konten 2026-11-27:** label “Sejak” → **Aktif Sejak**; Fokus → **FE · BE · AI · Mobile**; Language hanya **JavaScript, TypeScript, Golang, Python, Java, Rust**; Backend hanya **Express.js, NestJS, Go Gin, FastAPI, Actix Web, Laravel**; count “0X ENTRI” di `/about` dihapus; H1 kembali **The Engineer Behind the Code**; **Acak proyek dihapus**.
+**Revisi konten 2026-11-27:** homepage spec strip → **Based in / Bandung, Indonesia** (meta `/about` tetap **Aktif Sejak**); Fokus → **FE · BE · AI · Mobile**; Language hanya **JavaScript, TypeScript, Golang, Python, Java, Rust**; Backend hanya **Express.js, NestJS, Go Gin, FastAPI, Actix Web, Laravel**; count “0X ENTRI” di `/about` dihapus; H1 kembali **The Engineer Behind the Code**; **Acak proyek dihapus**.
 
 ---
 
@@ -279,7 +279,7 @@ src/
 
 ### Tech Stack 5 kategori — SELESAI (2026-11-18)
 - Data `skills.categories` di Neon diganti 5 kategori: **Language** (10), **Backend** (8), **Frontend** (7), **Cloud and Infrastructure** (7), **Architecture and Integrations** (8). `_key` lama dari Sanity tidak dipertahankan.
-- Homepage: **Language** memakai `md:col-span-2` (baris penuh 2 kolom) dengan 6 item di `md:grid-cols-3 lg:grid-cols-6`; empat kategori lain tetap 2×2 dengan pembatas vertikal dan stagger reveal. Hero spec strip **Aktif Sejak / Fokus: FE · BE · AI · Mobile / Kontak**.
+- Homepage: **Language** memakai `md:col-span-2` (baris penuh 2 kolom) dengan 6 item di `md:grid-cols-3 lg:grid-cols-6`; empat kategori lain tetap 2×2 dengan pembatas vertikal dan stagger reveal. Hero spec strip **Based in / Bandung, Indonesia · Fokus: FE · BE · AI · Mobile · Kontak**.
 - `BrandIcon` diperluas 19 brand Simple Icons (JavaScript, TypeScript, PHP, Dart, Kotlin, Express, NestJS, Gin, FastAPI, Spring Boot, Actix, .NET, Alpine.js, Flutter, AWS, Cloudflare, Supabase, Neon, Cloudinary). Ikon konsep (SQL, REST, gRPC, WebSocket, RAG, CAG, KAG, Recommendation System, CNN) tetap garis generik; `gRPC` tidak ada di Simple Icons.
 - `db/seed.ts` disamakan dengan data live agar instalasi baru tidak mengembalikan stack lama.
 - Deploy: `b55d48d0-6767-491f-a55a-814b648ae44a` (2026-11-18). Verifikasi live: 5 kategori tampil, `Language` `md:col-span-2`, spec strip hero `FE·BE·AI·Mobile`.

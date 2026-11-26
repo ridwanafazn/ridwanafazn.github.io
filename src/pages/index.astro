@@ -21,7 +21,6 @@ const base = import.meta.env.BASE_URL;
 const basePath = base.endsWith('/') ? base : `${base}/`;
 const projectsLink = `${basePath}projects`;
 
-const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
 const focusSummary = ['FE', 'BE', 'AI', 'Mobile'].join(' · ');
 
@@ -71,8 +70,8 @@ const personSchema = {
   <section aria-label="Ringkasan profil" class="mb-16 md:mb-20">
     <dl class="grid grid-cols-1 gap-px bg-outline sm:grid-cols-3">
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
-        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Aktif Sejak</dt>
-        <dd class="mt-2 font-mono text-[15px] tabular-nums text-on-background">{since}</dd>
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Based in</dt>
+        <dd class="mt-2 font-mono text-[15px] text-on-background">Bandung, Indonesia</dd>
       </div>
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Fokus</dt>
