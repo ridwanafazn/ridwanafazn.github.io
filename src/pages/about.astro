@@ -20,7 +20,7 @@ const formatPeriod = (period: string) => period.replace(/\s+-\s+/g, ' — ');
 // Stat dari DB dipetakan ke label UI Indonesia; fallback ke label asli.
 const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
   label: /professional/i.test(stat.label)
-    ? 'Sejak'
+    ? 'Aktif Sejak'
     : /role/i.test(stat.label)
       ? 'Peran'
       : /project/i.test(stat.label)
@@ -39,7 +39,7 @@ const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
 >
   <PageHeader
     class="relative z-10"
-    title="Di Balik Kode"
+    title="The Engineer Behind the Code"
     description="Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem."
   >
     {headerStats.length > 0 && (
@@ -57,7 +57,7 @@ const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
   </PageHeader>
 
   <section aria-labelledby="pengalaman" class="relative z-10 mb-14 md:mb-20">
-    <SectionHeader id="pengalaman" title="Pengalaman" meta={`${pad(experience.length)} entri`} />
+    <SectionHeader id="pengalaman" title="Pengalaman" />
 
     {experience.length > 0 ? (
       <ol>
@@ -95,7 +95,7 @@ const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
   </section>
 
   <section aria-labelledby="pendidikan" class="relative z-10 mb-14 md:mb-20">
-    <SectionHeader id="pendidikan" title="Pendidikan" meta={`${pad(education.length)} entri`} />
+    <SectionHeader id="pendidikan" title="Pendidikan" />
 
     {education.length > 0 ? (
       <div class="mt-6 grid gap-x-8 gap-y-6 md:grid-cols-2">
@@ -133,7 +133,7 @@ const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
   </section>
 
   <section aria-labelledby="sertifikasi" class="relative z-10 mb-14 md:mb-20">
-    <SectionHeader id="sertifikasi" title="Sertifikasi" meta={`${pad(certifications.length)} entri`} />
+    <SectionHeader id="sertifikasi" title="Sertifikasi" />
 
     {certifications.length > 0 ? (
       <ul class="mt-6 grid gap-x-8 md:grid-cols-2">
@@ -152,7 +152,7 @@ const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
   </section>
 
   <section aria-labelledby="volunteering" class="relative z-10">
-    <SectionHeader id="volunteering" title="Volunteering" meta={`${pad(activitiesData.length)} entri`} />
+    <SectionHeader id="volunteering" title="Volunteering" />
 
     {activitiesData.length > 0 ? (
       <div class="mt-6 grid gap-x-8 gap-y-8 md:grid-cols-2">

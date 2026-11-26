@@ -620,7 +620,6 @@ src/components/            # Astro components
   ├── ProjectLedger.astro  # daftar proyek berindeks + thumbnail
   ├── ProjectTrail.tsx     # island Preact: image trail desktop-only
   ├── SfxSpark.tsx         # island Preact: ClickSpark tombol SFX
-  ├── ProjectShuffle.astro # tombol Acak proyek
   ├── Icon.astro           # inline SVG (tanpa icon font)
   ├── Navbar.astro / Footer.astro / FloatingNav.astro
   ├── HeroGlobe.astro      # three.js, dynamic import (≥1024px)

@@ -23,7 +23,7 @@ const projectsLink = `${basePath}projects`;
 
 const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
-const focusSummary = ['Backend', 'AI', 'Mobile'].join(' · ');
+const focusSummary = ['FE', 'BE', 'AI', 'Mobile'].join(' · ');
 
 // Language memakai lebar penuh (2 kolom) karena daftarnya paling panjang.
 const isLanguage = (group: { category: string }) => /^language\b/i.test(group.category);
@@ -71,7 +71,7 @@ const personSchema = {
   <section aria-label="Ringkasan profil" class="mb-16 md:mb-20">
     <dl class="grid grid-cols-1 gap-px bg-outline sm:grid-cols-3">
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
-        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Sejak</dt>
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Aktif Sejak</dt>
         <dd class="mt-2 font-mono text-[15px] tabular-nums text-on-background">{since}</dd>
       </div>
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
@@ -133,7 +133,7 @@ const personSchema = {
             <span class="h-1.5 w-1.5 bg-signal" aria-hidden="true"></span>
             {skillGroup.category}
           </h3>
-          <ul class={skillGroup.wide ? 'grid grid-cols-2 gap-x-6 gap-y-2.5 md:grid-cols-5' : 'flex flex-wrap gap-x-5 gap-y-2.5'}>
+          <ul class={skillGroup.wide ? 'grid grid-cols-2 gap-x-6 gap-y-2.5 md:grid-cols-3 lg:grid-cols-6' : 'flex flex-wrap gap-x-5 gap-y-2.5'}>
             {skillGroup.items.map((item) => (
               <li class="group/item flex items-center gap-2 font-mono text-[13px] text-on-surface-variant transition-colors hover:text-on-background">
                 <BrandIcon name={item} class="h-[18px] w-[18px] shrink-0 text-on-background transition-colors group-hover/item:text-signal" />
