@@ -11,7 +11,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 
 **UI Refresh M1–M5 (2026-11-26/27) — LIVE:** foundation, `/about` “The Record”, ledger + ImageTrail, ClickSpark + GitHub heatmap. QA 390/768/1440 lolos (0 overflow/error/broken image), print & reduced-motion lolos, 404/admin/sitemap benar. Lighthouse a11y/BP/SEO **100** di `/`, `/about`, `/projects`, `/projects/[id]`; performance **0.99**, **LCP 2.2 s**, CLS 0, TBT 0, total **228 KiB**. Hero portrait responsif 720/900, app shot `srcset` + low priority, Rengoku lazy + mask desktop-only. **Deploy production 2026-11-27, version `95dd2020-0850-49f0-9ae6-ba950fc98401`.**
 
-**Revisi konten 2026-11-27 (LIVE):** homepage spec strip → **Based in / Bandung, Indonesia** (meta `/about` tetap **Aktif Sejak**); Fokus → **FE · BE · AI · Mobile**; Language hanya **JavaScript, TypeScript, Golang, Python, Java, Rust**; Backend hanya **Express.js, NestJS, Go Gin, FastAPI, Actix Web, Laravel**; count “0X ENTRI” di `/about` dihapus; H1 kembali **The Engineer Behind the Code**; **Acak proyek dihapus**.
+**Revisi konten 2026-11-27 (LIVE):** homepage spec strip → **Based in / Bandung, Indonesia** (meta `/about` tetap **Aktif Sejak**); Fokus → **FE · BE · AI · Mobile**; Language hanya **JavaScript, TypeScript, Golang, Python, Java, Rust**; Backend hanya **Express.js, NestJS, Go Gin, FastAPI, Actix Web, Laravel**; count “0X ENTRI” di `/about` dihapus; H1 kembali **The Engineer Behind the Code**; **Acak proyek dihapus**. Polish lanjutan: value spec strip disamakan **13px mobile / 15px desktop** seperti email; label **“5 KATEGORI”** dihapus; summary **“539 kontribusi…”** dan legend **“Sedikit/Banyak”** GitHub dihapus.
 
 ---
 

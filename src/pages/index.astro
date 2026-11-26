@@ -71,11 +71,11 @@ const personSchema = {
     <dl class="grid grid-cols-1 gap-px bg-outline sm:grid-cols-3">
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Based in</dt>
-        <dd class="mt-2 font-mono text-[15px] text-on-background">Bandung, Indonesia</dd>
+        <dd class="mt-2 font-mono text-[13px] text-on-background md:text-[15px]">Bandung, Indonesia</dd>
       </div>
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Fokus</dt>
-        <dd class="mt-2 font-mono text-[12px] uppercase tracking-normal text-on-background">{focusSummary}</dd>
+        <dd class="mt-2 font-mono text-[13px] uppercase tracking-normal text-on-background md:text-[15px]">{focusSummary}</dd>
       </div>
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Kontak</dt>
@@ -113,11 +113,8 @@ const personSchema = {
   </section>
 
   <section id="skills" class="mb-16 md:mb-20 relative z-10 scroll-mt-32">
-    <div class="reveal mb-2 flex items-end justify-between border-b border-outline-strong pb-4">
+    <div class="reveal mb-2 border-b border-outline-strong pb-4">
       <h2 class="text-3xl text-on-background tracking-tight md:text-4xl">Tech Stack</h2>
-      <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">
-        {skillsData.length} kategori
-      </span>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2">
