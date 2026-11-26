@@ -1,0 +1,17 @@
+---
+interface Props {
+  title: string;
+  meta?: string;
+  id?: string;
+  class?: string;
+}
+
+const { title, meta, id, class: className } = Astro.props;
+---
+
+<div class:list={['reveal flex items-end justify-between gap-4 border-b border-outline-strong pb-3', className]}>
+  <h2 id={id} class="text-3xl tracking-tight text-on-background md:text-4xl">{title}</h2>
+  {meta && (
+    <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">{meta}</span>
+  )}
+</div>

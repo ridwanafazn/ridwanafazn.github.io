@@ -45,7 +45,7 @@
 | Feature | Description | Priority |
 |---|---|---|
 | **Home (/)** | Hero globe (Three.js, desktop ≥1024), spec strip, Featured Projects (ledger 3 baris), Tech Stack, Current Focus, How I Build | P0 |
-| **About (/about)** | Timeline experience, Education, Certifications, Volunteering/Activities | P0 |
+| **About (/about)** | Record ledger: experience berindeks, Education, Certifications, Volunteering/Activities | P0 |
 | **Projects List (/projects)** | ProjectLedger 13 baris (indeks + thumbnail + role + stack); filter belum ada | P0 |
 | **Project Detail (/projects/[id])** | Meta plate, lead image, narasi `##`, Hasil, galeri slider, next project | P0 |
 | **SEO & Social** | ✅ sitemap (tahan DB kosong), robots, meta description, OG/Twitter (default `/og.png`), canonical hanya halaman indexable, JSON-LD Person (home), 404 + 500 khusus | P0 |

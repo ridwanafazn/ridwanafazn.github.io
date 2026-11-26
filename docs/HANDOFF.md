@@ -9,7 +9,7 @@
 
 Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postgres + Cloudinary**, punya **admin panel custom** (CRUD project + upload asset), **public pages SSR dengan edge cache 60 detik**, dan **live di Cloudflare Workers pada `https://ridwanafazn.my.id`** (`www` → 301 apex; GitHub Pages sudah dilepas). Sisa: **cover image project — 0 dari 13 project punya cover**; galeri sudah terisi 54 foto.
 
-**UI Refresh M1 (2026-11-26) — selesai di kode, belum deploy:** skala H1 `.page-title`, `PageHeader` shared, navbar tanpa numbering + `aria-current`, `scroll-padding-top`, SFX target ≥24 px + label, print fallback reveal. Runtime playful diputuskan **Preact compat** (ClickSpark 10,7 KB vs React 62,3 KB gzip). Berikutnya: M2 `/about` “The Record”.
+**UI Refresh M2 (2026-11-26) — selesai di kode, belum deploy:** `/about` di-rewrite jadi “The Record” — experience ledger berindeks, pendidikan/sertifikasi/volunteering grid hairline 2 kolom, header meta plate. `Timeline.astro` dihapus; `SectionHeader` + `Tag` ditambahkan. M1 foundation tetap: `.page-title`, navbar tanpa numbering + `aria-current`, `scroll-padding-top`, SFX ≥24 px, print fallback. Runtime playful diputuskan **Preact compat** (ClickSpark 10,7 KB vs React 62,3 KB gzip). Berikutnya: M3 `/projects` + ImageTrail/Shuffle.
 
 ---
 

@@ -621,7 +621,7 @@ src/components/            # Astro components
   ├── Icon.astro           # inline SVG (tanpa icon font)
   ├── Navbar.astro / Footer.astro / FloatingNav.astro
   ├── HeroGlobe.astro      # three.js, dynamic import (≥1024px)
-  ├── Timeline.astro / HowIBuild.astro / Badge.astro
+  ├── PageHeader.astro / SectionHeader.astro / Tag.astro / HowIBuild.astro / Badge.astro
   └── admin/AssetPicker.astro
 ```
 

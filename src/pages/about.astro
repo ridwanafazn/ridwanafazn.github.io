@@ -3,12 +3,33 @@ export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import Timeline from '../components/Timeline.astro';
-import Icon from '../components/Icon.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Tag from '../components/Tag.astro';
 import { getProfile, getActivities } from '../lib/content';
 
 const profileData = await getProfile();
 const activitiesData = await getActivities();
+
+const experience = profileData.experience ?? [];
+const education = profileData.education ?? [];
+const certifications = profileData.certifications ?? [];
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const formatPeriod = (period: string) => period.replace(/\s+-\s+/g, ' — ');
+
+// Stat dari DB dipetakan ke label UI Indonesia; fallback ke label asli.
+const headerStats = (profileData.stats ?? []).slice(0, 4).map((stat) => ({
+  label: /professional/i.test(stat.label)
+    ? 'Sejak'
+    : /role/i.test(stat.label)
+      ? 'Peran'
+      : /project/i.test(stat.label)
+        ? 'Proyek'
+        : /cert/i.test(stat.label)
+          ? 'Sertifikasi'
+          : stat.label,
+  value: stat.value,
+}));
 ---
 
 <Layout
@@ -18,116 +39,153 @@ const activitiesData = await getActivities();
 >
   <PageHeader
     class="relative z-10"
-    title="The Engineer Behind the Code"
+    title="Di Balik Kode"
     description="Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem."
-  />
-
-  <div class="relative z-10 mb-8">
-    {profileData?.experience && profileData.experience.length > 0 && (
-      <Timeline experience={profileData.experience} />
+  >
+    {headerStats.length > 0 && (
+      <dl slot="meta" class="border-t border-outline-strong">
+        {headerStats.map((stat) => (
+          <div class="flex items-baseline justify-between gap-4 border-b border-outline py-2.5">
+            <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">
+              {stat.label}
+            </dt>
+            <dd class="font-mono text-[13px] tabular-nums text-on-background">{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
     )}
-  </div>
+  </PageHeader>
 
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10 mb-16">
-    
-    <section class="md:col-span-8 outline-none focus-visible:ring-2 focus-visible:ring-accent">
-      
-      <div class="flex items-center gap-4 mb-12 relative z-10">
-        <div class="bg-accent/10 p-3 rounded-lg border border-accent/20 flex items-center justify-center">
-          <Icon name="graduation-cap" class="h-6 w-6 text-accent" />
-        </div>
-        <h2 class="text-3xl text-on-background tracking-tight">Pendidikan</h2>
-      </div>
+  <section aria-labelledby="pengalaman" class="relative z-10 mb-14 md:mb-20">
+    <SectionHeader id="pengalaman" title="Pengalaman" meta={`${pad(experience.length)} entri`} />
 
-      <div class="space-y-10 relative z-10 before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-accent/40 before:via-accent/20 before:to-transparent">
-        {profileData.education.map((edu, index) => (
-          <div class={`relative flex items-center justify-between md:justify-normal md:even:flex-row-reverse group reveal ${index % 2 === 0 ? 'from-left' : 'from-right'}`}>
-            
-            <div class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-surface bg-surface-hover text-accent shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 transition-transform duration-300 group-hover:scale-110 group-hover:border-accent/20">
-              <Icon name="cpu" class="h-5 w-5" />
-            </div>
-            
-            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-3rem)] p-6 md:p-8 bg-surface border border-outline rounded-lg hover:border-accent/30 transition-all duration-300">
-              <h3 class="text-xl text-on-background mb-1 group-hover:text-accent transition-colors">{edu.degree}</h3>
-              <div class="font-mono text-[12px] font-semibold text-on-surface-variant mb-4">{edu.institution}</div>
-              
-              <div class="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 px-3 py-1.5 rounded-md mb-4">
-                <span class="font-mono text-[12px] uppercase tracking-widest text-accent">GPA</span>
-                <span class="font-mono text-[12px] font-bold text-accent">{edu.gpa}</span>
+    {experience.length > 0 ? (
+      <ol>
+        {experience.map((exp, index) => (
+          <li class="group border-b border-outline transition-colors hover:bg-surface-hover">
+            <div class="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-x-4 gap-y-2 py-6 md:grid-cols-[2.5rem_11rem_minmax(0,1fr)] md:gap-x-6 md:py-7">
+              <span class="font-mono text-[12px] tabular-nums text-signal-strong">
+                {pad(index + 1)}
+              </span>
+              <span class="font-mono text-[12px] uppercase tracking-[0.08em] text-on-surface-variant md:pt-1.5">
+                {formatPeriod(exp.period)}
+              </span>
+              <div class="col-start-2 md:col-start-3 md:row-start-1">
+                <h3 class="font-heading text-xl leading-snug tracking-tight text-on-background md:text-2xl">
+                  {exp.role}
+                </h3>
+                <p class="mt-1 font-mono text-[12px] font-semibold text-on-surface-variant">
+                  {exp.organization}
+                </p>
+                {exp.description && (
+                  <p class="mt-3 max-w-[60ch] text-[14px] leading-relaxed text-on-surface-variant">
+                    {exp.description}
+                  </p>
+                )}
               </div>
-              
-              <ul class="space-y-2.5">
+            </div>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="border-b border-outline py-6 text-[14px] text-on-surface-variant">
+        Belum ada pengalaman yang dipublikasikan.
+      </p>
+    )}
+  </section>
+
+  <section aria-labelledby="pendidikan" class="relative z-10 mb-14 md:mb-20">
+    <SectionHeader id="pendidikan" title="Pendidikan" meta={`${pad(education.length)} entri`} />
+
+    {education.length > 0 ? (
+      <div class="mt-6 grid gap-x-8 gap-y-6 md:grid-cols-2">
+        {education.map((edu) => (
+          <article class="border-b border-outline pb-6">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="font-heading text-xl leading-snug tracking-tight text-on-background">
+                {edu.degree}
+              </h3>
+              <span class="font-mono text-[12px] tabular-nums text-on-surface-variant">
+                GPA {edu.gpa}
+              </span>
+            </div>
+            <p class="mt-1 font-mono text-[12px] font-semibold text-on-surface-variant">
+              {edu.institution}
+            </p>
+            {edu.highlights.length > 0 && (
+              <ul class="mt-4 space-y-2.5">
                 {edu.highlights.map((highlight) => (
-                  <li class="text-[13px] text-on-surface-variant font-medium flex items-start gap-2.5">
-                    <Icon name="check-circle" class="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    {highlight}
+                  <li class="flex items-start gap-3 text-[13px] leading-relaxed text-on-surface-variant">
+                    <span class="mt-[9px] h-px w-3 shrink-0 bg-outline-strong" aria-hidden="true"></span>
+                    <span>{highlight}</span>
                   </li>
                 ))}
               </ul>
-            </div>
-          </div>
+            )}
+          </article>
         ))}
       </div>
+    ) : (
+      <p class="border-b border-outline py-6 text-[14px] text-on-surface-variant">
+        Belum ada data pendidikan.
+      </p>
+    )}
+  </section>
 
-      <div class="mt-16 pt-10 border-t border-outline/40 relative z-10">
-        <div class="flex items-center gap-3 mb-8">
-          <Icon name="award" class="h-5 w-5 text-accent" />
-          <h3 class="font-mono text-[12px] font-bold text-on-background uppercase tracking-widest">Sertifikasi</h3>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {profileData.certifications.map((cert, index) => (
-            <div class={`bg-surface p-5 rounded-lg border border-outline hover:border-accent/40 transition-all duration-300 flex flex-col justify-center group reveal from-behind ${index === 1 ? 'reveal-delay-1' : ''}`}>
-              <span class="font-bold text-[13px] text-on-background mb-2 group-hover:text-accent transition-colors">{cert.name}</span>
-              <span class="text-[12px] font-mono font-semibold text-on-surface-variant">
-                {cert.issuer}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+  <section aria-labelledby="sertifikasi" class="relative z-10 mb-14 md:mb-20">
+    <SectionHeader id="sertifikasi" title="Sertifikasi" meta={`${pad(certifications.length)} entri`} />
 
-    <section class="md:col-span-4 flex flex-col outline-none focus-visible:ring-2 focus-visible:ring-accent">
-       
-       <div class="flex items-center gap-4 mb-10 relative z-10">
-        <div class="bg-accent/10 p-3 rounded-lg border border-accent/20 flex items-center justify-center">
-          <Icon name="users" class="h-6 w-6 text-accent" />
-        </div>
-        <h2 class="text-2xl text-on-background tracking-tight">Volunteering</h2>
-      </div>
-
-      <div class="flex-grow flex flex-col gap-6 relative z-10">
-        {activitiesData.map((activity, index) => (
-          <div class={`p-6 bg-surface rounded-lg border border-outline hover:border-accent/30 transition-all duration-300 group reveal from-right ${index === 1 ? 'reveal-delay-1' : ''}`}>
-            
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex-grow pr-4">
-                <h3 class="font-sans font-semibold text-[14px] text-on-background leading-tight mb-1 group-hover:text-accent transition-colors">{activity.title}</h3>
-                <p class="text-[12px] font-mono font-semibold text-on-surface-variant">{activity.organization}</p>
-              </div>
-              <span class="text-[12px] uppercase tracking-widest font-mono font-bold px-2 py-1 bg-accent/10 text-accent border border-accent/20 rounded-md shrink-0">
-                {activity.type}
-              </span>
-            </div>
-            
-            <p class="text-left text-[13px] text-on-surface-variant font-medium mb-5 leading-relaxed">{activity.description}</p>
-            
-            <div class="flex flex-wrap gap-2">
-              {activity.highlights.map((h) => (
-                <span class="text-[12px] uppercase tracking-wider font-mono font-bold text-accent bg-accent/8 px-2 py-1 rounded-md border border-accent/20">
-                  {h}
-                </span>
-              ))}
-            </div>
-            
-          </div>
+    {certifications.length > 0 ? (
+      <ul class="mt-6 grid gap-x-8 md:grid-cols-2">
+        {certifications.map((cert) => (
+          <li class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-outline py-4">
+            <span class="text-[14px] font-semibold text-on-background">{cert.name}</span>
+            <span class="shrink-0 font-mono text-[12px] text-on-surface-variant">{cert.issuer}</span>
+          </li>
         ))}
-        {activitiesData.length === 0 && (
-          <p class="text-[13px] text-on-surface-variant">Belum ada kegiatan yang dipublikasikan.</p>
-        )}
+      </ul>
+    ) : (
+      <p class="border-b border-outline py-6 text-[14px] text-on-surface-variant">
+        Belum ada sertifikasi.
+      </p>
+    )}
+  </section>
+
+  <section aria-labelledby="volunteering" class="relative z-10">
+    <SectionHeader id="volunteering" title="Volunteering" meta={`${pad(activitiesData.length)} entri`} />
+
+    {activitiesData.length > 0 ? (
+      <div class="mt-6 grid gap-x-8 gap-y-8 md:grid-cols-2">
+        {activitiesData.map((activity) => (
+          <article class="border-b border-outline pb-6">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+              <h3 class="font-heading text-lg leading-snug tracking-tight text-on-background md:text-xl">
+                {activity.title}
+              </h3>
+              <Tag>{activity.type}</Tag>
+            </div>
+            <p class="mt-1 font-mono text-[12px] font-semibold text-on-surface-variant">
+              {activity.organization}
+            </p>
+            <p class="mt-3 max-w-[60ch] text-[13px] leading-relaxed text-on-surface-variant">
+              {activity.description}
+            </p>
+            {activity.highlights.length > 0 && (
+              <ul class="mt-4 flex flex-wrap gap-2">
+                {activity.highlights.map((highlight) => (
+                  <li>
+                    <Tag>{highlight}</Tag>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))}
       </div>
-    </section>
-    
-  </div>
+    ) : (
+      <p class="border-b border-outline py-6 text-[14px] text-on-surface-variant">
+        Belum ada kegiatan yang dipublikasikan.
+      </p>
+    )}
+  </section>
 </Layout>

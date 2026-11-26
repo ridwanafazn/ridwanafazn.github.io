@@ -6,13 +6,23 @@ interface Props {
 }
 
 const { title, description, class: className } = Astro.props;
+const hasMeta = Astro.slots.has('meta');
 ---
 
 <header class:list={['reveal mb-10 md:mb-14', className]}>
-  <h1 class="page-title text-on-background">{title}</h1>
-  {description && (
-    <p class="mt-5 max-w-[62ch] text-[15px] leading-relaxed text-on-surface-variant md:text-lg">
-      {description}
-    </p>
-  )}
+  <div class:list={[hasMeta && 'grid gap-8 md:grid-cols-12 md:items-end']}>
+    <div class:list={[hasMeta && 'md:col-span-8']}>
+      <h1 class="page-title text-on-background">{title}</h1>
+      {description && (
+        <p class="mt-5 max-w-[62ch] text-[15px] leading-relaxed text-on-surface-variant md:text-lg">
+          {description}
+        </p>
+      )}
+    </div>
+    {hasMeta && (
+      <div class="md:col-span-4">
+        <slot name="meta" />
+      </div>
+    )}
+  </div>
 </header>
