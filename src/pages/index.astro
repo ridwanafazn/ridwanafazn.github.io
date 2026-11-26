@@ -23,7 +23,7 @@ const projectsLink = `${basePath}projects`;
 
 const since = profileData.stats.find((stat) => /professional/i.test(stat.label))?.value ?? '—';
 // Label ringkas khusus hero — bukan nama kategori DB (itu tetap dipakai di section Tech Stack).
-const stackSummary = ['FE', 'BE', 'AI', 'Mobile'].join('·');
+const focusSummary = ['Backend', 'AI', 'Mobile'].join(' · ');
 
 // Language memakai lebar penuh (2 kolom) karena daftarnya paling panjang.
 const isLanguage = (group: { category: string }) => /^language\b/i.test(group.category);
@@ -75,8 +75,8 @@ const personSchema = {
         <dd class="mt-2 font-mono text-[15px] tabular-nums text-on-background">{since}</dd>
       </div>
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
-        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Stack</dt>
-        <dd class="mt-2 font-mono text-[12px] uppercase tracking-normal text-on-background">{stackSummary}</dd>
+        <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Fokus</dt>
+        <dd class="mt-2 font-mono text-[12px] uppercase tracking-normal text-on-background">{focusSummary}</dd>
       </div>
       <div class="spec-cell min-w-0 bg-background p-5 md:p-6">
         <dt class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Kontak</dt>
@@ -135,8 +135,8 @@ const personSchema = {
           </h3>
           <ul class={skillGroup.wide ? 'grid grid-cols-2 gap-x-6 gap-y-2.5 md:grid-cols-5' : 'flex flex-wrap gap-x-5 gap-y-2.5'}>
             {skillGroup.items.map((item) => (
-              <li class="flex items-center gap-2 font-mono text-[12px] text-on-surface-variant">
-                <BrandIcon name={item} class="h-4 w-4 shrink-0 text-on-background" />
+              <li class="group/item flex items-center gap-2 font-mono text-[13px] text-on-surface-variant transition-colors hover:text-on-background">
+                <BrandIcon name={item} class="h-[18px] w-[18px] shrink-0 text-on-background transition-colors group-hover/item:text-signal" />
                 <span class="whitespace-nowrap">{item}</span>
               </li>
             ))}

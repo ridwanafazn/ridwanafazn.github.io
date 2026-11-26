@@ -25,6 +25,42 @@ const fills = [
   'var(--color-on-background)',
   'var(--color-signal)',
 ];
+
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+const fromDate = new Date(`${data.from}T00:00:00Z`);
+const toDate = new Date(`${data.to}T00:00:00Z`);
+const rawMonths: { label: string; left: number }[] = [];
+
+if (!Number.isNaN(fromDate.getTime()) && !Number.isNaN(toDate.getTime())) {
+  // weeks[] dimulai dari hari Minggu sebelum/sama dengan tanggal pertama.
+  const gridStart = new Date(fromDate);
+  gridStart.setUTCDate(gridStart.getUTCDate() - gridStart.getUTCDay());
+
+  const cursor = new Date(Date.UTC(fromDate.getUTCFullYear(), fromDate.getUTCMonth(), 1));
+  while (cursor <= toDate) {
+    const weekIndex = Math.max(
+      0,
+      Math.floor((cursor.getTime() - gridStart.getTime()) / 604_800_000),
+    );
+
+    // Lewati bulan parsial yang dimulai sebelum sel pertama; kalau tidak,
+    // label pertama (mis. Nov) menempel ke label berikutnya (Des).
+    if (cursor.getTime() >= gridStart.getTime() && weekIndex < data.weeks.length) {
+      rawMonths.push({
+        label: monthNames[cursor.getUTCMonth()] ?? '',
+        // Jangan biarkan label terakhir keluar dari tepi kanan.
+        left: Math.min((weekIndex / data.weeks.length) * 100, 94),
+      });
+    }
+
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+  }
+}
+
+// Jaga jarak minimum antar-label (6% dari lebar grid).
+const monthLabels = rawMonths.filter(
+  (month, index) => index === 0 || month.left - rawMonths[index - 1].left >= 6,
+);
 ---
 
 <section id="github" aria-labelledby="github-heading" class="relative z-10 mb-0">
@@ -51,41 +87,78 @@ const fills = [
       <span class="text-on-background">{total}</span> kontribusi dalam 12 bulan terakhir
     </p>
 
-    <div class="no-scrollbar mt-4 w-full overflow-x-auto" style="direction: rtl">
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        width={width}
-        height={height}
-        class="h-auto w-[640px] sm:w-full"
-        style="direction: ltr"
-        role="img"
-        aria-label={`${total} kontribusi GitHub dalam 12 bulan terakhir`}
-        shape-rendering="crispEdges"
-      >
-        {data.weeks.map((week, x) =>
-          week.map((level, y) =>
-            level === null ? null : (
-              <rect
-                x={x * (cell + gap)}
-                y={y * (cell + gap)}
-                width={cell}
-                height={cell}
-                rx="1"
-                fill={fills[level] ?? fills[0]}
-              />
-            ),
-          ),
-        )}
-      </svg>
-    </div>
+    <div class="github-scroll no-scrollbar mt-4 w-full overflow-x-auto" style="direction: rtl">
+      <div class="w-[640px] sm:w-full" style="direction: ltr">
+        <div class="relative h-4" aria-hidden="true">
+          {monthLabels.map((month) => (
+            <span
+              class="absolute top-0 font-mono text-[12px] leading-none text-on-surface-variant"
+              style={`left:${month.left}%`}
+            >
+              {month.label}
+            </span>
+          ))}
+        </div>
 
-    <div class="mt-3 flex items-center justify-between gap-3 font-mono text-[12px] text-on-surface-variant">
-      <span class="sm:hidden">Geser</span>
-      <span class="ml-auto flex items-center gap-1.5" aria-hidden="true">
-        {fills.map((fill) => (
-          <span class="h-2 w-2" style={`background:${fill}`}></span>
-        ))}
-      </span>
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          width={width}
+          height={height}
+          class="mt-1 h-auto w-full"
+          role="img"
+          aria-label={`${total} kontribusi GitHub dalam 12 bulan terakhir`}
+          shape-rendering="crispEdges"
+        >
+          {data.weeks.map((week, x) =>
+            week.map((level, y) =>
+              level === null ? null : (
+                <rect
+                  x={x * (cell + gap)}
+                  y={y * (cell + gap)}
+                  width={cell}
+                  height={cell}
+                  rx="1"
+                  fill={fills[level] ?? fills[0]}
+                />
+              ),
+            ),
+          )}
+        </svg>
+
+        <div class="mt-3 flex items-center justify-between gap-3 font-mono text-[12px] text-on-surface-variant">
+          <span class="sm:hidden">Geser</span>
+          <span class="ml-auto flex items-center gap-2" aria-hidden="true">
+            <span>Sedikit</span>
+            {fills.map((fill) => (
+              <span class="h-2 w-2" style={`background:${fill}`}></span>
+            ))}
+            <span>Banyak</span>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Mobile: tepi kiri/kanan heatmap dibuat fade supaya sel tidak terlihat
+     terpotong mentah saat di-scroll. */
+  @media (max-width: 639px) {
+    .github-scroll {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 14px,
+        #000 calc(100% - 14px),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 14px,
+        #000 calc(100% - 14px),
+        transparent 100%
+      );
+    }
+  }
+</style>

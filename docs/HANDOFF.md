@@ -9,7 +9,7 @@
 
 Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postgres + Cloudinary**, punya **admin panel custom** (CRUD project + upload asset), **public pages SSR dengan edge cache 60 detik**, dan **live di Cloudflare Workers pada `https://ridwanafazn.my.id`** (`www` → 301 apex; GitHub Pages sudah dilepas). Sisa: **cover image project — 0 dari 13 project punya cover**; galeri sudah terisi 54 foto.
 
-**UI Refresh M3 (2026-11-26) — selesai di kode, belum deploy:** `/projects` ledger dirapikan (role `13rem` + line-clamp, thumbnail 72×44 + placeholder, stack ≥lg, reveal per grup) + **ImageTrail Preact** (`ProjectTrail.tsx`, RAF tanpa GSAP, desktop-only, mobile 0 KB) + **Acak proyek** (`ProjectShuffle.astro`). `@astrojs/preact` + `preact@10.28` + `compat:true`. M2 `/about` dan M1 foundation tetap. Berikutnya: M4 homepage + ClickSpark.
+**UI Refresh M4 (2026-11-26) — selesai di kode, belum deploy:** homepage dapat **ClickSpark** di SFX (`SfxSpark.tsx`, Preact, desktop-only), spec strip **Fokus: Backend · AI · Mobile**, Tech Stack ikon 18px/label 13px + hover signal, GitHub heatmap dengan month labels, legend Sedikit/Banyak, dan mask fade mobile. M1–M3 (foundation, `/about`, ledger + ImageTrail + Acak proyek) tetap. Berikutnya: M5 QA/perf/docs/ship.
 
 ---
 
@@ -137,6 +137,7 @@ src/
   layouts/Layout.astro        # layout publik
   components/ProjectLedger.astro      # daftar proyek + thumbnail + data trail
   components/ProjectTrail.tsx         # island Preact: image trail desktop-only
+  components/SfxSpark.tsx             # island Preact: ClickSpark tombol SFX
   components/ProjectShuffle.astro     # tombol Acak proyek (vanilla)
   components/Icon.astro               # inline SVG (tanpa icon font)
   components/HeroGlobe.astro          # globe three.js (dynamic import, ≥1024px)

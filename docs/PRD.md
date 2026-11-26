@@ -44,7 +44,7 @@
 ### 3.1 Public Website (SSR + edge cache 60s)
 | Feature | Description | Priority |
 |---|---|---|
-| **Home (/)** | Hero globe (Three.js, desktop ≥1024), spec strip, Featured Projects (ledger 3 baris), Tech Stack, Current Focus, How I Build | P0 |
+| **Home (/)** | HeroAbstract (poster), spec strip Sejak/Fokus/Kontak, Featured Projects (ledger), Tech Stack, GitHub heatmap | P0 |
 | **About (/about)** | Record ledger: experience berindeks, Education, Certifications, Volunteering/Activities | P0 |
 | **Projects List (/projects)** | ProjectLedger (indeks + thumbnail + role + stack), ImageTrail desktop, dan Acak proyek; filter belum ada | P0 |
 | **Project Detail (/projects/[id])** | Meta plate, lead image, narasi `##`, Hasil, galeri slider, next project | P0 |

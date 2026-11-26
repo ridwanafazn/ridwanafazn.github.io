@@ -619,6 +619,7 @@ Implementasi aktual **tidak memakai React island sama sekali** (0 file `.tsx`).
 src/components/            # Astro components
   ├── ProjectLedger.astro  # daftar proyek berindeks + thumbnail
   ├── ProjectTrail.tsx     # island Preact: image trail desktop-only
+  ├── SfxSpark.tsx         # island Preact: ClickSpark tombol SFX
   ├── ProjectShuffle.astro # tombol Acak proyek
   ├── Icon.astro           # inline SVG (tanpa icon font)
   ├── Navbar.astro / Footer.astro / FloatingNav.astro

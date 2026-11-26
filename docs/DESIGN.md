@@ -102,7 +102,7 @@ Homepage memakai **HeroAbstract** (`src/components/HeroAbstract.astro`), bukan h
 
 | Route | Komponen | JS yang dimuat | Catatan |
 |---|---|---|---|
-| `/` | **HeroAbstract**, spec strip (Sejak/Stack/Kontak), ProjectLedger (3), Tech Stack, **GitHubActivity** | hero entrance/marquee/app float + nav gate 70%; spec strip/GitHub tetap | hero full-bleed; cutout portrait + app GIS Sentry; globe tidak lagi dimuat di homepage. `FloatingNav`, Current Focus, dan HowIBuild dihapus. Tech Stack memakai ikon brand + label 12px (5 kategori; **Language** baris penuh `md:col-span-2` dengan item 5 kolom, 4 kategori lain 2×2). Heatmap kontribusi 12 bulan: 5 langkah abu + orange hanya level tertinggi; mobile scroll horizontal mulai dari minggu terbaru |
+| `/` | **HeroAbstract**, spec strip (Sejak/Fokus/Kontak), ProjectLedger, Tech Stack, **GitHubActivity** | hero entrance/marquee/app float + nav gate 70% + **ClickSpark** SFX (Preact, desktop); spec strip/GitHub tetap | hero full-bleed; cutout portrait + app GIS Sentry; globe tidak dimuat. Spec strip memakai **Fokus: Backend · AI · Mobile**. Tech Stack: ikon brand 18px + label 13px (5 kategori; **Language** baris penuh `md:col-span-2` dengan item 5 kolom, 4 kategori lain 2×2); hover ikon ke signal. Heatmap 12 bulan: 5 langkah abu + orange hanya level tertinggi; month labels + legend Sedikit/Banyak; mobile scroll horizontal mulai minggu terbaru + mask fade |
 | `/about` | **Record ledger**: pengalaman berindeks; pendidikan/sertifikasi/volunteering grid hairline 2 kolom; header meta plate dari stats profil | reveal (satu per section) | tanpa kartu, gradient, icon chip; section full-width bertumpuk, bukan grid 8/4 |
 | `/projects` | **ProjectLedger** (indeks + thumbnail 72×44 + role line-clamp 2 + stack 2 item + `+N`; placeholder `—` untuk tanpa cover) | reveal grup + **ImageTrail** desktop (Preact) + **Acak proyek** | tanpa carousel; stack hanya ≥lg; detail stack lengkap di halaman project |
 | `/projects/[id]` | Case study: meta plate (Peran/Stack/Tautan), **lead image** (cover → gambar galeri pertama), narasi `##`, Hasil, **galeri slider** (snap per kartu, tinggi kartu seragam + lebar mengikuti rasio asli tanpa crop, berhenti di ujung), lightbox (hanya jika ada gambar), next-project | reveal + slider + lightbox | project tanpa gambar tidak merender lightbox/dialog kosong; OG jatuh ke `/og.png` |
@@ -207,7 +207,7 @@ Arah “Cold Steel with a Pulse”: mayoritas halaman tetap editorial; playfulne
 - Island wajib `client:media="(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"` + fallback no-JS; mobile/reduced-motion tidak mengunduh runtime.
 - Jangan menambah gesture baru di luar tabel ini tanpa memperbarui dokumen.
 
-**Status M3:** **Steel** (ImageTrail) dan **Play** (Acak proyek) sudah jalan. **Fire** (ClickSpark) menyusul di M4.
+**Status M4:** **Fire** (ClickSpark di SFX), **Steel** (ImageTrail), dan **Play** (Acak proyek) sudah jalan. Semua island hanya desktop + `prefers-reduced-motion: no-preference`; mobile 0 KB runtime.
 
 ### 5.2 Foundation M1
 
@@ -271,3 +271,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-26 | **UI Refresh M1 — foundation**: skala H1 `.page-title`, navbar tanpa numbering + label “Projects” + `aria-current`, `scroll-padding-top`, SFX target ≥24 px + label sesuai, print fallback reveal, `PageHeader` shared component. Runtime playful diputuskan **Preact compat** (ClickSpark 10,7 KB vs React 62,3 KB gzip). | ✅ belum deploy |
 | 2026-11-26 | **UI Refresh M2 — `/about` “The Record”**: rewrite total; experience ledger berindeks, pendidikan/sertifikasi/volunteering grid hairline 2 kolom, header meta plate (Sejak/Peran/Proyek/Sertifikasi). Hapus Timeline, kartu `rounded-lg`, gradient, dot `rounded-full`, icon chip. `Timeline.astro` dihapus; `SectionHeader` + `Tag` ditambahkan. Mobile height 3351 → 2816 px. | ✅ belum deploy |
 | 2026-11-26 | **UI Refresh M3 — `/projects` Archive that plays**: role column `13rem` + `line-clamp-2`, thumbnail 72×44 + placeholder, stack hanya ≥lg, reveal per grup, ImageTrail Preact (`ProjectTrail.tsx`, RAF tanpa GSAP) desktop-only, tombol “Acak proyek” (`ProjectShuffle.astro`). `@astrojs/preact` + `preact@10.28` + `compat:true`. Mobile tidak mengunduh Preact. | ✅ belum deploy |
+| 2026-11-26 | **UI Refresh M4 — `/` Poster with a pulse**: ClickSpark Preact (`SfxSpark.tsx`) pada tombol SFX; spec strip jadi **Fokus: Backend · AI · Mobile**; Tech Stack ikon 18px/label 13px + hover signal; GitHub heatmap month labels, legend Sedikit/Banyak, mask fade mobile. | ✅ belum deploy |
