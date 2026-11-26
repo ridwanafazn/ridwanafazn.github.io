@@ -1,5 +1,5 @@
 # HANDOFF — Current State Snapshot
-> **Terakhir diperbarui:** 2026-11-26
+> **Terakhir diperbarui:** 2026-11-27
 > **Tujuan:** agar sesi/agent baru bisa lanjut tanpa menggali ulang.
 > **Jangan taruh secret di file ini.** Semua kredensial ada di `.env.local` (gitignored) / Cloudflare secrets.
 
@@ -9,9 +9,9 @@
 
 Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postgres + Cloudinary**, punya **admin panel custom** (CRUD project + upload asset), **public pages SSR dengan edge cache 60 detik**, dan **live di Cloudflare Workers pada `https://ridwanafazn.my.id`** (`www` → 301 apex; GitHub Pages sudah dilepas). Sisa: **cover image project — 0 dari 13 project punya cover**; galeri sudah terisi 54 foto.
 
-**UI Refresh M5 (2026-11-26) — QA selesai, siap deploy:** M1–M4 selesai (foundation, `/about` “The Record”, ledger + ImageTrail, ClickSpark + GitHub heatmap). QA 390/768/1440 lolos (0 overflow/error/broken image), print & reduced-motion lolos, 404/admin/sitemap benar. Lighthouse a11y/BP/SEO **100** di `/`, `/about`, `/projects`, `/projects/[id]`; performance **0.99**, **LCP 2.2 s**, CLS 0, TBT 0, total **228 KiB**. Hero portrait responsif 720/900, app shot `srcset` + low priority, Rengoku lazy + mask desktop-only. **Belum deploy** — menunggu konfirmasi.
+**UI Refresh M1–M5 (2026-11-26/27) — LIVE:** foundation, `/about` “The Record”, ledger + ImageTrail, ClickSpark + GitHub heatmap. QA 390/768/1440 lolos (0 overflow/error/broken image), print & reduced-motion lolos, 404/admin/sitemap benar. Lighthouse a11y/BP/SEO **100** di `/`, `/about`, `/projects`, `/projects/[id]`; performance **0.99**, **LCP 2.2 s**, CLS 0, TBT 0, total **228 KiB**. Hero portrait responsif 720/900, app shot `srcset` + low priority, Rengoku lazy + mask desktop-only. **Deploy production 2026-11-27, version `95dd2020-0850-49f0-9ae6-ba950fc98401`.**
 
-**Revisi konten 2026-11-27:** homepage spec strip → **Based in / Bandung, Indonesia** (meta `/about` tetap **Aktif Sejak**); Fokus → **FE · BE · AI · Mobile**; Language hanya **JavaScript, TypeScript, Golang, Python, Java, Rust**; Backend hanya **Express.js, NestJS, Go Gin, FastAPI, Actix Web, Laravel**; count “0X ENTRI” di `/about` dihapus; H1 kembali **The Engineer Behind the Code**; **Acak proyek dihapus**.
+**Revisi konten 2026-11-27 (LIVE):** homepage spec strip → **Based in / Bandung, Indonesia** (meta `/about` tetap **Aktif Sejak**); Fokus → **FE · BE · AI · Mobile**; Language hanya **JavaScript, TypeScript, Golang, Python, Java, Rust**; Backend hanya **Express.js, NestJS, Go Gin, FastAPI, Actix Web, Laravel**; count “0X ENTRI” di `/about` dihapus; H1 kembali **The Engineer Behind the Code**; **Acak proyek dihapus**.
 
 ---
 
@@ -22,7 +22,7 @@ Portfolio pribadi (`portofx-v2`) sudah **migrasi total dari Sanity ke Neon Postg
 | **Live (canonical)** | https://ridwanafazn.my.id |
 | **Fallback** | https://portofx-v2.ridwanafzn.workers.dev |
 | **Worker name** | `portofx-v2` |
-| **Versi produksi** | `33faa70d-befb-4f38-83ed-490943613197` (2026-11-25, mobile marquee hidden + copy breathing room) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. CI hanya build/typecheck — step deploy **skipped** selama secret `CLOUDFLARE_API_TOKEN` belum di-set. |
+| **Versi produksi** | `95dd2020-0850-49f0-9ae6-ba950fc98401` (2026-11-27, UI refresh M1–M5 + revisi konten: Based in Bandung, stack lists, about copy) — 100% traffic; **sumber kebenaran** `wrangler deployments status`. Deploy manual `pnpm build` → `wrangler deploy`; CI masih build/typecheck sampai secret `CLOUDFLARE_API_TOKEN` di-set. |
 | **Akun Cloudflare** | `491877dfe9bd12e5bce536e6da18da15` (ridwanafzn@gmail.com) |
 | **KV SESSION** | `0caf957ffab8428687ada2d8bef1e809` |
 | **Custom domain** | `ridwanafazn.my.id` + `www` (Workers Custom Domain, sertifikat aktif) |
@@ -360,7 +360,7 @@ Memakai aset yang sudah ada (54 gambar galeri), tanpa isian baru:
 2. ✅ Mobile menu, admin login, sitemap, redirect `/admin`, print/PDF, reduced-motion.
 3. ✅ Lighthouse a11y/BP/SEO 100 (4 halaman publik); performance 0.99, LCP 2.2 s, CLS 0, TBT 0, total 228 KiB.
 4. ✅ Hero assets: portrait 720/900 + preload `imagesrcset`; app shot `srcset` + low priority; Rengoku lazy; `reveal-blob.png` desktop-only.
-5. ⏳ **Deploy**: `pnpm build` → `wrangler deploy`; setelah deploy update §2 Version ID + commit docs.
+5. ✅ **Deploy production 2026-11-27** — version `95dd2020-0850-49f0-9ae6-ba950fc98401`; live verified (`Based in` / `Bandung, Indonesia`, H1 about, tanpa Acak proyek).
 
 ### Go-live domain — SELESAI (2026-11-12)
 1. ✅ Zona `ridwanafazn.my.id` aktif di Cloudflare (NS `bart` + `keira`; registrar **idcloudhost**).
