@@ -4,6 +4,7 @@ export const prerender = false;
 import Layout from '../../layouts/Layout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import ProjectLedger from '../../components/ProjectLedger.astro';
+import ProjectShuffle from '../../components/ProjectShuffle.astro';
 import { getAllProjects } from '../../lib/content';
 
 const allProjects = await getAllProjects();
@@ -19,11 +20,14 @@ const allProjects = await getAllProjects();
     description="Kumpulan sistem, aplikasi, dan arsitektur yang sudah dibangun — mulai dari backend low-latency, fullstack monolitik, sampai sistem terdistribusi skala produksi."
   />
 
-  <div class="flex items-baseline justify-between border-b border-outline-strong pb-3">
+  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-outline-strong pb-3">
     <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Arsip</span>
-    <span class="font-mono text-[12px] tabular-nums text-on-surface-variant">
-      {allProjects.length} proyek
-    </span>
+    <div class="flex items-center gap-4">
+      {allProjects.length > 0 && <ProjectShuffle />}
+      <span class="font-mono text-[12px] tabular-nums text-on-surface-variant">
+        {allProjects.length} proyek
+      </span>
+    </div>
   </div>
 
   <ProjectLedger projects={allProjects} />

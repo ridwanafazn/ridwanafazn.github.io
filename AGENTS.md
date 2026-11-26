@@ -9,6 +9,7 @@
 - **Better Auth 1.7.20** — scrypt (`@noble/hashes`), bukan Lucia/argon2
 - **Cloudinary** — signed upload, transform URL
 - **Cloudflare Workers** — `@astrojs/cloudflare@14.4.7`, `wrangler deploy` (bukan Pages)
+- **Preact 10.28** — island React Bits (`ProjectTrail`) desktop-only via `@astrojs/preact` compat
 
 ## Aturan cepat
 

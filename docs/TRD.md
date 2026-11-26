@@ -3,10 +3,10 @@
 
 > **Version**: 1.2 (koreksi Astro 7 / Cloudflare Workers / Better Auth)
 > **Status**: ✅ **Implemented** — spec awal, dengan koreksi di §4.3/§4.4 dan §7 yang tidak sesuai implementasi.
-> **Stack**: Astro 7.4.5, Drizzle ORM 0.45.4, Neon Postgres 1.2.0, Better Auth 1.7.20, Cloudinary, Cloudflare Workers 14.4.7
+> **Stack**: Astro 7.4.5, Drizzle ORM 0.45.4, Neon Postgres 1.2.0, Better Auth 1.7.20, Cloudinary, Cloudflare Workers 14.4.7, Preact 10.28 (`@astrojs/preact` compat untuk island React Bits)
 
 > **Reality check (2026-11-15):**
-> - Tidak ada React island / file `.tsx`. Semua admin = **Astro components**.
+> - Public punya **satu island Preact compat** (`ProjectTrail.tsx`, desktop-only) untuk ImageTrail; admin tetap **Astro components**. Tidak ada React penuh/GSAP.
 > - Rate limit, CSP, HSTS, RBAC, Sentry, Resend, `@astrojs/sitemap` **belum diimplementasikan** (lihat §7).
 > - KV hanya binding `SESSION`; tidak ada namespace `RATE_LIMIT`.
 > - `AUTH_COOKIE_*` di `wrangler.jsonc` tidak dibaca `src/lib/auth.ts`.
@@ -618,6 +618,8 @@ Implementasi aktual **tidak memakai React island sama sekali** (0 file `.tsx`).
 ```
 src/components/            # Astro components
   ├── ProjectLedger.astro  # daftar proyek berindeks + thumbnail
+  ├── ProjectTrail.tsx     # island Preact: image trail desktop-only
+  ├── ProjectShuffle.astro # tombol Acak proyek
   ├── Icon.astro           # inline SVG (tanpa icon font)
   ├── Navbar.astro / Footer.astro / FloatingNav.astro
   ├── HeroGlobe.astro      # three.js, dynamic import (≥1024px)

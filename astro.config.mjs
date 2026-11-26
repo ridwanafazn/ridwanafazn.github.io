@@ -1,5 +1,6 @@
 import { defineConfig, envField } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
+import preact from '@astrojs/preact';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
@@ -15,6 +16,9 @@ export default defineConfig({
       // better-auth subpath adapters (sqlite/mongodb/memory) tidak kompatibel
       // dengan dep optimizer workerd — exclude dari pre-bundle.
       exclude: ['better-auth', '@neondatabase/serverless', 'drizzle-orm'],
+      // Pre-bundle Preact supaya dev tidak re-optimize di tengah request
+      // (pernah memicu `preact/hooks` __H undefined pada SSR pertama).
+      include: ['preact', 'preact/hooks', 'preact/compat', 'preact/compat/client', 'preact/jsx-runtime'],
     },
     server: {
       watch: {
@@ -23,7 +27,10 @@ export default defineConfig({
       },
     },
   },
-  integrations: [],
+  // React Bits components memakai API React; compat:true memetakan `react`
+  // ke `preact/compat` (runtime jauh lebih kecil). Jangan ganti ke React penuh
+  // tanpa mengukur bundle + LCP.
+  integrations: [preact({ compat: true })],
   env: {
     schema: {
       // === Runtime secrets (server) ===

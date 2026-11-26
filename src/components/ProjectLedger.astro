@@ -2,6 +2,7 @@
 // src/components/ProjectLedger.astro
 import type { Project } from '../types';
 import Icon from './Icon.astro';
+import ProjectTrail from './ProjectTrail';
 
 interface Props {
   projects: Project[];
@@ -16,27 +17,28 @@ const base = import.meta.env.BASE_URL;
 const href = (id: string) => `${base.endsWith('/') ? base : base + '/'}projects/${id}`;
 const pad = (n: number) => String(n).padStart(2, '0');
 
+// Stack hanya muncul di lg supaya kolom role punya ruang di tablet.
 const rowGrid = showIndex
   ? showStack
-    ? 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_minmax(0,14rem)_1.25rem]'
-    : 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_3.5rem_minmax(0,1fr)_10rem_1.25rem]'
+    ? 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_4.5rem_minmax(0,1fr)_minmax(0,11rem)_1.25rem] lg:grid-cols-[2.25rem_5rem_minmax(0,1fr)_minmax(0,13rem)_minmax(0,14rem)_1.25rem]'
+    : 'grid-cols-[1.5rem_1fr_1.25rem] md:grid-cols-[2.25rem_4.5rem_minmax(0,1fr)_minmax(0,11rem)_1.25rem] lg:grid-cols-[2.25rem_5rem_minmax(0,1fr)_minmax(0,13rem)_1.25rem]'
   : showStack
-    ? 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_minmax(0,14rem)_1.25rem]'
-    : 'grid-cols-[1fr_1.25rem] md:grid-cols-[3.5rem_minmax(0,1fr)_10rem_1.25rem]';
+    ? 'grid-cols-[1fr_1.25rem] md:grid-cols-[4.5rem_minmax(0,1fr)_minmax(0,11rem)_1.25rem] lg:grid-cols-[5rem_minmax(0,1fr)_minmax(0,13rem)_minmax(0,14rem)_1.25rem]'
+    : 'grid-cols-[1fr_1.25rem] md:grid-cols-[4.5rem_minmax(0,1fr)_minmax(0,11rem)_1.25rem] lg:grid-cols-[5rem_minmax(0,1fr)_minmax(0,13rem)_1.25rem]';
 ---
 
-<ul>
+<ul class="reveal">
   {
     projects.map((project, index) => (
       <li>
         <a
           href={href(project.id)}
           data-preview={project.previewImage}
+          data-project-link
+          data-project-title={project.title}
           class:list={[
-            'group grid items-center gap-x-4 gap-y-1 border-b border-outline py-3.5 transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent md:gap-x-5',
+            'group grid items-center gap-x-4 gap-y-1 border-b border-outline py-2.5 transition-colors hover:bg-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent md:gap-x-5',
             rowGrid,
-            'reveal from-behind',
-            index % 4 === 1 ? 'reveal-delay-1' : index % 4 === 2 ? 'reveal-delay-2' : index % 4 === 3 ? 'reveal-delay-3' : '',
           ]}
         >
           {showIndex && (
@@ -46,13 +48,10 @@ const rowGrid = showIndex
           )}
 
           <span
-            class:list={[
-              'hidden h-9 w-14 overflow-hidden md:block',
-              project.previewImage ? 'border border-outline bg-surface-hover' : '',
-            ]}
+            class="hidden h-11 w-[4.5rem] items-center justify-center overflow-hidden border border-outline bg-surface md:flex"
             aria-hidden="true"
           >
-            {project.previewImage && (
+            {project.previewImage ? (
               <img
                 src={project.previewImage}
                 alt=""
@@ -60,6 +59,8 @@ const rowGrid = showIndex
                 decoding="async"
                 class="h-full w-full object-cover"
               />
+            ) : (
+              <span class="font-mono text-[12px] text-on-surface-variant/60">—</span>
             )}
           </span>
 
@@ -74,13 +75,16 @@ const rowGrid = showIndex
             </span>
           </span>
 
-          <span class="hidden truncate text-[13px] text-on-surface-variant md:block">
+          <span
+            class="hidden min-w-0 text-[13px] leading-snug text-on-surface-variant md:line-clamp-2"
+            title={project.role}
+          >
             {project.role}
           </span>
 
           {showStack && (
             <span
-              class="hidden min-w-0 items-baseline gap-1 font-mono text-[12px] text-on-surface-variant md:flex"
+              class="hidden min-w-0 items-baseline gap-1 font-mono text-[12px] text-on-surface-variant lg:flex"
               title={project.techStack.join(' · ')}
             >
               {/* Ringkas: 2 item pertama + jumlah sisanya. Detail lengkap ada di halaman project. */}
@@ -101,51 +105,4 @@ const rowGrid = showIndex
   }
 </ul>
 
-<div
-  id="ledger-preview"
-  aria-hidden="true"
-  class="pointer-events-none fixed left-0 top-0 z-40 hidden w-[18rem] overflow-hidden border border-outline-strong bg-surface shadow-[0_18px_40px_-24px_rgb(17_17_16/0.55)]"
->
-  <img id="ledger-preview-img" alt="" decoding="async" class="aspect-[16/10] w-full object-cover" />
-</div>
-
-<script>
-  const preview = document.getElementById('ledger-preview');
-  const previewImg = document.getElementById('ledger-preview-img');
-  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-  if (preview && previewImg && canHover) {
-    let shown = false;
-
-    const place = (x, y) => {
-      if (!shown) return;
-      const pad = 16;
-      const width = preview.offsetWidth;
-      const height = preview.offsetHeight;
-      let left = x + 24;
-      let top = y - height / 2;
-
-      if (left + width + pad > window.innerWidth) left = x - width - 24;
-      top = Math.min(Math.max(pad, top), window.innerHeight - height - pad);
-
-      preview.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
-    };
-
-    document.querySelectorAll('[data-preview]').forEach((row) => {
-      const url = row.getAttribute('data-preview');
-      if (!url) return;
-
-      row.addEventListener('pointerenter', (event) => {
-        if (previewImg.getAttribute('src') !== url) previewImg.src = url;
-        shown = true;
-        preview.classList.remove('hidden');
-        place(event.clientX, event.clientY);
-      });
-      row.addEventListener('pointermove', (event) => place(event.clientX, event.clientY));
-      row.addEventListener('pointerleave', () => {
-        shown = false;
-        preview.classList.add('hidden');
-      });
-    });
-  }
-</script>
+<ProjectTrail client:media="(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)" />
