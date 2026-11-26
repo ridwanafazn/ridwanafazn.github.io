@@ -65,6 +65,8 @@
 
   html {
     scroll-behavior: smooth;
+    /* Navbar fixed ±64px + margin: jangan biarkan heading anchor tertutup. */
+    scroll-padding-top: 6rem;
   }
   body {
     @apply bg-background text-on-background font-sans antialiased selection:bg-signal/20 selection:text-signal-strong;
@@ -131,6 +133,13 @@
 }
 
 @layer utilities {
+  /* Satu skala H1 untuk halaman non-hero (/about, /projects). */
+  .page-title {
+    font-size: clamp(2.75rem, 7vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+
   /* =========================================
      BENTO ENGINE (Flat, minimal radius)
      ========================================= */
@@ -507,6 +516,21 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-on-surface-variant);
+}
+
+/* Print/PDF: konten tidak boleh tersembunyi oleh reveal atau animasi masuk. */
+@media print {
+  html.js .reveal,
+  html.js .reveal.from-left,
+  html.js .reveal.from-right,
+  html.js .reveal.from-behind,
+  .spec-cell,
+  .hero-enter {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* Mobile: gutter scrollbar di kanan hero menampilkan background html (cream).

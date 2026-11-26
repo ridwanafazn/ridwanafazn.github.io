@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import Timeline from '../components/Timeline.astro';
 import Icon from '../components/Icon.astro';
 import { getProfile, getActivities } from '../lib/content';
@@ -15,14 +16,11 @@ const activitiesData = await getActivities();
   description="Latar belakang, pengalaman, pendidikan, sertifikasi, dan kegiatan Ridwan Afazn."
   image="/og.png"
 >
-  <header class="reveal mb-14 pt-0 relative z-10">
-    <div class="max-w-2xl">
-      <h1 class="text-5xl md:text-6xl text-on-background mb-6 tracking-tight">The Engineer Behind the Code</h1>
-      <p class="text-[15px] text-on-surface-variant leading-relaxed font-medium">
-        Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem.
-      </p>
-    </div>
-  </header>
+  <PageHeader
+    class="relative z-10"
+    title="The Engineer Behind the Code"
+    description="Fondasi akademis, sertifikasi, dan pengalaman lapangan yang membentuk cara saya membangun sistem."
+  />
 
   <div class="relative z-10 mb-8">
     {profileData?.experience && profileData.experience.length > 0 && (

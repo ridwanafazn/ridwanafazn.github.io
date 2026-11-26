@@ -1,6 +1,6 @@
 # DESIGN — UI/UX Public + Admin
 
-> **Terakhir diverifikasi: 2026-11-16.** Sumber kebenaran visual = `src/styles/global.css` + kelas Tailwind di komponen. Dokumen ini menjelaskan **apa yang benar-benar ada**, bukan rencana lama.
+> **Terakhir diverifikasi: 2026-11-26 (M1 foundation).** Sumber kebenaran visual = `src/styles/global.css` + kelas Tailwind di komponen. Dokumen ini menjelaskan **apa yang benar-benar ada**, bukan rencana lama.
 >
 > Riwayat: dokumen versi Shadcn/glassmorphism (2024) sudah **tidak berlaku**. Revamp editorial (2026-11-11, lihat `.kilo/plans/`) menghasilkan tampilan yang sekarang.
 
@@ -187,10 +187,33 @@ Sisa: tidak ada dari daftar ini; item baru harus mengikuti aturan yang sama.
 
 Efek yang ada sekarang: hero `fadeSlideUp`, spotlight reveal foto hero, `.reveal` (kiri/kanan/belakang + stagger), `spec-cell` stagger, hover preview ledger, rotasi globe (desktop), slider galeri snap, lightbox, dan nav progress scroll-driven.
 
-**Aturan baru:** maksimal **dua gesture signature per halaman**. Sisanya statis. Semua animasi harus:
+**Aturan baru:** maksimal **dua gesture signature per halaman** — satu *primary* (efek yang memberi karakter) + satu *micro* (detail pada kontrol yang sudah ada). Sisanya statis. Semua animasi harus:
 - dihormati `prefers-reduced-motion` — globe **berhenti total** (bukan diperlambat) saat reduce aktif; render juga dijeda saat tab tidak terlihat,
 - tidak menyembunyikan konten default,
 - berjalan di compositor (transform/opacity), bukan layout.
+
+### 5.1 Playfulness budget (M1)
+
+Arah “Cold Steel with a Pulse”: mayoritas halaman tetap editorial; playfulness muncul sebagai kontras, bukan lapisan di semua section.
+
+| Momen | Halaman | Efek | Runtime |
+|---|---|---|---|
+| **Fire** | `/` | ClickSpark pada tombol SFX (percikan api, tema Rengoku) | Preact compat, desktop only |
+| **Steel** | `/` + `/projects` | ImageTrail pada hover ledger (2–3 screenshot proyek) | Preact compat, desktop only |
+| **Play** | `/projects` | Tombol “Acak proyek” + scramble text | Vanilla JS ≤1 KB |
+
+- React Bits yang membawa **GSAP/ScrollTrigger/motion** (ImageTrail asli, ScrollReveal, FadeContent, SplitText, CountUp) **tidak dipakai**; ImageTrail di-port ke RAF.
+- Runtime React Bits memakai **Preact compat** (`react` → `preact/compat`), bukan React penuh: hasil ukur ClickSpark 10,7 KB gzip vs React 62,3 KB gzip.
+- Island wajib `client:media="(hover: hover) and (pointer: fine)"` + fallback no-JS; mobile tidak mengunduh runtime.
+- Jangan menambah gesture baru di luar tabel ini tanpa memperbarui dokumen.
+
+### 5.2 Foundation M1
+
+- H1 non-hero memakai utility `.page-title` (`clamp(2.75rem, 7vw, 4.25rem)`).
+- `html { scroll-padding-top: 6rem }` agar anchor tidak tertutup navbar fixed.
+- Tombol SFX minimal 24 px; `aria-label` selalu memuat teks terlihat (`SFX OFF/ON`).
+- Menu mobile tidak memakai numbering `01/02/03`; label nav = “Projects”.
+- `@media print` memaksa `.reveal`, `.spec-cell`, `.hero-enter` terlihat — print/PDF tidak boleh kosong.
 
 ---
 
@@ -243,3 +266,4 @@ Sudah dikerjakan di Fase B:
 | 2026-11-22 | **Hero spotlight**: foto asli tampil penuh; blob mask lembut (bukan lingkaran, `reveal-blob.png`) mengikuti kursor dan membuka easter egg Rengoku **full-body** (paha/kaki ikut) yang sudah disejajarkan 1:1 dengan foto. Quote Inggris+Jepang (A/B/C) di **kolom kiri bawah** lewat shuffle bag + dwell 160ms; marker lime di kiri baris Jepang; hint dihapus. SFX Mixkit (`fire-whoosh.mp3`) default OFF, toggle di portrait, cooldown 1.2s. Tanpa JS/touch = hanya foto asli | ✅ deploy `ca3e50c4` |
 | 2026-11-22 | **Mobile gutter**: `html.page-home` gradient ink `#080907` 0–`calc(100svh/100dvh + var(--hero-bottom-gap))` lalu cream menutup gutter scrollbar ±4px di kanan hero, sudut kanan-bawah, dan strip samping margin hero; `--hero-bottom-gap` di `:root` (3/3.5/5rem); `.hero-grid` digeser `-1px`; margin bawah hero diisi `box-shadow` ink di ≤980px; class hanya saat `bareHero` | ✅ deploy `edaa1fae` |
 | 2026-11-25 | **Mobile marquee off + copy breathing room**: di ≤640px marquee/running text bawah disembunyikan, copy jadi penutup hero dengan `padding: 12px 0 max(40px, env(safe-area-inset-bottom))`, jarak tagline 20px. 641px+ (tablet/desktop) marquee tetap tampil | ✅ deploy `33faa70d` |
+| 2026-11-26 | **UI Refresh M1 — foundation**: skala H1 `.page-title`, navbar tanpa numbering + label “Projects” + `aria-current`, `scroll-padding-top`, SFX target ≥24 px + label sesuai, print fallback reveal, `PageHeader` shared component. Runtime playful diputuskan **Preact compat** (ClickSpark 10,7 KB vs React 62,3 KB gzip). | ✅ belum deploy |

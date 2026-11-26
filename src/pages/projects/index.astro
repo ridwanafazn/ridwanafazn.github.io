@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import ProjectLedger from '../../components/ProjectLedger.astro';
 import { getAllProjects } from '../../lib/content';
 
@@ -13,15 +14,10 @@ const allProjects = await getAllProjects();
   description={`Arsip ${allProjects.length} proyek: sistem backend, aplikasi fullstack, dan platform produksi.`}
   image="/og.png"
 >
-  <header class="reveal mb-10 md:mb-14">
-    <h1 class="text-[clamp(2.5rem,7.5vw,4rem)] leading-[1.02] tracking-tight text-on-background">
-      Portofolio Proyek
-    </h1>
-    <p class="mt-5 max-w-[62ch] text-[15px] leading-relaxed text-on-surface-variant md:text-lg">
-      Kumpulan sistem, aplikasi, dan arsitektur yang sudah dibangun — mulai dari backend low-latency,
-      fullstack monolitik, sampai sistem terdistribusi skala produksi.
-    </p>
-  </header>
+  <PageHeader
+    title="Portofolio Proyek"
+    description="Kumpulan sistem, aplikasi, dan arsitektur yang sudah dibangun — mulai dari backend low-latency, fullstack monolitik, sampai sistem terdistribusi skala produksi."
+  />
 
   <div class="flex items-baseline justify-between border-b border-outline-strong pb-3">
     <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-on-surface-variant">Arsip</span>
