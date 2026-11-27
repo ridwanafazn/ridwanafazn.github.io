@@ -250,10 +250,7 @@ const nextProject =
 
         {project.highlights && project.highlights.length > 0 && (
           <section class="reveal grid gap-3 border-t border-outline py-8 md:grid-cols-12 md:gap-8 md:py-10">
-            <h2 class="text-xl tracking-tight text-on-background md:col-span-3 md:sticky md:top-28 md:self-start md:text-2xl">
-              Hasil
-            </h2>
-            <ul class="md:col-span-8 md:col-start-5">
+            <ul class="md:col-span-8 md:col-start-5" aria-label="Hasil">
               {project.highlights.map((highlight) => (
                 <li class="border-b border-outline py-2.5 text-[14px] leading-snug text-on-background first:pt-0 last:border-b-0">
                   {highlight}
